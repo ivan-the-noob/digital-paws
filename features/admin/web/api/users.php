@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="../../css/app-req.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
 </head>
 
@@ -22,7 +24,7 @@
             <a class="navbar-brand d-none d-md-block logo-container" href="#">
                 <img src="../../../../assets/img/logo.png">
             </a>
-            <a href="admin.html">
+            <a href="admin.php">
                 <i class="fa-solid fa-gauge"></i>
                 <span>Dashboard</span>
             </a>
@@ -30,38 +32,23 @@
                 <i class="fa-regular fa-calendar-check"></i>
                 <span>User Accounts</span>
             </a>
-            <a href="app-records.html">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Patients Records</span>
-            </a>
-            <a href="app-records-list.html">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Record Lists</span>
-            </a>
-            <a href="pos.html">
-                <i class="fas fa-cash-register"></i>
-                <span>Point of Sales</span>
-            </a>
-            <a href="transaction.html">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Transaction</span>
-            </a>
+            
             
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>
-                <a href="category-list.html">
+                <a href="category-list.php">
                     <i class="fa-solid fa-list"></i>
                     <span>Category List</span>
                 </a>
-                <a href="service-list.html">
+                <a href="service-list.php">
                     <i class="fa-solid fa-layer-group"></i>
                     <span>Service List</span>
                 </a>
-                <a href="admin-user.html">
+                <a href="admin-user.php">
                     <i class="fa-solid fa-user-tie"></i>
                     <span>Admin User List</span>
                 </a>
-                <a href="settings.html">
+                <a href="settings.php">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>
@@ -81,43 +68,8 @@
             <!--Notification and Profile Admin-->
             <div class="profile-admin">
                 <div class="dropdown">
-                    <button class="" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-bell"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-                        <li class="dropdown-header">
-                            <h5 class=" mb-0">Notification</h5>
-                        </li>
-                        <li class="dropdown-item">
-                            <div class="alert alert-primary mb-0">
-                                <strong>Successfully Booked!</strong>
-                                <p>Rachel booked an appointment! <a href="#" class="alert-link">Check it now!</a></p>                               
-                            </div>
-                        </li>
-                        <li class="dropdown-item">
-                            <div class="alert alert-danger mb-0">
-                                <strong>Decline</strong>
-                                <p>Admin Kim declined Jana's appointment.<a href="#" class="alert-link">See here.</a></p> 
-                            </div>
-                        </li>
-                        <li class="dropdown-item">
-                            <div class="alert alert-success mb-0">
-                                <strong>Paid!</strong>
-                                <p>James paid the bill.</p> 
-                            </div>
-                        </li>
-                        <li class="dropdown-item">
-                            <div class="alert alert-primary mb-0">
-                                <strong>Successfully Booked!</strong>
-                                <p>Rachel booked an appointment! <a href="#" class="alert-link">Check it now!</a></p>                               
-                            </div>
-                        </li>
-                       
-                    </ul>
-                </div>
-                <div class="dropdown">
                     <button class="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../../../../assets/img/vet logo.jpg" style="width: 40px; height: 40px; object-fit: cover;">
+                        <img src="../../../../assets/img/vet logo.png" class="admin-profile" style="width: 40px; height: 40px; object-fit: cover;">
                     </button>
                     <ul class="dropdown-menu" style="background-color: transparent;">
                         <li><a class="dropdown-item" href="../../../users/web/api/login.html">Logout</a></li>
@@ -130,12 +82,12 @@
             <h3>User Accounts</h3>
             <div class="walk-in px-lg-5">
                 <div class="mb-3 x d-flex">
-                    <div class="search">
-                        <div class="search-bars">
-                            <i class="fa fa-magnifying-glass"></i>
-                            <input type="text" class="form-control" placeholder="Search...">
-                        </div>
+                <div class="search">
+                    <div class="search-bars">
+                        <i class="fa fa-magnifying-glass"></i>
+                        <input type="text" class="form-control" placeholder="Search..." id="search-input">
                     </div>
+                </div>
                   
                 </div>
             </div>
@@ -145,15 +97,15 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Service Category</th>
-                        <th>Details</th>
+                        <th>Email</th>
+                        <th>Button</th>
                     </tr>
                     </thead>
                     <tbody id="tableBody">
                         
                         <?php 
                         include '../../../../db.php';
-                        include '../../function/php/apt-req.php'
+                        include '../../function/php/users.php'
                           ?>
                                      
                     </tbody>
@@ -161,36 +113,7 @@
             <!--Appointment Request Table End-->
 
             
-            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">Appointment Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Name:</strong> <span id="modalOwnerName"></span></p>
-                <p><strong>Contact Number:</strong> <span id="modalContactNum"></span></p>
-                <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-                <p><strong>Barangay:</strong> <span id="modalBarangay"></span></p>
-                <p><strong>Pet Type:</strong> <span id="modalPetType"></span></p>
-                <p><strong>Breed:</strong> <span id="modalBreed"></span></p>
-                <p><strong>Age:</strong> <span id="modalAge"></span></p>
-                <p><strong>Service:</strong> <span id="modalService"></span></p>
-                <p><strong>Total Payment:</strong> <span id="modalTotalPayment"></span></p>
-                <p><strong>Appointment Time:</strong> <span id="modalAppointmentTime"></span></p>
-                <p><strong>Appointment Date:</strong> <span id="modalAppointmentDate"></span></p>
-                <!-- Google Map -->
-                <div id="modalMap" style="height: 400px; width: 100%;"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+          
                 
             </div>
             <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
@@ -251,7 +174,46 @@ $(document).ready(function() {
         });
     });
 });
+
+
+document.getElementById('search-input').addEventListener('input', function() {
+    const searchTerm = this.value;
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('GET', '../../function/php/search/search_users.php?query=' + encodeURIComponent(searchTerm), true);
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const results = JSON.parse(xhr.responseText);
+
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            results.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <form action='../../function/php/delete_user.php' method='POST'>
+                            <input type='hidden' name='user_id' value='${user.id}' />
+                            <input type='submit' value='Delete' class='btn btn-danger' />
+                        </form>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    };
+
+    // Send the request
+    xhr.send();
+});
+
 </script>
+
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmgygVeipMUsrtGeZPZ9UzXRmcVdheIqw&libraries=places"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" crossorigin="anonymous"></script>

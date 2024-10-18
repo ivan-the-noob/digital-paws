@@ -1,0 +1,112 @@
+<div class="form-row">
+    <div class="col-md-14">
+        <table class="table table-bordered physical">
+            <thead>
+                <tr>
+                    <th colspan="2">Physical Examination Weight</th>
+                    <th colspan="2">Chief Complaint</th>
+                    <th colspan="2">Treatment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="bcs">BCS: 
+                        <input type="radio" name="bcs" value="1" required> 1 
+                        <input type="radio" name="bcs" value="2" required> 2 
+                        <input type="radio" name="bcs" value="3" required> 3 
+                        <input type="radio" name="bcs" value="4" required> 4 
+                        <input type="radio" name="bcs" value="5" required> 5
+                    </td>
+                    <td class="stool">Stool: 
+                        <input type="radio" name="stool" value="firm" required> Firm
+                        <input type="radio" name="stool" value="watery_wet" required> Watery/Wet
+                    </td>
+                        <td colspan="2">
+                            <textarea type="text" class="form-control h-100 input-col" name="chief_complaint" rows="3" style="border: none;" required></textarea>
+                        </td>
+                        <td colspan="2">
+                            <textarea class="form-control h-100" name="treatment" rows="3" style="border: none;" required></textarea>
+                        </td>
+
+                </tr>
+                <tr>
+
+                    <td>
+                        <label for="vomiting">Vomiting: </label>
+                        <input type="radio" name="vomiting" value="yes" required> Yes 
+                        <input type="radio" name="vomiting" value="no" required> No
+                    </td>
+                    <td>Ticks/Fleas: 
+                        <input type="radio" name="ticks_fleas" value="present" required> Present
+                        <input type="radio" name="ticks_fleas" value="none" required> None
+                    </td>
+                    <td colspan="2">
+                        <textarea class="form-control h-100" name="chief_complaint" rows="3" style="border: none;" required></textarea>
+                    </td>
+                    <td colspan="2">
+                        <textarea class="form-control h-100" name="treatment" rows="3"  style="border: none;" required></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="title" style="background-color: #808080; color: #fff;">
+                        Laboratory
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title">
+                        Fecalysis:
+                    </td>
+                    <td class="title">
+                    <label for="leptop" class="radio-label">Lepto: </label>
+                        <input type="radio" name="lepto" value="yes" required>(+)
+                        <input type="radio" name="lepto" value="no" required> (-)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title">
+                        Ear swab:
+                    </td>
+                    <td class="title">
+                    <label for="ear-swab" class="radio-label">CHW </label>
+                        <input type="radio" name="chw" value="yes" required>(+)
+                        <input type="radio" name="chw" value="no" required> (-)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title">
+                        Skin Scrape:
+                    </td>
+                    <td class="title">
+                    <label for="skin-scrape" class="radio-label">CPV </label>
+                        <input type="radio" name="cpv" value="yes" required>(+)
+                        <input type="radio" name="cpv" value="no" required> (-)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title">
+                        Vaginal Smear: 
+                    </td>
+                    <td class="title">
+                    <label for="vaginal-smear" class="radio-label">CDV </label>
+                        <input type="radio" name="cdv" value="yes" required>(+)
+                        <input type="radio" name="cdv" value="no" required> (-)
+                    </td>
+                </tr>
+                <tr>
+                    
+                    <td class="title">
+                    <label for="CBC" class="radio-label">CBC:</label>
+                        <input type="radio" name="cbc" value="yes" required>Proceed
+                        <input type="radio" name="cbc" value="no" required> Denied
+                    </td>
+                    <td class="title">
+                        ANA/BAB/EHR:
+                    </td>
+                </tr>            
+            </tbody>
+        </table>   
+               
+            </div>
+        </div>      
+    </div>
+</div>
