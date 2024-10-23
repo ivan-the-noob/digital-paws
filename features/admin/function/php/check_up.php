@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Execute statement and check for success
     if ($stmt->execute()) {
         header("Location: ../../web/api/check-up.php?message=Data saved successfully!");
-        exit();
+        exit(); 
     } else {
         echo "Error executing statement: " . $stmt->error;
     }
@@ -59,13 +59,13 @@ $conn->close();
 ?>
 
 <?php
-// Check if the message parameter is set in the URL
-if (isset($_GET['message'])) {
-    // Escape the message to prevent XSS attacks
-    $message = htmlspecialchars($_GET['message'], ENT_QUOTES, 'UTF-8');
+    // Check if the message parameter is set in the URL
+    if (isset($_GET['message'])) {
+        // Escape the message to prevent XSS attacks
+        $message = htmlspecialchars($_GET['message'], ENT_QUOTES, 'UTF-8');
 
-    // Display the message using SweetAlert
-    echo "<script>
+        // Display the message using SweetAlert
+        echo "<script>
             window.onload = function() {
                 swal({
                 title: 'Success',
@@ -75,5 +75,5 @@ if (isset($_GET['message'])) {
             });
             };
         </script>";
-}
-?>
+    }
+    ?>

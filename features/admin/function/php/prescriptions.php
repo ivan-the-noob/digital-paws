@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Check if the array fields exist and sanitize
-    $drug_names = isset($_POST['drug_name']) ? implode(",", array_map('htmlspecialchars', $_POST['drug_name'])) : '';
+    $drug_names = isset($_POST['drug_name']) ? implode(",", array_map('htmlspecialchars', $_POST['drug_name'])) : ''; 
     $times = isset($_POST['time']) ? implode(",", array_map('htmlspecialchars', $_POST['time'])) : '';
     $prescriptions = isset($_POST['prescription']) ? implode(",", array_map('htmlspecialchars', $_POST['prescription'])) : '';
     $frequencies = isset($_POST['frequency']) ? implode(",", array_map('htmlspecialchars', $_POST['frequency'])) : '';
@@ -38,13 +38,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Bind parameters
     $stmt->bind_param(
-        "sssisisss",
+        "sssssssss",
         $owner_name,
         $date,
         $pet_name,
         $age,
         $drug_names, // Use the implode results here
-        $times,      // Use the implode results here
+        $times,      // Use the sanitized time input
         $prescriptions, // Use the implode results here
         $frequencies, // Use the implode results here
         $special_instructions // Use the implode results here

@@ -2,41 +2,32 @@
 include '../../../../db.php'; // Ensure this file has the correct connection settings
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Sanitize input data to prevent XSS
-    $owner_name = htmlspecialchars($_POST['owner_name']);
-    $date = htmlspecialchars($_POST['date']);
-    $address = htmlspecialchars($_POST['address']);
-    $active_number = htmlspecialchars($_POST['active_number']);
-    $pet_name = htmlspecialchars($_POST['petName']);
-    $species = htmlspecialchars($_POST['species']);
-    $color = htmlspecialchars($_POST['petColor']);
-    $pet_birthdate = htmlspecialchars($_POST['pet_birthdate']);
-    $gender = htmlspecialchars($_POST['gender']);
-    $breed = htmlspecialchars($_POST['breed']);
-    $diet = htmlspecialchars($_POST['diet']);
+    // Collect form data
+    $owner_name = $_POST['owner_name'];
+    $date = $_POST['date'];
+    $address = $_POST['address'];
+    $active_number = $_POST['active_number'];
+    $pet_name = $_POST['petName'];
+    $species = $_POST['species'];
+    $color = $_POST['petColor'];
+    $pet_birthdate = $_POST['pet_birthdate'];
+    $gender = $_POST['gender'];
+    $breed = $_POST['breed'];
+    $diet = $_POST['diet'];
 
-    // Check if the required fields are filled
-    if (empty($owner_name) || empty($date) || empty($pet_name) || empty($species)) {
-        die("Required fields are missing. Please fill all the necessary details.");
-    }
+    // Deworming data - convert arrays to comma-separated strings
+    $date_given_dwrm = implode(',', $_POST['date_given_dwrm']);
+    $weight_dwrm = implode(',', $_POST['weight_dwrm']);
+    $treatment_dwrm = implode(',', $_POST['treatment_dwrm']);
+    $observation_dwrm = implode(',', $_POST['observation_dwrm']);
+    $follow_up_dwrm = implode(',', $_POST['follow_up_dwrm']);
 
-    // Check if the array fields exist and sanitize
-    $date_given_dwrm = isset($_POST['date_given_dwrm']) ? implode(",", array_map('htmlspecialchars', $_POST['date_given_dwrm'])) : '';
-    $weight_dwrm = isset($_POST['weight_dwrm']) ? implode(",", array_map('htmlspecialchars', $_POST['weight_dwrm'])) : '';
-    $treatment_dwrm = isset($_POST['treatment_dwrm']) ? implode(",", array_map('htmlspecialchars', $_POST['treatment_dwrm'])) : '';
-    $observation_dwrm = isset($_POST['observation_dwrm']) ? implode(",", array_map('htmlspecialchars', $_POST['observation_dwrm'])) : '';
-    $follow_up_dwrm = isset($_POST['follow_up_dwrm']) ? implode(",", array_map('htmlspecialchars', $_POST['follow_up_dwrm'])) : '';
-
-    $date_given_vac = isset($_POST['date_given_vac']) ? implode(",", array_map('htmlspecialchars', $_POST['date_given_vac'])) : '';
-    $weight_vac = isset($_POST['weight_vac']) ? implode(",", array_map('htmlspecialchars', $_POST['weight_vac'])) : '';
-    $treatment_vac = isset($_POST['treatment_vac']) ? implode(",", array_map('htmlspecialchars', $_POST['treatment_vac'])) : '';
-    $observation_vac = isset($_POST['observation_vac']) ? implode(",", array_map('htmlspecialchars', $_POST['observation_vac'])) : '';
-    $follow_up_vac = isset($_POST['follow_up_vac']) ? implode(",", array_map('htmlspecialchars', $_POST['follow_up_vac'])) : '';
-
-    // Check the database connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+    // Vaccination data - convert arrays to comma-separated strings
+    $date_given_vac = implode(',', $_POST['date_given_vac']);
+    $weight_vac = implode(',', $_POST['weight_vac']);
+    $treatment_vac = implode(',', $_POST['treatment_vac']);
+    $observation_vac = implode(',', $_POST['observation_vac']);
+    $follow_up_vac = implode(',', $_POST['follow_up_vac']);
 
     // Prepare SQL statement
     $sql = "INSERT INTO wellness (
@@ -50,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if the prepare() failed
     if ($stmt === false) {
-        die("Error preparing the statement: " . $conn->error);
+        die("Error preparing the statement: " . $conn->error); // Display the MySQL error
     }
 
     // Bind parameters
@@ -81,8 +72,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Execute statement and check for success
     if ($stmt->execute()) {
-        // Redirect or display a success message
-        echo '<script>alert("Check-up information saved successfully."); window.location.href="/path/to/redirect.php";</script>';
+        // Redirect with a success message
+        echo '<script>
+            swal({
+                title: "Success",
+                text: "Check-up information saved successfully.",
+                icon: "success",
+                button: "OK"
+            }).then(function() {
+                window.location.href="../../path/to/redirect.php";
+            });
+        </script>';
     } else {
         // Handle errors
         echo "Error executing the statement: " . $stmt->error;
@@ -93,7 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
-
 
 <?php
 // Check if the message parameter is set in the URL

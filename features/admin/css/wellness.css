@@ -279,7 +279,7 @@ tr:hover{
 }
 
 .modal-content{
-    height: 100vh;
+    height: 92vh;
 }
 
 
@@ -301,7 +301,7 @@ tr:hover{
 }
 
 .modal-body{
-    height: 100%;
+    height: 90%;
 }
 
 .modal-body label{

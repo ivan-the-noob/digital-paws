@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Card Box Test</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-wrapper {
+            transition: transform 0.2s;
+        }
+        .card-wrapper:hover {
+            transform: scale(1.05);
+        }
+        .card {
+            border: 1px solid #ccc; /* Add a border to the card */
+            border-radius: 0.5rem; /* Slightly rounded corners */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class='col-md-3 mt-2 card-wrapper'>
+                <div class='card shadow'>
+                    <div class='card-body'>
+                        <h5 class='card-title text-center'><span id='ownerName'>Owner 1</span></h5>
+                        <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#checkupModal-1'>
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class='col-md-3 mt-2 card-wrapper'>
+                <div class='card shadow'>
+                    <div class='card-body'>
+                        <h5 class='card-title text-center'><span id='ownerName'>Owner 2</span></h5>
+                        <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#checkupModal-2'>
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class='col-md-3 mt-2 card-wrapper'>
+                <div class='card shadow'>
+                    <div class='card-body'>
+                        <h5 class='card-title text-center'><span id='ownerName'>Owner 3</span></h5>
+                        <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#checkupModal-3'>
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class='col-md-3 mt-2 card-wrapper'>
+                <div class='card shadow'>
+                    <div class='card-body'>
+                        <h5 class='card-title text-center'><span id='ownerName'>Owner 4</span></h5>
+                        <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#checkupModal-4'>
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

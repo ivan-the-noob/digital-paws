@@ -38,6 +38,7 @@ if (isset($_GET['message'])) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
 
 
 
@@ -136,8 +137,8 @@ if (isset($_GET['message'])) {
 
             <div class="checkup-list">
                 <?php
-                include '../../function/php/wellness_data.php';
-                echo $checkupCards;
+                include '../../function/php/prescription_data.php';
+           
                 ?>
             </div>
             <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
@@ -166,12 +167,12 @@ if (isset($_GET['message'])) {
                     <div class="container my-5">
                         <div class="row cus_inf">
                             <div class="d-flex">
-                                <div class="col-md-3 vet-logo">
+                                <!--<div class="col-md-3 vet-logo">
                                     <img src="../../../../assets/img/vet logo.png" alt="">
-                                </div>
+                                </div> !-->
                                 <div class="row">
-                                    <div class="col-md-10">
-                                        <h5>Happy Vet Animal Clinic and Grooming Center</h5>
+                                    <div class="col-md-12">
+                                        <h5 class="text-center">Happy Vet Animal Clinic and Grooming Center</h5>
                                         <div class="d-flex gap-2 justify-content-center mx-auto">
                                             <strong>
                                                 <p>Tel.No : 046-409-1254</p>
@@ -220,69 +221,58 @@ if (isset($_GET['message'])) {
                                     <tr>
                                         <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
                                         </td>
-                                        <td><input type="time" class="h-100 dwrm" name="time[]" id="time">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
-                                                id="prescription">
-                                        </td>
-                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
-                                                id="special_instructions"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
-                                        </td>
-                                        <td><input type="time" class="h-100 dwrm" name="time[]" id="time">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
-                                                id="prescription">
-                                        </td>
-                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
-                                                id="special_instructions"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
-                                        </td>
-                                        <td><input type="time" class="h-100 dwrm" name="time[]" id="time">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
-                                                id="prescription">
-                                        </td>
-                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
-                                                id="special_instructions"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
-                                        </td>
-                                        <td><input type="time" class="h-100 dwrm" name="time[]" id="time">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
-                                                id="prescription">
-                                        </td>
-                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
-                                                id="special_instructions"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
-                                        </td>
-                                        <td><input type="time" class="h-100 dwrm" name="time[]" id="time">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
-                                                id="prescription">
-                                        </td>
-                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
-                                        </td>
-                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
-                                                id="special_instructions"></td>
-                                    </tr>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
 
+                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
+                                                id="prescription">
+                                        </td>
+                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
+                                        </td>
+                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
+                                                id="special_instructions"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
+                                        </td>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
+
+                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
+                                                id="prescription">
+                                        </td>
+                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
+                                        </td>
+                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
+                                                id="special_instructions"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
+                                        </td>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
+
+                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
+                                                id="prescription">
+                                        </td>
+                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
+                                        </td>
+                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
+                                                id="special_instructions"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
+                                        </td>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
+
+                                        <td><input type="text" class="h-100 dwrm" name="prescription[]"
+                                                id="prescription">
+                                        </td>
+                                        <td><input type="number" class="h-100 dwrm" name="frequency[]" id="frequency">
+                                        </td>
+                                        <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
+                                                id="special_instructions"></td>
+                                    </tr>
+                                   
+                                    
+                                    
                                 </tbody>
                             </table>
                         </div>

@@ -3,13 +3,13 @@ include '../../../../db.php';
 
 $checkupCards = '';
 
-$sql = "SELECT * FROM wellness"; // Change to the wellness table
+$sql = "SELECT * FROM wellness";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    $checkupCards .= "<div class='row checkup-list'>";
+    // Loop through each database row
     while ($row = $result->fetch_assoc()) {
-        // Get values from the wellness table
+        // Sanitize the values for safety
         $ownerName = htmlspecialchars($row['owner_name'], ENT_QUOTES, 'UTF-8');
         $id = htmlspecialchars($row['id'], ENT_QUOTES, 'UTF-8');
         $date = htmlspecialchars($row['date'], ENT_QUOTES, 'UTF-8');
@@ -22,38 +22,55 @@ if ($result->num_rows > 0) {
         $species = htmlspecialchars($row['species'], ENT_QUOTES, 'UTF-8');
         $color = htmlspecialchars($row['color'], ENT_QUOTES, 'UTF-8');
         $gender = htmlspecialchars($row['gender'], ENT_QUOTES, 'UTF-8');
+        $date_given_dwrm = htmlspecialchars($row['date_given_dwrm'], ENT_QUOTES, 'UTF-8');
+        $weight_dwrm = htmlspecialchars($row['weight_dwrm'], ENT_QUOTES, 'UTF-8');
+        $treatment_dwrm = htmlspecialchars($row['treatment_dwrm'], ENT_QUOTES, 'UTF-8');
+        $observation_dwrm = htmlspecialchars($row['observation_dwrm'], ENT_QUOTES, 'UTF-8');
+        $follow_up_dwrm = htmlspecialchars($row['follow_up_dwrm'], ENT_QUOTES, 'UTF-8');
 
-        // Additional wellness fields
-        $weightDwrm = htmlspecialchars($row['weight_dwrm'], ENT_QUOTES, 'UTF-8');
-        $treatmentDwrm = htmlspecialchars($row['treatment_dwrm'], ENT_QUOTES, 'UTF-8');
-        $observationDwrm = htmlspecialchars($row['observation_dwrm'], ENT_QUOTES, 'UTF-8');
-        $followUpDwrm = htmlspecialchars($row['follow_up_dwrm'], ENT_QUOTES, 'UTF-8');
-        $dateGivenVac = htmlspecialchars($row['date_given_vac'], ENT_QUOTES, 'UTF-8');
-        $weightVac = htmlspecialchars($row['weight_vac'], ENT_QUOTES, 'UTF-8');
-        $treatmentVac = htmlspecialchars($row['treatment_vac'], ENT_QUOTES, 'UTF-8');
-        $observationVac = htmlspecialchars($row['observation_vac'], ENT_QUOTES, 'UTF-8');
-        $followUpVac = htmlspecialchars($row['follow_up_vac'], ENT_QUOTES, 'UTF-8');
+        $date_given_vac = htmlspecialchars($row['date_given_vac'], ENT_QUOTES, 'UTF-8');
+        $weight_vac = htmlspecialchars($row['weight_vac'], ENT_QUOTES, 'UTF-8');
+        $treatment_vac = htmlspecialchars($row['treatment_vac'], ENT_QUOTES, 'UTF-8');
+        $observation_vac = htmlspecialchars($row['observation_vac'], ENT_QUOTES, 'UTF-8');
+        $follow_up_vac = htmlspecialchars($row['follow_up_vac'], ENT_QUOTES, 'UTF-8');
 
-        // Card for each wellness record
+        // Assuming these values are stored in a comma-separated format and need to be split
+        $dateGivenArray = explode(',', $date_given_dwrm);
+        $weightArray = explode(',', $weight_dwrm);
+        $treatmentArray = explode(',', $treatment_dwrm);
+        $observationArray = explode(',', $observation_dwrm);
+        $followUpArray = explode(',', $follow_up_dwrm);
+
+        $dateGivenVacArray = explode(',', $date_given_vac);
+        $weightVacArray = explode(',', $weight_vac);
+        $treatmentVacArray = explode(',', $treatment_vac);
+        $observationVacArray = explode(',', $observation_vac);
+        $followUpVacArray = explode(',', $follow_up_vac);
+
+        // Count the rows for loop iteration based on the size of one of the arrays
+        $rowCount = count($dateGivenArray);
+        $rowCountVac = count($dateGivenVacArray);
+
+        // Card for each check-up record
         $checkupCards .= "
             <div class='col-md-3 mt-2 card-wrapper'>
                 <div class='card mb-3'>
                     <div class='card-body'>
                         <h5 class='card-title text-center'><span id='ownerName'>$ownerName</span></h5>
-                        <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#wellnessModal-$id'>
+                        <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#checkupModal-$id'>
                             View Details
                         </button>
                     </div>
                 </div>
             </div>";
 
-        // Modal for each wellness record
+        // Modal for each check-up record
         $checkupCards .= "
-        <div class='modal fade' id='wellnessModal-$id' tabindex='-1' aria-labelledby='wellnessModalLabel-$id' aria-hidden='true'>
+        <div class='modal fade' id='checkupModal-$id' tabindex='-1' aria-labelledby='checkupModalLabel-$id' aria-hidden='true'>
             <div class='modal-dialog'>
                 <div class='modal-content'>
                     <div class='modal-header'>
-                        <h5 class='modal-title' id='wellnessModalLabel-$id'>Wellness Details</h5>
+                        <h5 class='modal-title' id='checkupModalLabel-$id'>Check-Up Details</h5>
                         <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                     </div>
                     <div class='modal-body'>
@@ -134,26 +151,96 @@ if ($result->num_rows > 0) {
                                     </div>
                                 </div>
                             </div>
+                        <div class='form-section'>
                             <div class='container mt-4'>
-                                <div class='row'>
-                                    <div class='col-md-4 bordered-box'>
-                                        <div class='fw-bold treatment'>Deworming Treatment</div>
-                                        <p>Date Given: " . (isset($dateGivenVac) ? date('F j, Y', strtotime($dateGivenVac)) : 'N/A') . "</p>
-                                        <p>Weight: $weightDwrm kg</p>
-                                        <p>Treatment: $treatmentDwrm</p>
-                                        <p>Observation: $observationDwrm</p>
-                                        <p>Follow-up: $followUpDwrm</p>
-                                    </div>
-                                    <div class='col-md-4 bordered-box'>
-                                        <div class='fw-bold treatment'>Vaccination Treatment</div>
-                                        <p>Date Given: " . (isset($dateGivenVac) ? date('F j, Y', strtotime($dateGivenVac)) : 'N/A') . "</p>
-                                        <p>Weight: $weightVac kg</p>
-                                        <p>Treatment: $treatmentVac</p>
-                                        <p>Observation: $observationVac</p>
-                                        <p>Follow-up: $followUpVac</p>
-                                    </div>
-                                   
-                                </div>
+                                <table class='table table-bordered'>
+                                    <thead>
+                                        <tr>
+                                            <th colspan='5' class='text-center'>Deworming</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Date Given</th>
+                                            <th>Weight</th>
+                                            <th>Treatment</th>
+                                            <th>Observation</th>
+                                            <th>Follow Up</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>";
+
+        if ($rowCount > 0) {
+            for ($i = 0; $i < $rowCount; $i++) {
+                $dateGiven = isset($dateGivenArray[$i]) ? $dateGivenArray[$i] : '';
+                $weight = isset($weightArray[$i]) ? $weightArray[$i] : '';
+                $treatment = isset($treatmentArray[$i]) ? $treatmentArray[$i] : '';
+                $observation = isset($observationArray[$i]) ? $observationArray[$i] : '';
+                $followUp = isset($followUpArray[$i]) ? $followUpArray[$i] : '';
+
+                $checkupCards .= "
+                <tr>
+                    <td>$dateGiven</td>
+                    <td>$weight</td>
+                    <td>$treatment</td>
+                    <td>$observation</td>
+                    <td>$followUp</td>
+                </tr>";
+            }
+        } else {
+            $checkupCards .= "
+            <tr>
+                <td colspan='5' class='text-center'>No records found</td>
+            </tr>";
+        }
+
+        $checkupCards .= "
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Vaccination Table -->
+                            <div class='container mt-4'>
+                                <table class='table table-bordered'>
+                                    <thead>
+                                        <tr>
+                                            <th colspan='5' class='text-center'>Vaccination</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Date Given</th>
+                                            <th>Weight</th>
+                                            <th>Treatment</th>
+                                            <th>Observation</th>
+                                            <th>Follow Up</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>";
+
+        if ($rowCountVac > 0) {
+            for ($i = 0; $i < $rowCountVac; $i++) {
+                $dateGivenVac = isset($dateGivenVacArray[$i]) ? $dateGivenVacArray[$i] : '';
+                $weightVac = isset($weightVacArray[$i]) ? $weightVacArray[$i] : '';
+                $treatmentVac = isset($treatmentVacArray[$i]) ? $treatmentVacArray[$i] : '';
+                $observationVac = isset($observationVacArray[$i]) ? $observationVacArray[$i] : '';
+                $followUpVac = isset($followUpVacArray[$i]) ? $followUpVacArray[$i] : '';
+
+                $checkupCards .= "
+                <tr>
+                    <td>$dateGivenVac</td>
+                    <td>$weightVac</td>
+                    <td>$treatmentVac</td>
+                    <td>$observationVac</td>
+                    <td>$followUpVac</td>
+                </tr>";
+            }
+        } else {
+            $checkupCards .= "
+            <tr>
+                <td colspan='5' class='text-center'>No records found</td>
+            </tr>";
+        }
+
+        $checkupCards .= "
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -161,9 +248,8 @@ if ($result->num_rows > 0) {
             </div>
         </div>";
     }
-    $checkupCards .= "</div>"; // Close the row div
 } else {
-    $checkupCards .= "<p>No records found.</p>"; // Append message for no records
+    $checkupCards .= "<div class='alert alert-warning'>No wellness records found.</div>";
 }
-
 $conn->close();
+echo $checkupCards;
