@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 26, 2024 at 04:26 AM
+-- Generation Time: Oct 26, 2024 at 03:59 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -184,6 +184,68 @@ INSERT INTO `prescriptions` (`id`, `owner_name`, `date`, `pet_name`, `age`, `dru
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `product`
+--
+
+CREATE TABLE `product` (
+  `id` int(11) NOT NULL,
+  `product_img` varchar(255) NOT NULL,
+  `product_name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `cost` decimal(10,2) NOT NULL,
+  `type` enum('petfood','pettoys','supplements') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product`
+--
+
+INSERT INTO `product` (`id`, `product_img`, `product_name`, `description`, `cost`, `type`) VALUES
+(2, 'Screenshot 2024-10-20 173327.png', 'test', 'test', 69.00, 'supplements'),
+(4, 'Screenshot 2024-10-20 212839.png', 'dasdasdsadsadasdasdas', 'dsadasdasdas', 123.00, 'petfood'),
+(5, 'Screenshot 2024-10-20 212839.png', 'dasdasdsadsadasdasdas', 'dsadasdasdas', 123.00, 'petfood'),
+(6, 'Screenshot 2024-10-20 212839.png', 'dasdasdsadsadasdasdas', 'dsadasdasdas', 123.00, 'petfood'),
+(7, 'Screenshot 2024-10-20 212839.png', 'dasdasdsadsadasdasdas', 'dsadasdasdas', 123.00, 'petfood'),
+(8, 'Screenshot 2024-10-20 173327.png', 'HEHE', 'HEHE', 12321.00, 'petfood'),
+(9, 'Screenshot 2024-10-20 173327.png', 'DASDAS', 'DASDAS', 12.00, 'pettoys'),
+(10, 'Screenshot 2024-10-19 125332.png', '312321', 'DASDAS', 312312.00, 'petfood'),
+(11, 'Screenshot 2024-10-19 125332.png', '312321', 'DASDAS', 312312.00, 'pettoys'),
+(12, 'Screenshot 2024-10-18 221241.png', 'dasdas', 'dasdas', 12.00, 'supplements'),
+(13, 'Screenshot 2024-10-20 203749.png', '12321', 'DASDASDAS', 12.00, 'supplements');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `service_list`
+--
+
+CREATE TABLE `service_list` (
+  `id` int(11) NOT NULL,
+  `service_type` enum('medical','non-medical') NOT NULL,
+  `service_name` varchar(255) NOT NULL,
+  `cost` decimal(10,2) NOT NULL,
+  `discount` decimal(5,2) DEFAULT 0.00,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `info` varchar(255) DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `service_list`
+--
+
+INSERT INTO `service_list` (`id`, `service_type`, `service_name`, `cost`, `discount`, `created_at`, `info`, `is_read`) VALUES
+(6, 'medical', 'Surgical Servicesss', 2500.00, 1.00, '2024-09-11 10:11:31', 'Professional surgical services for your pets', 0),
+(7, 'medical', 'Pharmacy', 300.00, 0.00, '2024-09-11 10:12:04', 'Wide range of medications available at our pharmacy.', 0),
+(8, 'non-medical', 'Grooming', 999.00, 10.00, '2024-09-11 10:13:23', 'Professional grooming services to keep your pets looking their best', 0),
+(9, 'non-medical', 'Boarding', 700.00, 0.00, '2024-09-11 10:13:43', 'Comfortable and safe boarding services for your pets', 0),
+(10, 'non-medical', 'Pet Supplies', 300.00, 0.00, '2024-09-11 10:14:05', 'A wide range of pet supplies for your pet\'s needs', 0),
+(17, 'medical', 'Preventive Health Caress', 123.00, 10.00, '2024-10-17 22:53:49', 'hehe', 1),
+(19, 'medical', 'try lang', 123.00, 10.00, '2024-10-26 17:23:39', 'Basta try lang to pare koBasta try lang to pare koBasta try lang to pare koBasta try lang to pare ko', 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -193,7 +255,7 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `role` enum('user','admin') NOT NULL DEFAULT 'user'
+  `role` enum('user','admin','staff') NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -203,7 +265,11 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `role`) VALUES
 (1, 'ej', 'ej@gmail.com', '$2y$10$0aciurOYLqF49zhYkRtOfesnIn56cODY9resdBwFYFmgkKIxEGEDG', '2024-08-21 07:19:09', 'user'),
 (4, 'admin', 'admin@gmail.com', '$2y$10$B25A3lxkpj0t.XDzOg8Zz.fbqiofhTBTSPxZVWlH4oYRAc.CyOr12', '2024-08-21 23:18:15', 'admin'),
-(5, 'Ej Ivan Ablanida', 'ejivancablanida@gmail.com', '$2y$10$aP1nlRV3aYsY5RBAIAyoJOCDLZqWDtsqBF37U8kja/xrs42LEFY9O', '2024-10-14 06:17:37', 'user');
+(5, 'Ej Ivan Ablanida', 'ejivancablanida@gmail.com', '$2y$10$aP1nlRV3aYsY5RBAIAyoJOCDLZqWDtsqBF37U8kja/xrs42LEFY9O', '2024-10-14 06:17:37', 'user'),
+(7, 'Nami', 'nami@gmail.com', '$2y$10$y7MDJDeslWyhW2O7diiabOLLwGzBxxRj4EeNDSBYQ6AIbrB8TBIZu', '2024-10-26 12:22:15', 'admin'),
+(8, 'Jann Ray Mostajo', 'jannray@gmail.com', '$2y$10$auksETljR91mCM8XaugXuOh7lwAkEBeteJipmdwKtWIpUT.OGYHCO', '2024-10-26 12:22:25', ''),
+(9, 'Prince', 'prince@gmail.com', '$2y$10$CbXsyQItEsVCVg1Jt/gMXuQ6l512AVwQ1UUf8VYXCHGfBPRv.t5GK', '2024-10-26 12:25:14', 'staff'),
+(10, 'jan', 'jan@gmail.com', '$2y$10$3ziKOAaDlRc4EB9qrqpzVuIR2MzAXTO.FqxN0YI1csRGruNXHxjFi', '2024-10-26 12:26:24', 'admin');
 
 -- --------------------------------------------------------
 
@@ -273,6 +339,18 @@ ALTER TABLE `prescriptions`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `product`
+--
+ALTER TABLE `product`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `service_list`
+--
+ALTER TABLE `service_list`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -314,10 +392,22 @@ ALTER TABLE `prescriptions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
+-- AUTO_INCREMENT for table `product`
+--
+ALTER TABLE `product`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `service_list`
+--
+ALTER TABLE `service_list`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `wellness`
