@@ -3,6 +3,7 @@ session_start();
 
 include '../../../../db.php'; 
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -19,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Verify the password
         if (password_verify($password, $user['password'])) {
-            // Password is correct, check the role
             $_SESSION['email'] = $email;
+            $_SESSION['role'] = $user['role'];
             if ($user['role'] === 'user') {
                 header("Location: ../../../../index.php");
             } else {

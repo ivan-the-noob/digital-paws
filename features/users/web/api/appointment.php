@@ -224,29 +224,84 @@ $stmt->bind_param("ssssssssssssss", $ownerName, $contactNum, $email, $barangay, 
 
              
 
-              <div class="form-group">
-        <label for="service" class="form-label">Service</label>
-        <select class="form-control" id="service" name="service" required onchange="updatePayment()">
-            <!-- Medical Services -->
-            <optgroup label="Medical Services" class="medical-services">
-                <option value="Diagnostic and Therapeutic" data-payment="1200">Diagnostic and Therapeutic</option>
-                <option value="Preventive Health Care" data-payment="850">Preventive Health Care</option>
-                <option value="Internal Medicine Consults" data-payment="1500">Internal Medicine Consults</option>
-                <option value="Surgical Services" data-payment="2500">Surgical Services</option>
-                <option value="Pharmacy" data-payment="300">Pharmacy</option>
-                <option value="House Visit" data-payment="500">House Visit</option>
-            </optgroup>
-            <!-- Non-Medical Services -->
-            <optgroup label="Non-Medical Services" class="nonMedical-services">
-                <option value="Grooming" data-payment="999">Grooming</option>
-                <option value="Boarding" data-payment="700">Boarding</option>
-            </optgroup>
-        </select>
-    </div>
+              <?php
+require '../../../../db.php';
+
+try {
+    // Fetch services from the database
+    $sql = "SELECT service_name, cost, discount, service_type FROM service_list";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Initialize arrays to store services by type
+    $medical_services = [];
+    $non_medical_services = [];
+
+    // Organize services by type and calculate discounted cost
+    while ($row = $result->fetch_assoc()) {
+        // Calculate the discounted cost
+        $discounted_cost = $row['cost'] - ($row['cost'] * ($row['discount'] / 100));
+        
+        // Prepare service data
+        $service_data = [
+            'service_name' => $row['service_name'],
+            'cost' => number_format($row['cost'], 2), // Format cost
+            'discount' => $row['discount'],
+            'discounted_cost' => number_format($discounted_cost, 2),
+            'service_type' => $row['service_type']
+        ];
+
+        if (strtolower($row['service_type']) === 'medical') {
+            $medical_services[] = $service_data;
+        } elseif (strtolower($row['service_type']) === 'non-medical') {
+            $non_medical_services[] = $service_data;
+        }
+    }
+
+    // Close the statement
+    $stmt->close();
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+$conn->close();
+?>
+
+<!-- HTML Select Element -->
+<div class="form-group">
+    <label for="service" class="form-label">Service</label>
+    <select class="form-control" id="service" name="service" required onchange="updatePayment()">
+        <!-- Medical Services -->
+        <optgroup label="Medical Services" class="medical-services">
+            <?php foreach ($medical_services as $service): ?>
+                <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
+                        data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
+                        data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
+                    <?php echo htmlspecialchars($service['service_name']); ?> - 
+                    ₱<?php echo htmlspecialchars($service['cost']); ?> - 
+                    <?php echo htmlspecialchars($service['discount']); ?>%
+                </option>
+            <?php endforeach; ?>
+        </optgroup>
+        <!-- Non-Medical Services -->
+        <optgroup label="Non-Medical Services" class="nonMedical-services">
+            <?php foreach ($non_medical_services as $service): ?>
+                <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
+                        data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
+                        data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
+                    <?php echo htmlspecialchars($service['service_name']); ?> - 
+                    ₱<?php echo htmlspecialchars($service['cost']); ?> - 
+                    <?php echo htmlspecialchars($service['discount']); ?>%
+                </option>
+            <?php endforeach; ?>
+        </optgroup>
+    </select>
+</div>
 
     <div class="form-group">
         <label for="totalPayment" class="form-label">Total Payment</label>
-        <p id="totalPayment">₱0.00</p>
+        <p id="totalPayment">₱ 0.00</p>
     </div>
 
     <!-- Hidden input for payment -->

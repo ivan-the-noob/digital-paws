@@ -107,8 +107,7 @@ $email = isset($_SESSION['email']);
           <img src="assets/img/about_us.png" alt="Vet Logo" class="img-fluid">
         </div>
         <div class="col-md-6 order-2 order-md-1 text-md-left mb-4 mb-md-0 front-text">
-          <p class="mb-1 fs-5" style="font-weight: 400;">Pet shop with easy online booking</p>
-          <h4>Book your pet's next appointment with ease!</h4>
+          <h4 class="mt-4">Book your pet's next appointment with ease!</h4>
           <p class="mb-4 fs-5 mt-2" style="width: 70%;">Welcome to Pet booking, your one-stop destination for pet
             grooming and care.</p>
           <a href="features/users/web/api/appointment.php"><button class="btn btn-primary mb-2">Book an
@@ -142,11 +141,9 @@ $email = isset($_SESSION['email']);
 </div>
 
 
-  <section class="services" id="services">
-    <div class="service-headings">
-      <p>We offer you</p>
-      <h3>Our Services</h3>
-    </div>
+<section class="services" id="services">
+    <h3>Services Category</h3>
+
     <div class="checkbox-container text-start">
       <label>
         <input type="checkbox" id="medical-checkbox" onclick="filterServices()" checked> Medical Services
@@ -159,50 +156,42 @@ $email = isset($_SESSION['email']);
     <div class="container mt-4">
       <div class="slider-container">
         <div class="slider-wrapper">
-
-          <div class="service-card medical-service">
-            <div class="card">
-              <div class="card-body">
-                <div class="card-header">
-                  <i class="fa-solid fa-stethoscope mr-2"></i>
-                  <div class="discount-label text-center">
-                    <p>10% Off</p>
+          <?php 
+            require 'db.php';
+            include 'features/admin/function/php/view_service.php';
+            
+          ?>
+          <?php if (!empty($services)): ?> 
+          <?php foreach ($services as $service): ?>
+              <div class="service-card <?php echo $service['service_type'] == 'medical' ? 'medical-service' : 'non-medical-service'; ?>">
+                  <div class="card">
+                      <div class="card-body text-center">
+                          <div class="card-header">
+                              <i class="fa-solid fa-stethoscope mr-2"></i>
+                              <h5 class="card-title mt-2"><?php echo htmlspecialchars($service['service_name']); ?></h5>
+                              <?php if ($service['discount'] > 0): ?>
+                                  <div class="discount-label text-center">
+                                      <p><?php echo round($service['discount']); ?>% OFF</p>
+                                  </div>
+                              <?php endif; ?>
+                              <p class="card-text"><?php echo htmlspecialchars($service['info']); ?></p>
+                          </div>
+                          <div class="card-footer">
+                            <p style="font-weight: 400; font-size: 14px; color: #808080;" class="mb-0">Service fee</p>
+                            <div class="price-flex d-flex">
+                              <p class="price" style="display: flex; justify-content: center; align-items: center;">PHP</p>
+                              <p class="price cost" style="font-size: 25px; font-weight: 600;"><?php echo number_format($service['cost'], 2); ?></p>
+                            </div>  
+                          </div>
+                        
+                      </div>
                   </div>
-                </div>
-                <h5 class="card-title mt-2 mb-4">Pet Consultation</h5>
-                <p class="card-text">Get professional advice for your beloved pets from our experienced veterinarians.</p>
-                <hr>
-                <p style="font-weight: 400; font-size: 14px; color: #808080;" class="mb-0">Service fee</p>
-                <div class="price-flex d-flex">
-                  <p class="price" style="display: flex; justify-content: center; align-items: center;">PHP</p>
-                  <p class="price" style="font-size: 25px; font-weight: 600;">1200</p>
-                </div>
-                
               </div>
-            </div>
-          </div>
+          <?php endforeach; ?>
+      <?php endif; ?>
+          
+
          
-
-          <div class="service-card non-medical-service">
-            <div class="card">
-              <div class="card-body">
-                <div class="card-header">
-                  <i class="fa-solid fa-stethoscope mr-2"></i>
-                  <div class="discount-label text-center">
-                    <p>10% Off</p>
-                  </div>
-                </div>
-                <h5 class="card-title mt-2 mb-4">NON Pet Consultation</h5>
-                <p class="card-text">Get professional advice for your beloved pets from our experienced veterinarians.</p>
-                <hr>
-                <p style="font-weight: 400; font-size: 14px; color: #808080;" class="mb-0">Service fee</p>
-                <div class="price-flex d-flex">
-                  <p class="price" style="display: flex; justify-content: center; align-items: center;">PHP</p>
-                  <p class="price" style="font-size: 25px; font-weight: 600;">1200</p>
-                </div>   
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

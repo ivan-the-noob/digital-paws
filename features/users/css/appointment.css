@@ -205,6 +205,11 @@
 .fc-toolbar-title{
     text-align: start;
 }
+
+#totalPayment{
+    font-weight: 600 !important;
+    font-size: 20px !important;
+}
 /*Appointment History End*/
 
 /* Calendar Section */
