@@ -1,9 +1,9 @@
-<?php 
+<?php
 session_start();
 
 if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../../../users/web/api/login.php");
-    exit(); 
+    exit();
 }
 
 require '../../../../db.php';
@@ -35,62 +35,57 @@ $conn->close();
 </head>
 
 <body>
-        <!--Navigation Links-->
+    <!--Navigation Links-->
     <div class="navbar flex-column bg-white shadow-sm p-3 collapse d-md-flex" id="navbar">
         <div class="navbar-links">
             <a class="navbar-brand d-none d-md-block logo-container" href="#">
-                <img src="../../../../assets/img/logo.png">
+                <img src="../../../../assets/img/logo.png" alt="Logo">
             </a>
-            <a href="admin.php">
-                <i class="fa-solid fa-gauge"></i>
+            <a href="#dashboard">
+                <i class="fa-solid fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
+            <a href="users.php">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </a>
             <a href="app-req.php">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Appointment Request</span>
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Booking Request</span>
             </a>
-            <a href="app-records.php">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Patients Records</span>
+
+            <a href="check-up.php">
+                <i class="fa-solid fa-file-alt"></i>
+                <span>Check Up Form</span>
             </a>
-            <a href="app-records-list.php">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Record Lists</span>
+            <a href="wellness.php">
+                <i class="fa-solid fa-file-alt"></i>
+                <span>Wellness Form</span>
             </a>
-            <a href="pos.php">
-                <i class="fas fa-cash-register"></i>
-                <span>Point of Sales</span>
+            <a href="prescription.php">
+                <i class="fa-solid fa-file-prescription"></i>
+                <span>Prescription</span>
             </a>
-            <a href="transaction.php">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Transaction</span>
-            </a>
+
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>
-                <a href="review.php">
+                <a href="service-list.php" class="navbar-highlight">
                     <i class="fa-solid fa-list"></i>
-                    <span>User Reviews</span>
-                </a>
-                <a href="category-list.php">
-                    <i class="fa-solid fa-list"></i>
-                    <span>Category List</span>
-                </a>
-                <a href="service-list.php"  class="navbar-highlight">
-                    <i class="fa-solid fa-layer-group"></i>
                     <span>Service List</span>
                 </a>
+                <a href="product.php">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Product</span>
+                </a>
                 <a href="admin-user.php">
-                    <i class="fa-solid fa-user-tie"></i>
+                    <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
-                <a href="settings.php">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
             </div>
+
         </div>
     </div>
-        <!--Navigation Links End-->
+    <!--Navigation Links End-->
     <div class="content flex-grow-1">
         <div class="header">
             <button class="navbar-toggler d-block d-md-none" type="button" onclick="toggleMenu()">
@@ -100,15 +95,15 @@ $conn->close();
                     </path>
                 </svg>
             </button>
-           <!--Notification and Profile Admin-->
+            <!--Notification and Profile Admin-->
             <div class="profile-admin">
-            
                 <div class="dropdown">
                     <button class="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../../../../assets/img/vet logo.jpg" style="width: 40px; height: 40px; object-fit: cover;">
+                        <img src="../../../../assets/img/vet logo.png"
+                            style="width: 40px; height: 40px; object-fit: cover;">
                     </button>
                     <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="../../../users/web/api/logout.php">Logout</a></li>
+                        <li><a class="dropdown-item" href="../../../users/web/api/logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -130,9 +125,11 @@ $conn->close();
                                 var searchTerm = $(this).val().trim();
 
                                 $.ajax({
-                                    url: '../../function/php/search/service_list.php', 
+                                    url: '../../function/php/search/service_list.php',
                                     type: 'POST',
-                                    data: { search: searchTerm },
+                                    data: {
+                                        search: searchTerm
+                                    },
                                     success: function(data) {
                                         $('#tableBody').html(data);
                                     }
@@ -146,7 +143,8 @@ $conn->close();
                 </div>
             </div>
             <!--Service Modal (add new)-->
-            <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+            <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header justify-content-between">
@@ -156,34 +154,38 @@ $conn->close();
                             </button>
                         </div>
                         <div class="modal-body">
-                        <form action="../../function/php/save_service.php" method="POST">
-                            <div class="form-group">
-                                <label for="categoryType">Type</label>
-                                <select class="form-control mt-2" id="categoryType" name="service_type">
-                                    <option value="">Select Type</option>
-                                    <option value="medical">Medical</option>
-                                    <option value="non-medical">Non-Medical</option>
-                                </select>
-                            </div>
+                            <form action="../../function/php/save_service.php" method="POST">
+                                <div class="form-group">
+                                    <label for="categoryType">Type</label>
+                                    <select class="form-control mt-2" id="categoryType" name="service_type">
+                                        <option value="">Select Type</option>
+                                        <option value="medical">Medical</option>
+                                        <option value="non-medical">Non-Medical</option>
+                                    </select>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="categoryName">Service</label>
-                                <input type="text" class="form-control mt-2" id="categoryName" name="service_name" placeholder="Enter Name">
-                            </div>
+                                <div class="form-group">
+                                    <label for="categoryName">Service</label>
+                                    <input type="text" class="form-control mt-2" id="categoryName" name="service_name"
+                                        placeholder="Enter Name">
+                                </div>
 
-                            <div class="form-group">
-                                <label for="serviceCost">Cost</label>
-                                <input type="number" class="form-control mt-2" id="serviceCost" name="cost" placeholder="Enter Cost">
-                            </div>
+                                <div class="form-group">
+                                    <label for="serviceCost">Cost</label>
+                                    <input type="number" class="form-control mt-2" id="serviceCost" name="cost"
+                                        placeholder="Enter Cost">
+                                </div>
 
-                            <div class="form-group">
-                                <label for="serviceDiscount">Discount</label>
-                                <input type="number" class="form-control mt-2" id="serviceDiscount" name="discount" placeholder="Enter Discount">
-                            </div>
-                            <div class="form-group">
-                                <label for="serviceInfo">Info</label>
-                                <input type="text" class="form-control mt-2" id="serviceInfo" name="info" placeholder="Enter additional information">
-                            </div>
+                                <div class="form-group">
+                                    <label for="serviceDiscount">Discount</label>
+                                    <input type="number" class="form-control mt-2" id="serviceDiscount" name="discount"
+                                        placeholder="Enter Discount">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceInfo">Info</label>
+                                    <input type="text" class="form-control mt-2" id="serviceInfo" name="info"
+                                        placeholder="Enter additional information">
+                                </div>
 
 
 
@@ -197,115 +199,128 @@ $conn->close();
             </div>
             <!--Service Modal (add new) End-->
 
-             <!--Service List Table-->
+            <!--Service List Table-->
             <div class="table-wrapper px-lg-5">
-            <table class="table table-hover table-remove-borders">
-    <thead class="thead-light">
-        <tr>
-            <th>#</th>
-            <th>Type</th>
-            <th>Service</th>
-            <th>Cost</th>
-            <th>Discount</th>
-            <th>Info</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="tableBody">
-        <?php
-            require '../../../../db.php';
-            include '../../function/php/table_service_list.php';
-            include '../../function/php/edit_service.php';
-            include '../../function/php/delete_service.php';
-       
-        ?>
-    </tbody>
-</table>
+                <table class="table table-hover table-remove-borders">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Type</th>
+                            <th>Service</th>
+                            <th>Cost</th>
+                            <th>Discount</th>
+                            <th>Info</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <?php
+                        require '../../../../db.php';
+                        include '../../function/php/table_service_list.php';
+                        include '../../function/php/edit_service.php';
+                        include '../../function/php/delete_service.php';
+
+                        ?>
+                    </tbody>
+                </table>
 
                 <!--Service List Table End-->
-                
+
             </div>
             <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
                 <li class="page-item">
-                    <a class="page-link" href="#" data-page="prev"><</a>
+                    <a class="page-link" href="#" data-page="prev">
+                        < </a>
                 </li>
                 <li class="page-item" id="pageNumbers"></li>
                 <li class="page-item">
                     <a class="page-link" href="#" data-page="next">></a>
                 </li>
             </ul>
-            
-             </div>
 
-             <?php foreach ($services as $service): ?>
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editModal<?php echo $service['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel<?php echo $service['id']; ?>" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel<?php echo $service['id']; ?>">Edit Service</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="../../function/php/edit_service.php" method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
-                        <div class="form-group">
-                            <label for="serviceType<?php echo $service['id']; ?>">Type</label>
-                            <input type="text" class="form-control" id="serviceType<?php echo $service['id']; ?>" name="service_type" value="<?php echo htmlspecialchars($service['service_type']); ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="serviceName<?php echo $service['id']; ?>">Service</label>
-                            <input type="text" class="form-control" id="serviceName<?php echo $service['id']; ?>" name="service_name" value="<?php echo htmlspecialchars($service['service_name']); ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="serviceCost<?php echo $service['id']; ?>">Cost</label>
-                            <input type="number" class="form-control" id="serviceCost<?php echo $service['id']; ?>" name="cost" value="<?php echo htmlspecialchars($service['cost']); ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="serviceDiscount<?php echo $service['id']; ?>">Discount</label>
-                            <input type="number" class="form-control" id="serviceDiscount<?php echo $service['id']; ?>" name="discount" value="<?php echo htmlspecialchars($service['discount']); ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="serviceInfo<?php echo $service['id']; ?>">Info</label>
-                            <input type="text" class="form-control" id="serviceInfo<?php echo $service['id']; ?>" name="info" value="<?php echo htmlspecialchars($service['info']); ?>">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
         </div>
-    </div>
 
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal<?php echo $service['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel<?php echo $service['id']; ?>" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header d-flex justify-content-between">
-                    <h5 class="modal-title" id="deleteModalLabel<?php echo $service['id']; ?>">Delete Service</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete the service "<?php echo htmlspecialchars($service['service_name']); ?>"?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <a href="../../function/php/delete_service.php?id=<?php echo $service['id']; ?>" class="btn btn-danger">Delete</a>
+        <?php foreach ($services as $service): ?>
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal<?php echo $service['id']; ?>" tabindex="-1" role="dialog"
+                aria-labelledby="editModalLabel<?php echo $service['id']; ?>" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header d-flex justify-content-between">
+                            <h5 class="modal-title" id="editModalLabel<?php echo $service['id']; ?>">Edit Service</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="../../function/php/edit_service.php" method="POST">
+                            <div class="modal-body">
+                                <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
+                                <div class="form-group">
+                                    <label for="serviceType<?php echo $service['id']; ?>">Type</label>
+                                    <input type="text" class="form-control" id="serviceType<?php echo $service['id']; ?>"
+                                        name="service_type"
+                                        value="<?php echo htmlspecialchars($service['service_type']); ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceName<?php echo $service['id']; ?>">Service</label>
+                                    <input type="text" class="form-control" id="serviceName<?php echo $service['id']; ?>"
+                                        name="service_name"
+                                        value="<?php echo htmlspecialchars($service['service_name']); ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceCost<?php echo $service['id']; ?>">Cost</label>
+                                    <input type="number" class="form-control" id="serviceCost<?php echo $service['id']; ?>"
+                                        name="cost" value="<?php echo htmlspecialchars($service['cost']); ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceDiscount<?php echo $service['id']; ?>">Discount</label>
+                                    <input type="number" class="form-control"
+                                        id="serviceDiscount<?php echo $service['id']; ?>" name="discount"
+                                        value="<?php echo htmlspecialchars($service['discount']); ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceInfo<?php echo $service['id']; ?>">Info</label>
+                                    <input type="text" class="form-control" id="serviceInfo<?php echo $service['id']; ?>"
+                                        name="info" value="<?php echo htmlspecialchars($service['info']); ?>">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-<?php endforeach; ?>
+
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal<?php echo $service['id']; ?>" tabindex="-1" role="dialog"
+                aria-labelledby="deleteModalLabel<?php echo $service['id']; ?>" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header d-flex justify-content-between">
+                            <h5 class="modal-title" id="deleteModalLabel<?php echo $service['id']; ?>">Delete Service</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete the service
+                            "<?php echo htmlspecialchars($service['service_name']); ?>"?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <a href="../../function/php/delete_service.php?id=<?php echo $service['id']; ?>"
+                                class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
 
 </body>
 
-       
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" crossorigin="anonymous">
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" crossorigin="anonymous">

@@ -1,22 +1,22 @@
-<?php 
+<?php
 
 session_start();
 if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../../../users/web/api/login.php");
-    exit(); 
+    exit();
 }
 
 if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
     header('Content-Type: application/json');
-    
+
     include '../../../../db.php';
-    
+
     $currentYear = date('Y');
     $currentMonth = date('n'); // 1 for January, 12 for December
-    
+
     $lastMonth = $currentMonth - 1;
     $lastYear = $currentYear;
-    
+
     if ($lastMonth < 1) {
         $lastMonth = 12;
         $lastYear -= 1;
@@ -28,7 +28,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
                OR (YEAR(created_at) = $lastYear AND MONTH(created_at) = $lastMonth)
             GROUP BY YEAR(created_at), MONTH(created_at)
             ORDER BY YEAR(created_at), MONTH(created_at)";
-    
+
     $result = $conn->query($sql);
 
     $payments = [
@@ -54,12 +54,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
 }
 ?>
 
-<?php 
+<?php
 if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
     header('Content-Type: application/json');
-    
+
     include '../../../../db.php';
-    
+
     $currentYear = date('Y');
     $currentMonth = date('n'); // 1 for January, 12 for December
 
@@ -135,14 +135,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
 ?>
 
 
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -164,49 +156,47 @@ if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
                 <img src="../../../../assets/img/logo.png" alt="Logo">
             </a>
             <a href="#dashboard" class="navbar-highlight">
-                <i class="fa-solid fa-gauge"></i>
+                <i class="fa-solid fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="app-req.html">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Appointment Request</span>
+            <a href="users.php">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
             </a>
-            <a href="app-records.html">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Patients Records</span>
+            <a href="app-req.php">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Booking Request</span>
             </a>
-            <a href="app-records-list.html">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Record Lists</span>
+
+            <a href="check-up.php">
+                <i class="fa-solid fa-file-alt"></i>
+                <span>Check Up Form</span>
             </a>
-            <a href="pos.html">
-                <i class="fas fa-cash-register"></i>
-                <span>Point of Sales</span>
+            <a href="wellness.php">
+                <i class="fa-solid fa-file-alt"></i>
+                <span>Wellness Form</span>
             </a>
-            <a href="transaction.html">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Transaction</span>
+            <a href="prescription.php">
+                <i class="fa-solid fa-file-prescription"></i>
+                <span>Prescription</span>
             </a>
-           
+
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>
-                <a href="category-list.html">
+                <a href="service-list.php">
                     <i class="fa-solid fa-list"></i>
-                    <span>Category List</span>
-                </a>
-                <a href="service-list.html">
-                    <i class="fa-solid fa-layer-group"></i>
                     <span>Service List</span>
                 </a>
-                <a href="admin-user.html">
-                    <i class="fa-solid fa-user-tie"></i>
+                <a href="product.php">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Product</span>
+                </a>
+                <a href="admin-user.php">
+                    <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
-                <a href="settings.html">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
             </div>
+
         </div>
     </div>
     <!--Navigation Links End-->
@@ -219,61 +209,21 @@ if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
                     </path>
                 </svg>
             </button>
-            <div class="col-8 col-md-6 col-lg-3">
-                <div class="search-bar">
-                    <i class="fa fa-magnifying-glass"></i>
-                    <input type="text" class="form-control" placeholder="Search...">
-                </div>
-            </div>
+
             <!--Notification and Profile Admin-->
             <div class="profile-admin">
-                    <div class="dropdown">
-                        <button class="" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-bell"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-                            <li class="dropdown-header">
-                                <h5 class=" mb-0">Notification</h5>
-                            </li>
-                            <li class="dropdown-item">
-                                <div class="alert alert-primary mb-0">
-                                    <strong>Successfully Booked!</strong>
-                                    <p>Rachel booked an appointment! <a href="#" class="alert-link">Check it now!</a></p>                               
-                                </div>
-                            </li>
-                            <li class="dropdown-item">
-                                <div class="alert alert-danger mb-0">
-                                    <strong>Decline</strong>
-                                    <p>Admin Kim declined Jana's appointment.<a href="#" class="alert-link">See here.</a></p> 
-                                </div>
-                            </li>
-                            <li class="dropdown-item">
-                                <div class="alert alert-success mb-0">
-                                    <strong>Paid!</strong>
-                                    <p>James paid the bill.</p> 
-                                </div>
-                            </li>
-                            <li class="dropdown-item">
-                                <div class="alert alert-primary mb-0">
-                                    <strong>Successfully Booked!</strong>
-                                    <p>Rachel booked an appointment! <a href="#" class="alert-link">Check it now!</a></p>                               
-                                </div>
-                            </li>
-                           
-                        </ul>
-                    </div>
                 <div class="dropdown">
                     <button class="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../../../../assets/img/vet logo.jpg" style="width: 40px; height: 40px; object-fit: cover;">
+                        <img src="../../../../assets/img/vet logo.png"
+                            style="width: 40px; height: 40px; object-fit: cover;">
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="../../../users/web/api/login.html">Logout</a></li>
+                        <li><a class="dropdown-item" href="../../../users/web/api/logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>
         </div>
-         <!--Notification and Profile Admin End-->
-
+        <!--Notification and Profile Admin End-->
         <!--Pos Card with graphs-->
         <div class="dashboard">
             <h3>Dashboard</h3>

@@ -1,19 +1,25 @@
 <?php
 
+session_start();
+if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../../../users/web/api/login.php");
+    exit();
+}
+
 if (isset($_GET['message'])) {
     $message = htmlspecialchars($_GET['message'], ENT_QUOTES, 'UTF-8');
 
     echo "<script>
-        window.onload = function() {
-            Swal.fire({
-                title: 'Success',
-                text: '$message',
-                icon: 'success',
-                confirmButtonText: 'OK',
-                html: '$message'
-            });
-        };
-    </script>";
+window.onload = function() {
+    Swal.fire({
+        title: 'Success',
+        text: '$message',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        html: '$message'
+    });
+};
+</script>";
 }
 ?>
 <!DOCTYPE html>
@@ -38,7 +44,7 @@ if (isset($_GET['message'])) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
+
 
 
 
@@ -50,45 +56,50 @@ if (isset($_GET['message'])) {
     <div class="navbar flex-column bg-white shadow-sm p-3 collapse d-md-flex" id="navbar">
         <div class="navbar-links">
             <a class="navbar-brand d-none d-md-block logo-container" href="#">
-                <img src="../../../../assets/img/logo.png">
+                <img src="../../../../assets/img/logo.png" alt="Logo">
             </a>
-            <a href="admin.php">
-                <i class="fa-solid fa-gauge"></i>
+            <a href="#dashboard">
+                <i class="fa-solid fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#appointment">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>User Accounts</span>
+            <a href="users.php">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
             </a>
-            <a href="#appointment">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Requests</span>
-            </a>
-            <a href="#appointment" class="navbar-highlight">
-                <i class="fa-regular fa-calendar-check"></i>
-                <span>Wellness Form</span>
+            <a href="app-req.php">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Booking Request</span>
             </a>
 
+            <a href="check-up.php">
+                <i class="fa-solid fa-file-alt"></i>
+                <span>Check Up Form</span>
+            </a>
+            <a href="wellness.php">
+                <i class="fa-solid fa-file-alt"></i>
+                <span>Wellness Form</span>
+            </a>
+            <a href="prescription.php" class="navbar-highlight">
+                <i class="fa-solid fa-file-prescription"></i>
+                <span>Prescription</span>
+            </a>
 
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>
-                <a href="category-list.php">
-                    <i class="fa-solid fa-list"></i>
-                    <span>Category List</span>
-                </a>
                 <a href="service-list.php">
-                    <i class="fa-solid fa-layer-group"></i>
+                    <i class="fa-solid fa-list"></i>
                     <span>Service List</span>
                 </a>
+                <a href="product.php">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Product</span>
+                </a>
                 <a href="admin-user.php">
-                    <i class="fa-solid fa-user-tie"></i>
+                    <i class="fa-solid fa-user-shield"></i>
                     <span>Admin User List</span>
                 </a>
-                <a href="settings.php">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
             </div>
+
         </div>
     </div>
     <!--Navigation Links End-->
@@ -105,11 +116,11 @@ if (isset($_GET['message'])) {
             <div class="profile-admin">
                 <div class="dropdown">
                     <button class="" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="../../../../assets/img/vet logo.png" class="admin-profile"
+                        <img src="../../../../assets/img/vet logo.png"
                             style="width: 40px; height: 40px; object-fit: cover;">
                     </button>
-                    <ul class="dropdown-menu" style="background-color: transparent;">
-                        <li><a class="dropdown-item" href="../../../users/web/api/login.html">Logout</a></li>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="../../../users/web/api/logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -138,13 +149,13 @@ if (isset($_GET['message'])) {
             <div class="checkup-list">
                 <?php
                 include '../../function/php/prescription_data.php';
-           
+
                 ?>
             </div>
             <ul class="pagination justify-content-end mt-3 px-lg-5" id="paginationControls">
                 <li class="page-item">
                     <a class="page-link" href="#" data-page="prev">
-                        << /a>
+                        < </a>
                 </li>
                 <li class="page-item" id="pageNumbers"></li>
                 <li class="page-item">
@@ -221,7 +232,8 @@ if (isset($_GET['message'])) {
                                     <tr>
                                         <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
                                         </td>
-                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60">
+                                        </td>
 
                                         <td><input type="text" class="h-100 dwrm" name="prescription[]"
                                                 id="prescription">
@@ -234,7 +246,8 @@ if (isset($_GET['message'])) {
                                     <tr>
                                         <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
                                         </td>
-                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60">
+                                        </td>
 
                                         <td><input type="text" class="h-100 dwrm" name="prescription[]"
                                                 id="prescription">
@@ -247,7 +260,8 @@ if (isset($_GET['message'])) {
                                     <tr>
                                         <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
                                         </td>
-                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60">
+                                        </td>
 
                                         <td><input type="text" class="h-100 dwrm" name="prescription[]"
                                                 id="prescription">
@@ -260,7 +274,8 @@ if (isset($_GET['message'])) {
                                     <tr>
                                         <td><input type="text" class="h-100 dwrm" name="drug_name[]" id="drug_name">
                                         </td>
-                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60"></td>
+                                        <td><input type="text" class="h-100 dwrm" name="time[]" id="time" step="60">
+                                        </td>
 
                                         <td><input type="text" class="h-100 dwrm" name="prescription[]"
                                                 id="prescription">
@@ -270,9 +285,9 @@ if (isset($_GET['message'])) {
                                         <td><input type="text" class="h-100 dwrm" name="special_instructions[]"
                                                 id="special_instructions"></td>
                                     </tr>
-                                   
-                                    
-                                    
+
+
+
                                 </tbody>
                             </table>
                         </div>

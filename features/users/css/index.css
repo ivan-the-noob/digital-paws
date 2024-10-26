@@ -197,7 +197,7 @@ body{
   
 }
 .services {
-  background-color: #FBF9FA;
+  background-color: #F8EBDC;
   color: #7A3015;
   padding: 20px 0; 
 }
@@ -269,7 +269,7 @@ body{
   justify-content: start;
   padding: 10px 0;
   background-color: transparent;
-  height: 25vh;
+  height: 70%;
 }
 
 
@@ -298,11 +298,11 @@ body{
   opacity: 100% !important; 
 }
 
-.price{
+.essentials .price{
   margin-bottom: 0;
   justify-content: start;
   color: #000 !important;
-  font-size: 12px;
+  font-size: 20px;
   opacity: 80%;
 }
 
@@ -460,61 +460,100 @@ width: 50%;
 /*How it works End*/
 
 /*Essentials Section*/
-.essentials{
-    background-color: #FBF9FA;
-    color: #7A3015;
-    padding: 20px 0; 
-    
+/* Essentials Section */
+.essentials {
+  background-color: #FBF9FA;
+  color: #7A3015;
+  padding: 20px 0;
 }
 
-.essentials h3{
-  padding: 0 6vw;
-    font-family: "Rubik", sans-serif;
-    font-weight: bold;
-    font-style: normal;
-    text-align: start;
-    font-size: 20px;
-    margin-left: 1.8rem;
+.how-headings h2 {
+  font-size: 24px;
+  color: #7A3015;
 }
 
-
-
-.product-item {
-  transition: box-shadow 0.3s ease;
-  display: grid;
-  padding: 1px;
-  background-color: #F1E5D6;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.product-price{
-  font-size: 18px;
-  font-weight: 700;
-  color: #000;
-}
-.product-php{
-  color: #000;
+.essentials-button {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 0 !important;
+  width: 100%;
+}
+
+.essentials-button button, .essentials-button a {
+  padding: 5px 15px;
+  border: 2px solid #7A3015;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #000;
+  text-align: left;
+  width: 60%;
+  display: flex;
+  justify-content: center;
   align-items: center;
+  margin: auto;
 }
 
-.img-product img {
-  transition: transform 0.3s ease;
-  width: 100% !important;
-  height: auto !important;   
-  display: block !important;
+.essentials-button button:hover, .essentials-button a:hover {
+  background-color: #7A3015;
+  color: #fff;
+  transition: 400ms ease-in-out;
+}
+
+.product {
+  padding: 15px;
+  text-align: center;
   border-radius: 10px;
-
-  
+  background-color: #F8EBDC;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  min-height: 40vh;
 }
+
+.product p{
+  opacity: 70%;
+}
+
+.tag{
+  opacity: 100% !important;
+  color: #000;
+}
+
+.prices{
+  display: flex;
+  gap: 2%;
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.product img {
+  border-radius: 10px;
+  width: auto;
+  height: 20vh !important;
+}
+
+.item-btn {
+  display: flex;
+  gap: 10px;
+}
+
+.buy-now, .add-to-cart {
+  background-color: #7A3015;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+}
+
+.buy-now:hover, .add-to-cart:hover {
+  background-color: #BD3207;
+}
+
 @media (max-width: 576px) {
-  .product-item {
-    padding: 50px !important;
-    padding-bottom: 0 !important;
-    padding-top: 0 !important;
-    margin: 5px;
+  .essentials-button {
+    align-items: center;
+  }
+  .product {
+    margin-bottom: 20px;
   }
 }
 
@@ -688,14 +727,7 @@ width: 50%;
 
 }
 
-.essentials-button button{
-  padding: 5px 15px;
-  border: 2px solid #7A3015;
-  border-radius: 20px;
-  background-color: #fff;
-  margin: 5px;
 
-}
 
 .product {
   padding: 15px; 
@@ -711,11 +743,6 @@ width: 50%;
 }
 
 
-.essentials-button button:hover{
-  background-color: #7A3015;
-  color: #fff;
-  transition: 400ms ease-in-out;
-}
 
 .essentials-button a{
   text-decoration: none;
