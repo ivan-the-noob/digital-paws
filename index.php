@@ -20,20 +20,19 @@ $email = isset($_SESSION['email']);
 
 <body>
     <div class="navbar-container">
-        <nav class="navbar navbar-expand-lg navbar-light">
+<nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
-                <a class="navbar-brand d-none d-md-block" href="#">
+            <a class="navbar-brand d-none d-lg-block" href="#">
                     <img src="assets/img/logo.pngs" alt="Logo" width="30" height="30">
                 </a>
 
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         style="stroke: black; fill: none;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16m-7 6h7"></path>
                     </svg>
-
                 </button>
 
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
@@ -56,51 +55,22 @@ $email = isset($_SESSION['email']);
                     </ul>
                     <div class="d-flex ml-auto">
                         <?php if ($email): ?>
-                        <div class="dropdown second-dropdown">
-                            <button class="dropdown-toggle" type="button" id="dropdownMenuButton2"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="assets/img/customer.jfif" alt="dsads" class="profile">
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                <a class="dropdown-item" href="/features/users/web/api/dashboard.html">Profile</a>
-                                <li><a class="dropdown-item"
-                                        href="features/users/function/authentication/logout.php">Logout</a></li>
+                            <div class="dropdown second-dropdown">
+                                <button class="btn" type="button" id="dropdownMenuButton2"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="assets/img/customer.jfif" alt="Profile Image" class="profile">
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                    <li><a class="dropdown-item" href="/features/users/web/api/dashboard.html">Profile</a></li>
+                                    <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
+                                </ul>
                             </div>
-                        </div>
+
+
                         <?php else: ?>
                         <a href="features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
                         <?php endif; ?>
-                        <?php if ($email): ?>
-                        <div class="d-flex ml-auto align-items-center">
-                            <div class="dropdown first-dropdown">
-                                <button class="" type="button" id="dropdownMenuButton1" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-bell"></i>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <h5 class="notification-title">Notification</h5>
-                                    <div class="notification-content alert alert-success">
-                                        <strong>Appointment Confirmed!</strong>
-                                        <p class="notification-text">Your appointment has been confirmed!</p>
-                                        <p class="code">Code: OVAS-01234</p>
-                                        <a href="/features/users/web/api/appointment.html"
-                                            onclick="localStorage.setItem('showBookedHistory', 'true');">View
-                                            Details</a>
-                                    </div>
-                                    <div class="notification-content alert-primary">
-                                        <strong>Successfully Booked!</strong>
-                                        <p class="notification-text">You successfully booked!</p>
-                                    </div>
-                                    <div class="notification-content alert-danger">
-                                        <strong>Rejected</strong>
-                                        <p class="notification-text">Your appointment has been rejected.</p>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <?php else: ?>
-                            <?php endif; ?>
-                        </div>
+                       
                     </div>
         </nav>
     </div>
@@ -115,8 +85,8 @@ $email = isset($_SESSION['email']);
                     <img src="assets/img/about_us.png" alt="Vet Logo" class="img-fluid">
                 </div>
                 <div class="col-md-6 order-2 order-md-1 text-md-left mb-4 mb-md-0 front-text">
-                    <h4 class="mt-4">Book your pet's next appointment with ease!</h4>
-                    <p class="mb-4 fs-5 mt-2" style="width: 70%;">Welcome to Pet booking, your one-stop destination for
+                    <h4 class="mt-5">Book your pet's next appointment with ease!</h4>
+                    <p class="mb-4 fs-5 mt-2" style="width: 70%;">Welcome to Happy Vet Animal Clinic & Grooming Center, your one-stop destination for
                         pet
                         grooming and care.</p>
                     <a href="features/users/web/api/appointment.php"><button class="btn btn-primary mb-2">Book an

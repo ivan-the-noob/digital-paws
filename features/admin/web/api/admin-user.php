@@ -9,40 +9,9 @@ if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
 include '../../../../db.php';
 
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get the form data
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Hash the password for security
-    $role = $_POST['role'];
-
-    // Check if the email already exists in the database
-    $checkEmailStmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $checkEmailStmt->bind_param('s', $email);
-    $checkEmailStmt->execute();
-    $result = $checkEmailStmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Email already exists, set error message
-        $error = "The email address is already in use.";
-    } else {
-        // Email does not exist, proceed with the insertion
-        $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
-
-        // Bind the parameters to the statement
-        $stmt->bind_param('ssss', $name, $email, $password, $role);
-
-        // Execute the statement
-        if ($stmt->execute()) {
-            // You can set a success message or redirect if needed
-        } else {
-            $error = "Error: Could not add user.";
-        }
-
-        $stmt->close();
-    }
-
-    $checkEmailStmt->close();
+if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../../../users/web/api/login.php");
+    exit();
 }
 
 try {
@@ -196,7 +165,7 @@ $conn->close();
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="" method="POST">
+                            <form action="../../function/php/add_user.php" method="POST">
                                 <div class="form-group">
                                     <label for="name">Name</label>
                                     <input type="text" class="form-control mt-2" id="name" name="name"

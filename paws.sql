@@ -322,7 +322,7 @@ ALTER TABLE `appointment`
 
 --
 -- Indexes for table `approved_req`
---
+s--
 ALTER TABLE `approved_req`
   ADD PRIMARY KEY (`id`);
 

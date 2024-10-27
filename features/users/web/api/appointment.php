@@ -14,12 +14,20 @@
 
 </head>
 
-
 <?php
+session_start();
+$email = isset($_SESSION['email']);
+include '../../../../db.php';
 
 include '../../../../db.php';
 
+session_start();
+$email = isset($_SESSION['email']);
 
+if (!isset($_SESSION['email'])) { 
+  header("Location: ../../../users/web/api/login.php"); 
+  exit(); 
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $ownerName = $_POST['ownerName'];
   $contactNum = $_POST['contactNum'];
@@ -36,88 +44,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $longitude = $_POST['longitude']; // Capture longitude
   $addInfo = $_POST['add-info']; // Capture additional information
 
-  // Prepare and bind
- // Prepare and bind
-$stmt = $conn->prepare("INSERT INTO appointment (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, appointment_time, appointment_date, latitude, longitude, add_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssssssssssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $appointmentTime, $appointmentDate, $latitude, $longitude, $addInfo);
 
-  // Execute the statement
-  if ($stmt->execute()) {
-      echo "New record created successfully";
-  } else {
-      echo "Error: " . $stmt->error;
-  }
+  $stmt = $conn->prepare("INSERT INTO appointment (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, appointment_time, appointment_date, latitude, longitude, add_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-  // Close connection
-  $stmt->close();
-  $conn->close();
+
+// Check if prepare() failed
+if ($stmt === false) {
+    die("Error preparing statement: " . $conn->error);
+}
+
+// Bind parameters
+$stmt->bind_param("ssssssisssssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $appointmentTime, $appointmentDate, $latitude, $longitude, $addInfo);
+
+// Execute the statement
+if ($stmt->execute()) {
+    echo "New record created successfully";
+} else {
+    echo "Error: " . $stmt->error;
+}
+
+// Close connection
+$stmt->close();
+$conn->close();
 }
 
 ?>
+
 <body onload="initAutocomplete()">
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container">
-      <a class="navbar-brand d-none d-md-block" href="#">
-        <img src="../../../../assets/img/logo.png" alt="Logo" width="30" height="30">
-      </a>
+<nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+            <a class="navbar-brand d-none d-lg-block" href="#">
+                    <img src="assets/img/logo.pngs" alt="Logo" width="30" height="30">
+                </a>
 
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-          style="stroke: black; fill: none;">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-        </svg>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        style="stroke: black; fill: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
 
-      </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav d-flex ">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../../index.php">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Appointment</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex ml-auto">
+                        <?php if ($email): ?>
+                            <div class="dropdown second-dropdown">
+                                <button class="btn" type="button" id="dropdownMenuButton2"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="../../../../assets/img/customer.jfif" alt="Profile Image" class="profile">
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                    <li><a class="dropdown-item" href="/features/users/web/api/dashboard.html">Profile</a></li>
+                                    <li><a class="dropdown-item" href="../../../../features/users/function/authentication/logout.php">Logout</a></li>
+                                </ul>
+                            </div>
 
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="../../../../../user.html">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Appointment</a>
-          </li>
-        </ul>
-        <!--Header-->
-        <div class="d-flex ml-auto align-items-center">
-          <div class="dropdown first-dropdown">
-            <button class="" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-bell"></i>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <h5 class="notification-title">Notification</h5>
-                <div class="notification-content alert alert-success">
-                  <strong>Appointment Confirmed!</strong>
-                  <p class="notification-text">Your appointment has been confirmed!</p>
-                  <p class="code">Code:   OVAS-01234</p>
-                  <a href="/features/users/web/api/appointment.html" onclick="localStorage.setItem('showBookedHistory', 'true');">View Details</a>
-              </div>
-                <div class="notification-content alert-primary">
-                    <strong>Successfully Booked!</strong>
-                    <p class="notification-text">You successfully booked!</p>
-                </div>
-                <div class="notification-content alert-danger">
-                  <strong>Rejected</strong>
-                  <p class="notification-text">Your appointment has been rejected.</p>
-              </div>
-          </div>
-        </div>
-        
-          <div class="dropdown">
-              <button class="dropdown-toggle profiles" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="../../../../assets/img/customer.jfif" alt="" class="profile">
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="../../../users/web/api/dashboard.html">Profile</a>
-                  <a class="dropdown-item" href="../../../users/web/api/login.html">Logout</a>
-              </div>
-      </div>
-        </div>
-        
-      </div>
-    </div>
-  </nav>
+
+                        <?php else: ?>
+                        <a href="../../../features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
+                        <?php endif; ?>
+                       
+                    </div>
+        </nav>
     <!--Header End-->
 
   <!--Appointment Section-->
@@ -811,6 +808,5 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
 <script src="../../function/script/service-dropdown.js"></script>
 <script src="../../function/script/chatbot-toggle.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </html>
