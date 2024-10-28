@@ -4,7 +4,7 @@ require '../../../../db.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productId = $_POST['id'];
 
-    $stmt = $conn->prepare("SELECT product_img, product_name, description, cost, type FROM product WHERE id = ?");
+    $stmt = $conn->prepare("SELECT product_img, product_name, description, cost, type, quantity FROM product WHERE id = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -16,7 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Product not found.";
         exit();
     }
-
 
     $productImg = $currentImg;
 
@@ -60,10 +59,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = $_POST['description'];
     $cost = $_POST['cost'];
     $type = $_POST['type'];
+    $quantity = $_POST['quantity']; // Retrieve quantity from the form
 
     // Prepare and execute the update statement
-    $stmt = $conn->prepare("UPDATE product SET product_img=?, product_name=?, description=?, cost=?, type=? WHERE id=?");
-    $stmt->bind_param("sssssi", $productImg, $productName, $description, $cost, $type, $productId);
+    $stmt = $conn->prepare("UPDATE product SET product_img=?, product_name=?, description=?, cost=?, type=?, quantity=? WHERE id=?");
+    $stmt->bind_param("sssssii", $productImg, $productName, $description, $cost, $type, $quantity, $productId);
 
     // Execute the statement
     if ($stmt->execute()) {

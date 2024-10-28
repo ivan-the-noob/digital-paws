@@ -29,6 +29,10 @@ body{
 .navbar-toggler{
     margin-left: auto;
 }
+.navbar-brand img{
+    width: 120px;
+    height: 50px;
+}
 .navbar-toggler{
     border: none;
 }
@@ -64,7 +68,7 @@ body{
 
 .navbar a{
   color: #000;
-  margin: 0 10px 0 10px;
+
 }
 
 .navbar a:hover{
@@ -179,8 +183,8 @@ body{
 }
 .paws .foot3{
     position: absolute;
-    left: 90%;
-    opacity: 50%;
+    left: 80%;
+    bottom: 1vh;
 }
 
 /*section front end */
@@ -1223,9 +1227,6 @@ width: 50%;
   display: none;
 }
 
-
-/*Chat Bot End*/
-
 /*Notif Section*/
 
 
@@ -1297,8 +1298,6 @@ width: 50%;
   background-color: #d4edda; 
   color: #155724;
 }
-
-
 
 
 

@@ -536,7 +536,7 @@ $email = isset($_SESSION['email']);
         </div>
     </footer>
 
-    <button id="chat-bot-button" onclick="toggleChat()">
+ <button id="chat-bot-button" onclick="toggleChat()">
         <i class="fa-solid fa-headset"></i>
     </button>
 
