@@ -41,7 +41,7 @@ $conn->close();
             <a class="navbar-brand d-none d-md-block logo-container" href="#">
                 <img src="../../../../assets/img/logo.png" alt="Logo">
             </a>
-            <a href="#dashboard">
+            <a href="admin.php">
                 <i class="fa-solid fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>

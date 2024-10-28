@@ -29,7 +29,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
             <a class="navbar-brand d-none d-md-block logo-container" href="#">
                 <img src="../../../../assets/img/logo.png" alt="Logo">
             </a>
-            <a href="#dashboard">
+            <a href="admin.php">
                 <i class="fa-solid fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
@@ -114,7 +114,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
             </div>
             <!--Notification and Profile Admin End-->
 
-            <?php
+<?php
 
             require '../../../../db.php';
 
@@ -123,6 +123,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 $description = $_POST['description'];
                 $cost = $_POST['cost'];
                 $type = $_POST['type']; // Retrieve the product type from POST data
+                $quantity = $_POST['quantity']; // Retrieve the quantity from POST data
 
                 // Image file upload
                 $targetDir = "../../../../assets/img/product/";
@@ -132,7 +133,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 // Move the uploaded file to the target directory
                 if (move_uploaded_file($_FILES["product_img"]["tmp_name"], $targetFilePath)) {
                     // Insert into database
-                    $sql = "INSERT INTO product (product_img, product_name, description, cost, type) VALUES ('$imageName', '$productName', '$description', '$cost', '$type')";
+                    $sql = "INSERT INTO product (product_img, product_name, description, cost, type, quantity) VALUES ('$imageName', '$productName', '$description', '$cost', '$type', '$quantity')";
 
                     if ($conn->query($sql) === TRUE) {
                         echo "New product added successfully!";
@@ -143,7 +144,6 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     echo "Sorry, there was an error uploading your file.";
                 }
             }
-
 
             // Fetch products from database
             $products = $conn->query("SELECT * FROM product");
@@ -183,6 +183,10 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                     <input type="number" class="form-control" id="cost" name="cost" required>
                                 </div>
                                 <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity" required>
+                                </div>
+                                <div class="form-group">
                                     <label for="type">Type</label>
                                     <select class="form-control" id="type" name="type" required>
                                         <option value="petfood">Pet Food</option>
@@ -199,10 +203,9 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     </div>
                 </div>
             </div>
-
             <!-- Product Table -->
             <div class="px-lg-5" style="overflow-x: auto;">
-                <table class="table table-hover table-remove-borders">
+<table class="table table-hover table-remove-borders">
                     <thead class="thead-light">
                         <tr>
                             <th>#</th>
@@ -211,6 +214,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                             <th>Description</th>
                             <th>Type</th>
                             <th>Price</th>
+                            <th>Quantity</th> <!-- New Quantity Column -->
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -219,12 +223,15 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                             <?php while ($product = $products->fetch_assoc()): ?>
                                 <tr>
                                     <td><?= $product['id'] ?></td>
-                                    <td><img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>"
-                                            alt="Product Image" style="width: 50px; height: 50px;"></td>
+                                    <td>
+                                        <img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>"
+                                            alt="Product Image" style="width: 50px; height: 50px;">
+                                    </td>
                                     <td><?= htmlspecialchars($product['product_name']) ?></td>
                                     <td><?= htmlspecialchars($product['description']) ?></td>
                                     <td><?= htmlspecialchars($product['type']) ?></td>
                                     <td>PHP <?= htmlspecialchars(number_format($product['cost'], 2)) ?></td>
+                                    <td><?= htmlspecialchars($product['quantity']) ?></td> <!-- Display Quantity -->
                                     <td>
                                         <!-- Edit Button -->
                                         <button title="Update" data-bs-toggle="modal"
@@ -304,6 +311,12 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                                                             value="<?= htmlspecialchars($product['cost']) ?>" required>
                                                     </div>
                                                     <div class="form-group">
+                                                        <label for="quantity">Quantity</label>
+                                                        <!-- Add Quantity Field in Edit Modal -->
+                                                        <input type="number" class="form-control" id="quantity" name="quantity"
+                                                            value="<?= htmlspecialchars($product['quantity']) ?>" required>
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label for="type">Type</label>
                                                         <select class="form-control" id="type" name="type" required>
                                                             <option value="petfood"
@@ -333,7 +346,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="7" class="text-center">No products found</td>
+                                <td colspan="8" class="text-center">No products found</td>
                             </tr>
                         <?php endif; ?>
                         <?php $conn->close(); ?>
@@ -356,13 +369,13 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
     </div>
 
     <!-- Edit Product Modal -->
-    <?php if ($products->num_rows > 0): ?>
+<?php if ($products->num_rows > 0): ?>
         <?php while ($product = $products->fetch_assoc()): ?>
             <div class="modal fade" id="editProductModal<?= $product['id'] ?>" tabindex="-1"
                 aria-labelledby="editProductModalLabel<?= $product['id'] ?>" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
-                        <form action="update.php" method="POST" enctype="multipart/form-data">
+                        <form action="../../function/update_product.php" method="POST" enctype="multipart/form-data">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="editProductModalLabel<?= $product['id'] ?>">Edit Product</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -410,7 +423,6 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
             </div>
         <?php endwhile; ?>
     <?php endif; ?>
-
 </body>
 
 
