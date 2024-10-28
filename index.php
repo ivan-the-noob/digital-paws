@@ -10,12 +10,12 @@ $email = isset($_SESSION['email']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Happy Vet Animal Clinic & Grooming Center</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="features/users/css/index.css">
-
+     <link rel="icon" href="assets/img/logo.png" type="image/x-icon">
 </head>
 
 <body>
@@ -23,7 +23,7 @@ $email = isset($_SESSION['email']);
 <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
             <a class="navbar-brand d-none d-lg-block" href="#">
-                    <img src="assets/img/logo.pngs" alt="Logo" width="30" height="30">
+                    <img src="assets/img/logo.png" alt="Logo" width="30" height="30">
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"

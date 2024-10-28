@@ -29,10 +29,6 @@ body{
 .navbar-toggler{
     margin-left: auto;
 }
-.navbar-brand img{
-    width: 120px;
-    height: 50px;
-}
 .navbar-toggler{
     border: none;
 }
@@ -183,8 +179,8 @@ body{
 }
 .paws .foot3{
     position: absolute;
-    left: 80%;
-    bottom: 1vh;
+    left: 90%;
+    opacity: 50%;
 }
 
 /*section front end */
