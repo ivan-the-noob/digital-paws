@@ -541,34 +541,37 @@ $email = isset($_SESSION['email']);
     </button>
 
     <div id="chat-interface" class="hidden">
-        <div id="chat-header">
-            <p>Amazing Day! How may I help you?</p>
-            <button onclick="toggleChat()">X</button>
+    <div id="chat-header">
+        <p>Amazing Day! How may I help you?</p>
+        <button onclick="toggleChat()">X</button>
+    </div>
+    <div id="chat-body">
+    <div class="button-bot">
+            <button onclick="sendResponse('How to log in?')">How to log in?</button>
+            <button onclick="sendResponse('How to book?')">How to book?</button>
+            <button onclick="sendResponse('What are the services?')">What are the services?</button>
+            <button onclick="sendResponse('Contact information?')">Contact information?</button>
         </div>
-        <div id="chat-body">
-            <div class="button-bot">
-                <button>How to book?</button>
-                <button>?</button>
-                <button>How to book?</button>
-                <button>How to book?</button>
-                <button>How to book?</button>
-                <button>How to book?</button>
-            </div>
-        </div>
-        <div class="line"></div>
+        
         <div class="admin mt-3">
             <div class="admin-chat">
-                <img src="assets/img/vet logo.jpg" alt="Admin">
+                <img src="assets/img/logo.png" alt="Admin">
                 <p>Admin</p>
             </div>
-            <p class="text">Hello, I am Chat Bot. Please Ask me a question just by pressing the question buttons.</p>
+            <p class="text" id="typing-text">Hello, I am Chat Bot. Please Ask me a question just by pressing the question buttons.</p>
         </div>
+      
     </div>
+    <div class="line"></div>
+</div>
+
+
 
 
 
 </body>
 <script src="features/users/function/script/select-size.js"></script>
+<script src="features/users/function/script/chat-bot.js"></script>
 <script src="features/users/function/script/product-size.js"></script>
 <script src="features/users/function/script/services-check.js"></script>
 <script src="features/users/function/script/chatbot-toggle.js"></script>

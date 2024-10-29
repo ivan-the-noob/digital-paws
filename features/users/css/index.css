@@ -68,7 +68,7 @@ body{
 
 .navbar a{
   color: #000;
-
+  margin: 0 10px 0 10px;
 }
 
 .navbar a:hover{
@@ -1089,7 +1089,7 @@ width: 50%;
 #chat-interface {
     position: fixed;
     bottom: 5px; 
-    right: 20px;
+    right: 50px;
     width: 30%;
     height: 60%;
     background-color: #fff;
@@ -1099,6 +1099,8 @@ width: 50%;
     flex-direction: column;
     z-index: 1000;
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 @media (max-width: 768px) {
@@ -1129,6 +1131,8 @@ width: 50%;
     padding-bottom: 0;
     justify-content: space-between;
     display: flex;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .chat-header p{
@@ -1162,9 +1166,16 @@ width: 50%;
 
 .admin-chat{
     display: flex;
-    align-items: center;
-    width: 30%;
-    margin-left: 10px;
+    font-weight: bold;
+    gap: 5px;
+
+}
+
+#chat-body{
+  padding: 10px;
+  padding-bottom: 20px;
+  overflow-y:  auto;
+  height: auto;
 }
 
 
@@ -1185,10 +1196,8 @@ width: 50%;
     color: #fff;
     padding: 10px;
     display: flex;
-    align-items: center;
     border-radius: 10px;
     margin: auto;
-    padding: 5px;
     font-size: 13px;
     padding-left: 10px !important;
     width: 80%;
@@ -1217,6 +1226,7 @@ width: 50%;
 #chat-bot-button.hidden {
   display: none;
 }
+
 
 /*Chat Bot End*/
 
@@ -1291,6 +1301,8 @@ width: 50%;
   background-color: #d4edda; 
   color: #155724;
 }
+
+
 
 
 
