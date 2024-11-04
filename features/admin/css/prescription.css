@@ -65,10 +65,11 @@ body {
     display: block;
     justify-content: center;
     align-items: center;
-    margin: auto;
-    width: 100px;
-    height: 60px;
+    width: 70%;
+    height: 15vh;
+    margin: 20px 0 20px 30px;
 }
+
 
 .navbar-links {
     display: flex;
@@ -276,19 +277,12 @@ tr:hover{
     border-radius: 10px !important;
 }
 .modal-dialog{
-    max-width: 60%;
+    max-width: 80%;
 }
 
-.logo-container img{
-    width: 200px;
-    height: 200px;
+.modal-content{
+    height: 92vh;
 }
-
-.logo-container p{
-    color: #000 !important;
-}
-
-
 
 
 @media (max-width: 768px) {
@@ -309,61 +303,22 @@ tr:hover{
 }
 
 .modal-body{
-    height: 100%;
+    height: 90%;
 }
 
-.cus_inf label{
+.modal-body label{
     color: #7A3015;
     font-size: 16px;
     font-weight: 500;
-    white-space: nowrap;
-    min-width: 120px;
-    display: flex;
-    justify-content: start;
-    align-items: center;
 }
-
-
 .modal-body h6{
     color:#7A3015;
     font-size: 22px;
 }
 
 .modal-body p{
-    color: #000;
+    color: #7A3015;
 }
-
-.cus_inf input{
-    width: 50%;
-    padding: 5px 10px;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-}
-
-.cus_inf input:focus{
-    width: 50%;
-    padding: 5px 10px;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-}
-
-.vet-logo img{
-    width: 95%;
-    height: 95%;
-    display: flex;
-    justify-items: center;
-    margin: auto;
-}
-
-
-.rx img{
-    width: 150px;
-    height: 150px;
-}
-
-
 
 #dayModal .container{
     padding: 0;

@@ -264,7 +264,7 @@ $email = isset($_SESSION['email']);
                         <div class="col-lg-4 col-md-6 col-12 mb-4">
                             <div class="product">
                                 <!-- Display product image -->
-                                <img src="assets/img/product/<?= $product['product_img'] ?>" alt="Product Image"">
+                                <img src="assets/img/product/<?= $product['product_img'] ?>" alt="Product Image">
 
                     <!-- Display product name -->
                     <h5 class=" mt-4" name="product_name"><?= htmlspecialchars($product['product_name']) ?>
@@ -282,7 +282,9 @@ $email = isset($_SESSION['email']);
 
                                 <!-- Action buttons -->
                                 <div class="d-flex justify-content-between item-btn">
-                                    <a href="features/users/web/api/buy-now.php" class="btn buy-now">BUY NOW!</a>
+                                <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>" class="btn buy-now">
+                                    BUY NOW!
+                                </a>
                                     <button class="btn add-to-cart"><i class="fas fa-shopping-cart"></i></button>
                                 </div>
                             </div>
