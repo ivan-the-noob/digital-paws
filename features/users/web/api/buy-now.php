@@ -1,4 +1,5 @@
 <?php 
+session_start(); // Start the session
 require '../../../../db.php';
 
 $product = null; // Initialize the product variable
@@ -30,6 +31,30 @@ if (isset($_GET['id'])) {
     }
 
     $stmt->close();
+}
+
+// Fetch user details based on session email
+if (isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];
+    $stmt = $conn->prepare("SELECT name, contact_number, home_street, address_search FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if (!$user) {
+        echo "User not found.";
+        exit;
+    }
+
+    // Sanitize user data
+    $name = htmlspecialchars($user['name']);
+    $contactNumber = htmlspecialchars($user['contact_number']);
+    $homeStreet = htmlspecialchars($user['home_street']);
+    $addressSearch = htmlspecialchars($user['address_search']);
+} else {
+    echo "User not logged in.";
+    exit;
 }
 
 $conn->close(); 
@@ -154,9 +179,10 @@ function fetchProductDetails(id) {
                             <div class="card-body">
                                 <p class="card-title">Customer Information</p>
                                 <div class="context">
-                                  <p class="name">Ivan Ablanida</p>
-                                  <p>0931232141</p>
-                                  <p>Blk 4. Lot 45 San Agustin Tmc.</p>
+                                    <p class="name"><?php echo $name; ?></p>
+                                    <p><?php echo $contactNumber; ?></p>
+                                    <p><?php echo $homeStreet; ?></p>
+                                    <p><?php echo $addressSearch; ?></p>
                                 </div>
                             </div>
                         </div>
@@ -164,7 +190,7 @@ function fetchProductDetails(id) {
                     
                     <!-- Payment Method Card -->
                     <div class="col-md-6 mb-3">
-                        <div class="card">
+                        <div class="card payment-method">
                             <div class="card-body">
                                 <h5 class="card-title">Payment Method</h5>
                                 <div class="form-check d-flex justify-content-between align-items-center mb-3">
@@ -186,34 +212,36 @@ function fetchProductDetails(id) {
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-    <div class="card">
-        <div class="card-body">
-            <div class="row align-items-center">
-                
-                <!-- First Column: Image -->
-                <div class="col-12 col-md-4 mb-3 mb-md-0 text-center">
-                    <img id="modalProductImage" src="" alt="Product Image" class="img-fluid">
-                    
-                </div>
-                
-                <!-- Second Column: Name and Size -->
-                <div class="col-6 col-md-4 mb-3 mb-md-0 text-center">
-                    <h6 id="modalProductName">Product Name</h6>
-                    <p id="modalProductSize">Size: 25kg</p>
-                </div>
-                
-                <!-- Third Column: Quantity Controls and Price -->
-                <div class="col-12 col-md-4 d-flex flex-column align-items-center text-center">
-                    <div class="d-flex justify-content-center mb-2">
-                        <button class="quantity-btn" id="decrement">-</button>
-                        <input type="number" class="form-control mx-2" id="quantity" min="1" value="1" style="max-width: 40px;">
-                        <button class="quantity-btn" id="increment">+</button>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
+                      <div class="card">
+                          <div class="card-body">
+                              <div class="row">
+                                  
+                                  <!-- First Column: Image -->
+                                  <div class="col-12 col-md-4 mb-3 mb-md-0 text-center">
+                                      <img id="modalProductImage" src="" alt="Product Image" class="img-fluid">
+                                      
+                                  </div>
+                                  
+                                  <!-- Second Column: Name and Size -->
+                                  <div class="col-6 col-md-4 mb-3 mb-md-0">
+                                      <h6 id="modalProductName">Product Name</h6>
+                                      <p id="modalProductSize">Size: 25kg</p>
+                                  </div>
+                                  
+                                  <!-- Third Column: Quantity Controls and Price -->
+                                  <div class="col-12 col-md-4 d-flex justify-content-end mt-auto">
+                                      <div class=" mb-2">
+                                      <div class="d-flex justify-content-end">
+                                          <button class="quantity-btn" id="decrements">-</button>
+                                          <input type="number" class="form-control" id="quantityInput" min="1" value="1" style="max-width: 45px;">
+                                          <button class="quantity-btn" id="increments">+</button>
+                                      </div>
+                                          <p class="mb-0 d-flex justify-content-center mt-2">₱699.00</p>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
 </div>
 
 
@@ -223,9 +251,20 @@ function fetchProductDetails(id) {
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Order Summary</h5>
-                                <p>Subtotal: ₱<span id="subtotalAmount">123.00</span></p>
-                                <p>Shipping Fee: ₱<span id="shippingFee">69.00</span></p>
-                                <h6>Total: ₱<span id="totalAmount">192.00</span></h6>
+                                <div class="d-flex justify-content-between">
+                                  <p>Subtotal:</p>
+                                  <p>₱<span id="subtotalAmount">123.00</span></p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                  <p>Shipping Fee:</p>
+                                  <p>₱<span id="shippingFee">69.00</span></p>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                  <h6>Total:</h6>
+                                  <h6>₱<span id="totalAmount">192.00</span></h6>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -261,6 +300,32 @@ function fetchProductDetails(id) {
     document.getElementById('totalAmount').innerText = (parseFloat(document.getElementById('subtotalAmount').innerText) + 69.00).toFixed(2); // Adding static shipping fee
 }
 
+
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const decrementButton = document.getElementById('decrements');
+        const incrementButton = document.getElementById('increments');
+        const quantityInput = document.getElementById('quantityInput'); // Updated ID
+
+        decrementButton.addEventListener('click', function () {
+            let currentValue = parseInt(quantityInput.value, 10);
+            console.log('Decrement clicked, current value:', currentValue);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+                console.log('New value after decrement:', quantityInput.value);
+            }
+        });
+
+        incrementButton.addEventListener('click', function () {
+            let currentValue = parseInt(quantityInput.value, 10);
+            console.log('Increment clicked, current value:', currentValue);
+            quantityInput.value = currentValue + 1;
+            console.log('New value after increment:', quantityInput.value);
+        });
+    });
 </script>
   
   

@@ -1,3 +1,34 @@
+<?php 
+session_start();
+include '../../../../db.php';
+
+if (isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];
+    
+    
+    // Update query to fetch profile_picture along with other details
+    $query = "SELECT latitude, longitude, contact_number, home_street, address_search, profile_picture FROM users WHERE email = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->bind_result($latitude, $longitude, $contact_number, $home_street, $address_search, $profile_picture);
+    $stmt->fetch();
+    $stmt->close();
+} else {
+    echo "User not logged in.";
+    exit;
+}
+
+
+
+// Pass latitude and longitude to JavaScript
+echo "<script>
+        var userLatitude = $latitude;
+        var userLongitude = $longitude;
+      </script>";
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,7 +76,7 @@
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   <a class="dropdown-item" href="#">Profile</a>
-                  <a class="dropdown-item" href="login.html">Logout</a>
+                  <a class="dropdown-item" href="logout.php">Logout</a>
               </div>
           </div>
         </div>
@@ -53,42 +84,146 @@
     </div>
   </nav>
   <!--Dashboard Section-->
-  <div class="container custom-container mt-5">
+
+<div class="container custom-container mt-auto">
     <h1 class="text-center mb-4">Profile</h1>
     <div class="row justify-content-center">
-        <div class="col-12 col-md-6 text-center mb-4">
+        <!-- Left Side: Profile Information -->
+        <div class="text-center mb-4">
             <img src="../../../../assets/img/customer.jfif" class="rounded-circle" alt="Profile Picture" style="width: 150px; height: 150px;">
             <h4 class="mt-3">Racel</h4>
-            <div class="mt-3">
-                <label for="changeProfile" class="form-label">Change Profile Picture</label>
-                <input type="file" class="form-control" id="changeProfile">
-            </div>
         </div>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-6">
-            <div class="mb-3">
-                <label for="currentPassword" class="form-label">Current Password</label>
-                <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
+        
+        <form action="../../function/php/update_profile.php" method="POST" enctype="multipart/form-data" class="row justify-content-center">
+            <!-- Profile Picture and Password Fields -->
+            <div class="col-12 col-md-4">
+                <div class="mb-4">
+                    <label for="changeProfile" class="form-label">Change Profile Picture</label>
+                    <input type="file" name="profile_picture" class="form-control" id="changeProfile">
+                </div>
+                <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Current Password</label>
+                    <input type="password" name="current_password" class="form-control" id="currentPassword" placeholder="Enter current password">
+                </div>
+                <div class="mb-4">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    <input type="password" name="new_password" class="form-control" id="newPassword" placeholder="Enter new password">
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="newPassword" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
-            </div>
-        </div>
-    </div>
 
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-6">
-          <div class="dash-button">
-              <div class="col-12">
-                  <button class="btn btn-primary">Save</button>
+            <!-- Address and Contact Fields -->
+            <div class="col-12 col-md-4">
+              <div class="mb-4">
+                  <label for="addressSearch" class="form-label">Search for Address</label>
+                  <input type="text" name="address_search" id="addressSearch" class="form-control" placeholder="Enter address within Cavite" value="<?= htmlspecialchars($address_search) ?>">
               </div>
-          </div>
-      </div>
-  </div>
-</div>
+                
+                <!-- Google Maps API integration -->
+                <div id="map" style="height: 300px; width: 100%;"></div>
+
+                <input type="hidden" name="latitude" id="latitude" value="<?= htmlspecialchars($latitude) ?>">
+                <input type="hidden" name="longitude" id="longitude" value="<?= htmlspecialchars($longitude) ?>">
+
+                <div class="mb-4">
+                    <label for="contactNumber" class="form-label">Contact Number</label>
+                    <input type="text" name="contact_number" class="form-control" id="contactNumber" placeholder="Enter contact number" value="<?= htmlspecialchars($contact_number) ?>">
+                </div>
+                <div class="mb-2">
+                    <label for="addressSearch" class="form-label">Home Street</label>
+                    <input type="text" name="home_street" class="form-control" id="addressSearch" placeholder="Enter address" value="<?= htmlspecialchars($home_street) ?>">
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 text-center">
+                        <button type="submit" class="btn btn-primary mt-4 w-100">Save</button>
+                    </div>
+                </div>
+
+<script>
+   function initMap() {
+    // Initialize the map centered on the user's latitude and longitude
+    const map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: userLatitude || 14.2928, lng: userLongitude || 120.8982 }, // Fallback to Cavite if values are not set
+        zoom: 18, // Set a higher zoom level to include more details
+        mapTypeId: 'roadmap',
+    });
+
+    // Create autocomplete input
+    const input = document.getElementById('addressSearch');
+
+    // Create autocomplete without restrictions
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+        fields: ['geometry', 'name', 'formatted_address'] // Added fields
+    });
+
+    const marker = new google.maps.Marker({
+        map: map,
+        anchorPoint: new google.maps.Point(0, -29),
+        draggable: true,
+        visible: false
+    });
+
+    const infowindow = new google.maps.InfoWindow();
+
+    // When a place is selected in the autocomplete search box
+    autocomplete.addListener('place_changed', function () {
+        infowindow.close();
+        const place = autocomplete.getPlace();
+
+        // Check if the selected place has geometry
+        if (place.geometry) {
+            // Set the marker position and visibility
+            marker.setPosition(place.geometry.location);
+            marker.setVisible(true);
+
+            // Center the map on the location
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(15); // Set zoom level to 15 for better visibility
+            }
+
+            // Update latitude and longitude fields
+            document.getElementById('latitude').value = place.geometry.location.lat();
+            document.getElementById('longitude').value = place.geometry.location.lng();
+
+            const address = place.formatted_address || '';
+            infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+            infowindow.open(map, marker);
+        } else {
+            console.log("No details available for input: '" + place.name + "'");
+        }
+    });
+
+    // Handle marker drag events to update latitude and longitude fields
+    marker.addListener('dragend', function (event) {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+
+        // Update the hidden fields for latitude and longitude
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+
+        infowindow.setContent('<div>Your selected location:<br>' + lat + ', ' + lng + '</div>');
+        infowindow.open(map, marker);
+    });
+
+    // Center the marker on the user's location at initialization
+    marker.setPosition(new google.maps.LatLng(userLatitude || 14.2928, userLongitude || 120.8982));
+    marker.setVisible(true);
+}
+
+</script>
+
+<!-- Load Google Maps API asynchronously with a callback -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmgygVeipMUsrtGeZPZ9UzXRmcVdheIqw&libraries=places&callback=initMap"
+async defer></script>
+
+
+
+
+
+
 
   <!--Dashboard Section End-->
 

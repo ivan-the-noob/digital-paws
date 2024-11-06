@@ -253,6 +253,12 @@ h3{
   border-radius: 10px;
 }
 
+#quantity::-webkit-outer-spin-button,
+#quantity::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* Product Section End */
 
 
@@ -260,6 +266,9 @@ h3{
 
 .modal-dialog .card{
   min-height: 25vh;
+}
+.payment-method{
+  min-height: 190px !important;
 }
 
 .modal-dialog p{

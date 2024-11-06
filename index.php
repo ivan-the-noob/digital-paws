@@ -61,7 +61,7 @@ $email = isset($_SESSION['email']);
                                     <img src="assets/img/customer.jfif" alt="Profile Image" class="profile">
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                    <li><a class="dropdown-item" href="/features/users/web/api/dashboard.html">Profile</a></li>
+                                    <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
                                     <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
                                 </ul>
                             </div>
