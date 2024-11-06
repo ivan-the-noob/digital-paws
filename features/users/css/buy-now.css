@@ -246,9 +246,9 @@ h3{
 
 
 #modalProductImage{
-  width: 100%;
+  width: 300px;
   height: 100%;
-  min-height: 20vh;
+  min-height: 15vh;
   padding: 0;
   border-radius: 10px;
 }
@@ -259,17 +259,21 @@ h3{
   margin: 0;
 }
 
+.gcash{
+  width: 100% !important;
+  height: 50vh !important;
+}
+
 /* Product Section End */
 
 
 /*Modal Section*/
 
-.modal-dialog .card{
-  min-height: 25vh;
+.form-payment{
+  padding-top: 5px;
+  padding-bottom: 5px; 
 }
-.payment-method{
-  min-height: 190px !important;
-}
+
 
 .modal-dialog p{
   color: #000 !important;
@@ -278,6 +282,16 @@ h3{
 .modal-dialog .card-title{
   font-size: 12px !important;
   opacity: 70%;
+}
+
+#quantityInput {
+  width: 40%;
+  -moz-appearance: textfield; 
+}
+#quantityInput::-webkit-outer-spin-button,
+#quantityInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .context p{
