@@ -177,151 +177,144 @@ $conn->close();
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="row">
-                <!-- Customer Information Card -->
-                <div class="col-md-6 mb-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <p class="card-title">Customer Information</p>
-                      <div class="context">
-                        <p class="name"><?php echo $name; ?></p>
-                        <p><?php echo $contactNumber; ?></p>
-                        <p><?php echo $addressSearch; ?></p>
+              <form method="POST" action="../../function/php/checkout_process.php"
+                enctype="multipart/form-data">
+                <div class="row">
+
+                  <div class="col-md-6 mb-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <p class="card-title">Customer Information</p>
+                        <div class="context">
+                          <p class="name" name="name"></p>
+                          <p name="contact-num"><?php echo $contactNumber; ?></p>
+                          <p name="address-search"><?php echo $addressSearch; ?></p>
+                        </div>
+                        <!-- Hidden inputs for Customer Information -->
+                        <input type="hidden" name="name" value="<?php echo $name; ?>">
+                        <input type="hidden" name="contact-num"
+                          value="<?php echo $contactNumber; ?>">
+                        <input type="hidden" name="address-search"
+                          value="<?php echo $addressSearch; ?>">
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- Payment Method Card -->
-                <div class="col-md-6 mb-3">
-                  <div class="card payment-method">
-                    <div class="card-body">
-                      <h5 class="card-title">Payment Method</h5>
-                      <div
-                        class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
-                        <div>
-                          <input type="radio" id="payment-cash" name="paymentMethod"
-                            value="cash" class="form-check-input">
-                          <label for="payment-cash" class="form-check-label">Cash on
-                            delivery</label>
+                  <!-- Payment Method Card -->
+                  <div class="col-md-6 mb-3">
+                    <div class="card payment-method">
+                      <div class="card-body">
+                        <h5 class="card-title">Payment Method</h5>
+                        <div
+                          class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
+                          <div>
+                            <input type="radio" id="payment-cash" name="paymentMethod"
+                              value="cash" class="form-check-input">
+                            <label for="payment-cash" class="form-check-label">Cash on
+                              delivery</label>
+                          </div>
+                          <span class="cod">COD</span>
                         </div>
-                        <span class="cod">COD</span>
-                      </div>
-                      <div
-                        class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
-                        <div>
-                          <input type="radio" id="payment-gcash" name="paymentMethod"
-                            value="gcash" class="form-check-input">
-                          <label for="payment-gcash" class="form-check-label">Gcash</label>
-                        </div>
-                      </div>
-
-                      <!-- Gcash specific inputs and image -->
-                      <div id="gcash-details" style="display: none;">
-                        <img src="../../../../assets/img/gcash.jfif" alt="Gcash"
-                          class="img-fluid mb-3 gcash">
-
-                        <!-- Screenshot and Reference ID Input -->
-                        <div class="mb-3">
-                          <label for="screenshot" class="form-label">Upload Screenshot</label>
-                          <input type="file" id="screenshot" class="form-control">
+                        <div
+                          class="form-check d-flex justify-content-between align-items-center mb-3 form-payment">
+                          <div>
+                            <input type="radio" id="payment-gcash" name="paymentMethod"
+                              value="gcash" class="form-check-input">
+                            <label for="payment-gcash"
+                              class="form-check-label">Gcash</label>
+                          </div>
                         </div>
 
-                        <div class="mb-3">
-                          <label for="reference-id" class="form-label">Reference ID</label>
-                          <input type="number" id="reference-id" class="form-control"
-                            placeholder="Enter your Reference ID">
+                        <!-- Gcash specific inputs and image -->
+                        <div id="gcash-details" style="display: none;">
+                          <img src="../../../../assets/img/gcash.jfif" alt="Gcash"
+                            class="img-fluid mb-3 gcash">
+
+                          <!-- Hidden inputs for Gcash -->
+                          <input type="hidden" name="paymentMethod" value="gcash">
+                          <input type="hidden" name="screenshot" value="">
+                          <input type="hidden" name="reference" value="">
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-12 col-md-5 mb-3 mb-md-0 text-center">
+                            <img id="modalProductImage" src="" alt="Product Image"
+                              class="img-fluid">
+                          </div>
 
-                <script>
-                  // Get the radio buttons and the Gcash specific details container
-                  const paymentCash = document.getElementById("payment-cash");
-                  const paymentGcash = document.getElementById("payment-gcash");
-                  const gcashDetails = document.getElementById("gcash-details");
+                          <div class="col-6 col-md-3 mb-3 mb-md-0">
+                            <h6 id="modalProductName" name="product-name">Product Name</h6>
+                            <p id="modalProductSize" name="size">Size: 25kg</p>
+                          </div>
 
-                  // Show/hide Gcash details based on the selected payment method
-                  paymentGcash.addEventListener("change", () => {
-                    if (paymentGcash.checked) {
-                      gcashDetails.style.display = "block"; // Show Gcash details
-                    }
-                  });
-
-                  paymentCash.addEventListener("change", () => {
-                    if (paymentCash.checked) {
-                      gcashDetails.style.display = "none"; // Hide Gcash details
-                    }
-                  });
-                </script>
-                <div class="col-md-6 mb-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="row">
-
-                        <!-- First Column: Image -->
-                        <div class="col-12 col-md-5 mb-3 mb-md-0 text-center">
-                          <img id="modalProductImage" src="" alt="Product Image"
-                            class="img-fluid">
-                        </div>
-
-                        <!-- Second Column: Name and Size -->
-                        <div class="col-6 col-md-3 mb-3 mb-md-0">
-                          <h6 id="modalProductName">Product Name</h6>
-                          <p id="modalProductSize">Size: 25kg</p>
-                        </div>
-                        <!-- Third Column: Quantity Controls and Price -->
-                        <div class="col-12 col-md-4 d-flex justify-content-end mt-auto">
-                          <div class=" mb-2">
-                            <div class="d-flex justify-content-end">
-                              <div id="quantity-display">1x</div>
+                          <div class="col-12 col-md-4 d-flex justify-content-end mt-auto">
+                            <div class="mb-2">
+                              <div class="d-flex justify-content-end">
+                                <div id="quantity-display" name="quantity">1x</div>
+                              </div>
+                              <p class="mb-0 d-flex justify-content-center mt-2"
+                                id="total-cost-1" name="cost">
+                                ₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?>
+                              </p>
+                              <!-- Hidden Inputs for Product Details -->
+                              <input type="hidden" name="product-name"
+                                value="<?= htmlspecialchars($product['product_name']) ?>">
+                              <input type="hidden" name="size" value="25kg">
+                              <input type="hidden" name="quantity" value="1">
+                              <input type="hidden" name="cost"
+                                value="<?= htmlspecialchars(number_format($product['cost'], 2)) ?>">
                             </div>
-                            <p class="mb-0 d-flex justify-content-center mt-2"
-                              id="total-cost-1">
-                              ₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?>
-                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
 
-                <!-- Order Summary Card -->
-                <div class="col-md-6 mb-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Order Summary</h5>
-                      <div class="d-flex justify-content-between">
-                        <p>Subtotal:</p>
-                        <p class="mb-0 d-flex justify-content-center mt-2" id="total-cost-2">
-                          ₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?>
-                        </p>
-                      </div>
-                      <div class="d-flex justify-content-between">
-                        <p>Shipping Fee:</p>
-                        <p>₱<span id="shippingFee">69.00</span></p>
-                      </div>
-                      <div class="d-flex justify-content-between">
-                        <h6>Total:</h6>
-                        <h6><span id="totalAmount">192.00</span></h6>
+
+                  <!-- Order Summary Card -->
+                  <div class="col-md-6 mb-3">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        <div class="d-flex justify-content-between">
+                          <p>Subtotal:</p>
+                          <p class="mb-0 d-flex justify-content-center mt-2" id="total-cost-2"
+                            name="sub-total">
+                            ₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?>
+                          </p>
+                          <input type="hidden" name="sub-total"
+                            value="<?= htmlspecialchars(number_format($product['cost'], 2)) ?>">
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <p>Shipping Fee:</p>
+                          <p>₱<span id="shippingFee" name="shipping-fee">69.00</span></p>
+                          <input type="hidden" name="shipping-fee" value="69.00">
+                        </div>
+                        <div class="d-flex justify-content-between">
+                          <h6>Total:</h6>
+                          <h6><span id="totalAmount" name="total-amount">192.00</span></h6>
+                          <input type="hidden" name="total-amount" value="192.00">
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-              </div>
+                </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Proceed to Checkout</button>
+              <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
             </div>
           </div>
         </div>
       </div>
+
 
       <script>
         const unitCost = <?php echo $product['cost']; ?>; // Get product cost from PHP
@@ -423,6 +416,26 @@ $conn->close();
         }
       </script>
 
+      <script>
+        // Get the radio buttons and the Gcash specific details container
+        const paymentCash = document.getElementById("payment-cash");
+        const paymentGcash = document.getElementById("payment-gcash");
+        const gcashDetails = document.getElementById("gcash-details");
+
+        // Show/hide Gcash details based on the selected payment method
+        paymentGcash.addEventListener("change", () => {
+          if (paymentGcash.checked) {
+            gcashDetails.style.display = "block"; // Show Gcash details
+          }
+        });
+
+        paymentCash.addEventListener("change", () => {
+          if (paymentCash.checked) {
+            gcashDetails.style.display = "none"; // Hide Gcash details
+          }
+        });
+      </script>
+
 
 
 
@@ -444,7 +457,7 @@ $conn->close();
                   <img src="../../../../assets/img/product/<?= htmlspecialchars($item['product_img']) ?>"
                     alt="Product Image" class="img-fluid mb-2">
                 </div>
-                <h5 class="product-title"><?php echo htmlspecialchars($item['product_name']); ?></h5>
+                <h5 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h5>
                 <div class="product-price">₱<?php echo number_format($item['cost'], 2); ?> PHP</div>
               </div>
             </div>
