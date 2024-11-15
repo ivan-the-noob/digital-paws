@@ -168,15 +168,18 @@ h3{
 .product-title{
   font-size: 16px;
   color: #7A3015 !important;
+  text-align: center;
 }
 
 .product-item {
   transition: box-shadow 0.3s ease;
   display: grid;
+  cursor: pointer !important;
 }
 
 .product-price{
   color: #7A3015;
+  text-align: center;
 }
 
 .img-product img {
@@ -201,16 +204,17 @@ h3{
 
 .product img {
   max-width: 90%;
-  height: 100%;
+  height: 30vh;
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: auto;
 }
-.product {
-  margin-top: 20px;
+#main-product-img{
+  height: auto !important;
 }
+
 .product .btn {
   margin-top: 10px;
 }
@@ -246,7 +250,7 @@ h3{
 
 
 #modalProductImage{
-  width: 300px;
+  width: auto;
   height: 100%;
   min-height: 15vh;
   padding: 0;
@@ -267,7 +271,7 @@ h3{
 /* Product Section End */
 
 
-/*Modal Section*/
+/*Modal Section Buy Now*/
 
 .form-payment{
   padding-top: 5px;
@@ -321,7 +325,35 @@ h3{
 
 }
 
-/*Modal Section End*/
+/*Modal Section Buy Now End*/
+
+
+/*Modal Section Add to cart*/
+
+.modal-dialog-bottom-centered {
+  height: auto; 
+  margin-top: 18%;
+}
+
+.modal-dialog-bottom-centered .modal-header {
+  border-bottom: none !important;
+}
+
+.add-to-carts{
+  background-color: none;
+  color: #000;
+  display: flex;
+  margin-left: auto;
+  border: 2px solid #7A3015;
+}
+
+.add-to-carts:hover{
+  background-color: #f0f0f0;
+  border: 2px solid #7A3015;
+  color: #000;
+}
+
+/*Modal Section Add to cart end*/
 
 
   /* Chat Bot Section */

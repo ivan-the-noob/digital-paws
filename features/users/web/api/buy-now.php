@@ -2,27 +2,25 @@
 session_start(); // Start the session
 require '../../../../db.php';
 
-$product = null; // Initialize the product variable
-$products = []; // Initialize an array to hold all products
+$product = null; 
+$products = [];
 
 if (isset($_GET['id'])) {
   $id = $_GET['id'];
 
-  // Prepare and execute the query to fetch the specific product
   $stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
   $stmt->bind_param("i", $id);
   $stmt->execute();
   $result = $stmt->get_result();
 
-  // Fetch the product details if found
   if ($result->num_rows > 0) {
     $product = $result->fetch_assoc();
   }
   $stmt->close();
 
-  // Fetch recommended products excluding the chosen product
+
   $stmt = $conn->prepare("SELECT * FROM product WHERE id != ?");
-  $stmt->bind_param("i", $id); // Exclude the product with the chosen ID
+  $stmt->bind_param("i", $id);
   $stmt->execute();
   $result = $stmt->get_result();
 
@@ -33,7 +31,32 @@ if (isset($_GET['id'])) {
   $stmt->close();
 }
 
-// Fetch user details based on session email
+if (isset($_GET['id'])) {
+  $id = $_GET['id'];
+
+  $stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  if ($result->num_rows > 0) {
+    $product = $result->fetch_assoc();
+  }
+  $stmt->close();
+
+
+  $stmt = $conn->prepare("SELECT * FROM product WHERE id != ?");
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  while ($row = $result->fetch_assoc()) {
+    $products[] = $row;
+  }
+
+  $stmt->close();
+}
+
 if (isset($_SESSION['email'])) {
   $email = $_SESSION['email'];
   $stmt = $conn->prepare("SELECT name, contact_number, home_street, address_search FROM users WHERE email = ?");
@@ -47,7 +70,6 @@ if (isset($_SESSION['email'])) {
     exit;
   }
 
-  // Sanitize user data
   $name = htmlspecialchars($user['name']);
   $contactNumber = htmlspecialchars($user['contact_number']);
   $homeStreet = htmlspecialchars($user['home_street']);
@@ -105,6 +127,7 @@ $conn->close();
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="../../../users/web/api/dashboard.html">Profile</a>
+
             <a class="dropdown-item" href="login.html">Logout</a>
           </div>
         </div>
@@ -115,57 +138,166 @@ $conn->close();
   <!-- Product Section -->
   <div class="container">
     <section class="product row">
-      <!-- Main Product Details -->
-      <div class="col-md-6">
-        <img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>"
-          alt="Product Image" class="img-fluid">
-      </div>
-      <div class="col-md-5">
-        <div class="product-text">
-          <p>Digital Paws</p>
-          <h1><?= htmlspecialchars($product['product_name']) ?></h1>
-          <p class="stock">Stock: <?= htmlspecialchars($product['quantity']) ?></p>
-          <p class="price">₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?> PHP</p>
-          <p class="size">Size</p>
-          <div class="size-button-button">
-            <button class="size-button" onclick="selectSize(this)">1kg</button>
-            <button class="size-button" onclick="selectSize(this)">25kg</button>
-          </div>
-          <p class="mb-0 mt-3">Quantity</p>
-          <div class="quantity-wrapper">
-            <button class="quantity-btn" id="decrement-btn">-</button> <!-- Decrement button -->
-            <input type="number" class="form-control" id="quantity" min="1" value="1">
-            <!-- Quantity input -->
-            <button class="quantity-btn" id="increment-btn">+</button> <!-- Increment button -->
-          </div>
+    <input type="hidden" id="main-product-id" value="<?= htmlspecialchars($product['id']) ?>">
+    <div class="col-md-6">
+  <img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>" alt="Product Image" class="img-fluid" id="main-product-img">
+</div>
+<div class="col-md-5">
+  <div class="product-text">
+    <p>Digital Paws</p>
+    <h1 id="main-product-name"><?= htmlspecialchars($product['product_name']) ?></h1>
+    <p class="stock" id="main-product-stock">Stock: <?= htmlspecialchars($product['quantity']) ?></p>
+    <p class="price" id="main-product-price">₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?> PHP</p>
 
-          <button class="add-to-cart mt-2">Add to cart</button>
-          <button class="buy-it-now mt-2" data-bs-toggle="modal" data-bs-target="#orderDetailsModal"
-            onclick="openOrderDetailsModal()">Buy it now</button>
-        </div>
+    <p class="mb-0 mt-3">Quantity</p>
+    <div class="quantity-wrapper">
+      <button class="quantity-btn" id="decrement-btn">-</button> <!-- Decrement button -->
+      <input type="number" class="form-control" id="quantity" min="1" value="1">
+      <!-- Quantity input -->
+      <button class="quantity-btn" id="increment-btn">+</button> <!-- Increment button -->
+    </div>
+
+    <button class="add-to-cart mt-2" data-bs-toggle="modal" data-bs-target="#addToCartModal" onclick="showCartModal()">Add to cart</button>
+    <button class="buy-it-now mt-2" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" onclick="openOrderDetailsModal()">Buy it now</button>
+  </div>
+</div>
+
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-bottom-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addToCartModalLabel">Add to cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <div class="modal-body">
+        <form id="cartForm" method="POST" action="../../function/php/add_to_cart.php">
+          <div class="row">
+            <div class="col-md-4">
+              <img id="productImageModal" src="" alt="Product Image" class="img-fluid">
+            </div>
+            <div class="col-md-8">
+              <h5 id="modalNameProduct">Product Name</h5>
+              <p id="modalProductPrice">₱0.00 PHP</p>
+              <p id="modalProductQuantity">Quantity: 1</p>
+              <p><strong>Total:</strong> ₱<span id="modalTotalPrice">0.00</span></p>
+
+              <input type="hidden" id="productId" name="product_id">
+              <input type="hidden" id="productName" name="product_name">
+              <input type="hidden" id="productPrice" name="product_price">
+              <input type="hidden" id="productQuantity" name="quantity">
+              <input type="hidden" id="totalPrice" name="total_price">
+              <input type="hidden" id="productImage" name="product_image"> 
+
+              <button type="submit" class="btn d-flex add-to-carts">Add to cart</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+ function showCartModal() {
+  const productName = document.querySelector('#main-product-name').innerText;
+  const productPrice = parseFloat(document.querySelector('#main-product-price').innerText.replace('₱', '').replace(' PHP', ''));
+  const quantity = parseInt(document.querySelector('#quantity').value);
+  const totalPrice = (productPrice * quantity).toFixed(2);
+  
+  const productId = document.querySelector('#main-product-id').value; 
+
+  const productImageUrl = document.querySelector('#main-product-img').src;
+  
+  const productImageName = productImageUrl.substring(productImageUrl.lastIndexOf('/') + 1);
+
+  document.querySelector('#productImageModal').src = productImageUrl;
+  document.querySelector('#modalNameProduct').innerText = productName;
+  document.querySelector('#modalProductPrice').innerText = `₱${productPrice.toFixed(2)}`;
+  document.querySelector('#modalProductQuantity').innerText = `Quantity: ${quantity}`;
+  document.querySelector('#modalTotalPrice').innerText = totalPrice;
+
+  document.querySelector('#productId').value = productId;
+  document.querySelector('#productName').value = productName;
+  document.querySelector('#productPrice').value = productPrice.toFixed(2);
+  document.querySelector('#productQuantity').value = quantity;
+  document.querySelector('#totalPrice').value = totalPrice;
+  document.querySelector('#productImage').value = productImageName; 
+}
+
+</script>
       <script>
-        function fetchProductDetails(id) {
-          fetch(`../../function/php/detail_product.php?id=${id}`)
-            .then(response => response.json())
-            .then(data => {
-              document.querySelector('.product img').src =
-                `../../../../assets/img/product/${data.product_img}`;
-              document.querySelector('.product h1').innerText = data.product_name;
-              document.querySelector('.stock').innerText = `Stock: ${data.quantity}`;
-              document.querySelector('.price').innerText = `₱${parseFloat(data.cost).toFixed(2)} PHP`;
-              document.querySelector('#quantity').value = 1;
+let previousProduct = null;
 
-              const productItems = document.querySelectorAll('.row.px-5 .product-item');
-              productItems.forEach(item => {
-                if (item.getAttribute('data-id') == id) {
-                  item.remove();
-                }
-              });
-            })
-            .catch(error => console.error('Error fetching product details:', error));
+function fetchProductDetails(id) {
+  fetch(`../../function/php/detail_product.php?id=${id}`)
+    .then(response => response.json())
+    .then(data => {
+      const currentMainProduct = {
+        id: document.querySelector('#main-product-id').value, // Get the current main product id
+        product_img: document.querySelector('#main-product-img').src.split('/').pop(), // Extract current image filename
+        product_name: document.querySelector('#main-product-name').innerText,
+        cost: parseFloat(document.querySelector('#main-product-price').innerText.replace('₱', '').replace(' PHP', '')),
+        quantity: document.querySelector('#main-product-stock').innerText
+      };
+
+      // Step 3: Update the main product details with the clicked product's details
+      document.querySelector('#main-product-img').src = `../../../../assets/img/product/${data.product_img}`;
+      document.querySelector('#main-product-name').innerText = data.product_name;
+      document.querySelector('#main-product-stock').innerText = `Stock: ${data.quantity}`;
+      document.querySelector('#main-product-price').innerText = `₱${parseFloat(data.cost).toFixed(2)} PHP`;
+      document.querySelector('#quantity').value = 1;
+
+      // Store the clicked product id in a hidden field for reference
+      document.querySelector('#main-product-id').value = data.id;
+
+      // Step 4: Move the current main product back to the "You may also like" section (if it's not already there)
+      const prevProductItem = document.createElement('div');
+      prevProductItem.classList.add('col-md-3', 'col-sm-6', 'col-12', 'mb-4', 'product-item');
+      prevProductItem.setAttribute('data-id', currentMainProduct.id);
+      prevProductItem.innerHTML = `
+        <div class="product-item">
+          <div class="img-product">
+            <img src="../../../../assets/img/product/${currentMainProduct.product_img}" alt="Product Image" class="img-fluid mb-2">
+          </div>
+          <h5 class="product-title">${currentMainProduct.product_name}</h5>
+          <div class="product-price">₱${currentMainProduct.cost.toFixed(2)} PHP</div>
+        </div>
+      `;
+
+      // Append previous product to "You may also like"
+      const productRow = document.querySelector('.row.px-5');
+      productRow.appendChild(prevProductItem); 
+
+      // Attach the click event handler to the newly appended product in "You may also like"
+      prevProductItem.addEventListener('click', function() {
+        fetchProductDetails(currentMainProduct.id); // Trigger fetch on click to swap again
+      });
+
+      // Step 5: Remove the clicked product from "You may also like"
+      const productItems = document.querySelectorAll('.row.px-5 .product-item');
+      productItems.forEach(item => {
+        if (item.getAttribute('data-id') == id) {
+          item.remove(); // Remove the clicked product item from the list
         }
+      });
+    })
+    .catch(error => console.error('Error fetching product details:', error));
+}
+
+// Ensure that all existing products in the "You may also like" section are clickable
+document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
+  item.addEventListener('click', function() {
+    const productId = item.getAttribute('data-id');
+    fetchProductDetails(productId); // Trigger fetch when clicking an existing product
+  });
+});
+
+
       </script>
+
+
 
       <!-- Bootstrap Modal for Order Details -->
       <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel"
@@ -227,29 +359,27 @@ $conn->close();
 
                         <!-- Gcash specific inputs and image -->
                         <div id="gcash-details" style="display: none;">
-                          <img src="../../../../assets/img/gcash.jfif" alt="Gcash"
-                            class="img-fluid mb-3 gcash">
-
-                          <!-- Hidden inputs for Gcash -->
-                          <input type="hidden" name="paymentMethod" value="gcash">
-                          <input type="hidden" name="screenshot" value="">
-                          <input type="hidden" name="reference" value="">
+                            <img src="../../../../assets/img/gcash.jfif" alt="Gcash" class="img-fluid mb-3 gcash">
+                            <input type="file" name="screenshot" id="gcash-image" class="form-control m">
+                            <label for="number" class="form-check-label mt-2">Reference # </label>
+                            <input type="number" name="reference" value="" class="form-control mt-1">
                         </div>
+
                       </div>
                     </div>
                   </div>
                   <div class="col-md-6 mb-3">
                     <div class="card">
                       <div class="card-body">
+                      <h5 class="card-title">Product</h5>
                         <div class="row">
                           <div class="col-12 col-md-5 mb-3 mb-md-0 text-center">
-                            <img id="modalProductImage" src="" alt="Product Image"
-                              class="img-fluid">
+                          <img id="modalProductImage" src="" alt="Product Image" class="img-fluid">
+                          <input type="hidden" name="product_img" id="product_img">
                           </div>
 
                           <div class="col-6 col-md-3 mb-3 mb-md-0">
                             <h6 id="modalProductName" name="product-name">Product Name</h6>
-                            <p id="modalProductSize" name="size">Size: 25kg</p>
                           </div>
 
                           <div class="col-12 col-md-4 d-flex justify-content-end mt-auto">
@@ -309,7 +439,7 @@ $conn->close();
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+              <button type="submit" class="btn btn-primary">Checkout</button>
             </div>
           </div>
         </div>
@@ -350,24 +480,33 @@ $conn->close();
 
         // Sync the input value with quantity and update the display
         function syncQuantity(value) {
-          quantityInput.value = value;
+              quantityInput.value = value;
 
-          // Update both total cost elements
-          const totalCostDisplay1 = document.getElementById("total-cost-1");
-          const totalCostDisplay2 = document.getElementById("total-cost-2");
+              // Update the quantity display
+              const quantityDisplay = document.getElementById("quantity-display");
+              quantityDisplay.textContent = `${value}x`;
 
-          const subtotal = updateTotalCost(value, totalCostDisplay1); // Update total cost for the first div
-          updateTotalCost(value, totalCostDisplay2); // Update total cost for the second div
+              // Update both total cost elements
+              const totalCostDisplay1 = document.getElementById("total-cost-1");
+              const totalCostDisplay2 = document.getElementById("total-cost-2");
 
-          // Update the total amount (Subtotal + Shipping Fee)
-          updateTotalAmount();
-        }
+              const subtotal = updateTotalCost(value, totalCostDisplay1); // Update total cost for the first div
+              updateTotalCost(value, totalCostDisplay2); // Update total cost for the second div
+
+              // Update the total amount (Subtotal + Shipping Fee)
+              updateTotalAmount();
+
+              // Update the hidden input in the modal
+              document.querySelector('input[name="quantity"]').value = value;
+          }
+
+
 
         // Increment the quantity and update displays
         incrementBtn.addEventListener("click", () => {
-          const newValue = parseInt(quantityInput.value) + 1; // Increment the value by 1
-          syncQuantity(newValue); // Update quantity input and display
-        });
+    const newValue = parseInt(quantityInput.value) + 1; // Increment the value by 1
+    syncQuantity(newValue); // Update quantity input and display
+});
 
         // Decrement the quantity and update displays
         decrementBtn.addEventListener("click", () => {
@@ -392,28 +531,30 @@ $conn->close();
 
 
       <script>
-        function openOrderDetailsModal() {
-          // Get product details
-          const productImage = document.querySelector('.product img').src;
-          const productName = document.querySelector('.product h1').innerText;
-          const productPrice = document.querySelector('.price').innerText;
-          const productQuantity = document.querySelector('#quantity').value; // get the input value
-          const selectedSize = document.querySelector('.size-button.selected'); // get selected size button
+      function openOrderDetailsModal() {
+    const productImage = document.querySelector('.product img').src;
+    const productName = document.querySelector('.product h1').innerText;
+    const productPrice = document.querySelector('.price').innerText;
+    const productQuantity = document.querySelector('#quantity').value; // get the input value
+    const selectedSize = document.querySelector('.size-button.selected'); // get selected size button
 
-          // Update modal content
-          document.getElementById('modalProductImage').src = productImage;
-          document.getElementById('modalProductName').innerText = productName;
-          document.getElementById('modalProductPrice').innerText = productPrice;
-          document.getElementById('modalProductQuantity').innerText = `Quantity: ${productQuantity}`;
-          document.getElementById('modalProductSize').innerText = selectedSize ? selectedSize.innerText :
-            'Size not selected';
+    // Update modal content
+    document.getElementById('modalProductImage').src = productImage;
+    document.getElementById('modalProductName').innerText = productName;
+    document.getElementById('modalProductPrice').innerText = productPrice;
+    document.getElementById('modalProductQuantity').innerText = `Quantity: ${productQuantity}`;
+    document.getElementById('modalProductSize').innerText = selectedSize ? selectedSize.innerText : 'Size not selected';
 
-          // Set static values for subtotal and total
-          document.getElementById('subtotalAmount').innerText = (parseFloat(productPrice.replace('').replace(
-            ',', '')) * productQuantity).toFixed(2);
-          document.getElementById('totalAmount').innerText = (parseFloat(document.getElementById('subtotalAmount')
-            .innerText) + 69.00).toFixed(2); // Adding static shipping fee
-        }
+    // Update hidden inputs
+    document.querySelector('input[name="quantity"]').value = productQuantity;
+
+    // Update subtotal and total
+    document.getElementById('subtotalAmount').innerText = (parseFloat(productPrice.replace('₱', '').replace(',', '')) * productQuantity).toFixed(2);
+    document.getElementById('totalAmount').innerText = (parseFloat(document.getElementById('subtotalAmount').innerText) + 69.00).toFixed(2); // Adding static shipping fee
+
+    document.getElementById('product_img').value = productImage;
+}
+
       </script>
 
       <script>
@@ -443,27 +584,26 @@ $conn->close();
 
 
       <h3 class="mt-5">You may also like</h3>
-      <div class="row px-5">
-        <?php if (empty($products)): ?>
-          <div class="col-12">
-            <p>No products available.</p>
-          </div>
-        <?php else: ?>
-          <?php foreach ($products as $item): ?>
-            <div class="col-md-3 col-sm-6 col-12 mb-4 product-item" data-id="<?= $item['id'] ?>"
-              onclick="fetchProductDetails(<?= $item['id'] ?>)">
-              <div class="product-item">
-                <div class="img-product">
-                  <img src="../../../../assets/img/product/<?= htmlspecialchars($item['product_img']) ?>"
-                    alt="Product Image" class="img-fluid mb-2">
-                </div>
-                <h5 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h5>
-                <div class="product-price">₱<?php echo number_format($item['cost'], 2); ?> PHP</div>
-              </div>
+        <div class="row px-5">
+          <?php if (empty($products)): ?>
+            <div class="col-12">
+              <p>No products available.</p>
             </div>
-          <?php endforeach; ?>
-        <?php endif; ?>
-      </div>
+          <?php else: ?>
+            <?php foreach ($products as $item): ?>
+              <div class="col-md-3 col-sm-6 col-12 mb-4 product-item" data-id="<?= $item['id'] ?>" onclick="fetchProductDetails(<?= $item['id'] ?>)">
+                <div class="product-item">
+                  <div class="img-product">
+                    <img src="../../../../assets/img/product/<?= htmlspecialchars($item['product_img']) ?>" alt="Product Image" class="img-fluid mb-2">
+                  </div>
+                  <h5 class="product-title"><?= htmlspecialchars($item['product_name']) ?></h5>
+                  <div class="product-price">₱<?= number_format($item['cost'], 2) ?> PHP</div>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+
     </section>
 
 
@@ -471,10 +611,9 @@ $conn->close();
 
   </div>
 
-  <!-- Chat Bot -->
-  <button id="chat-bot-button" onclick="toggleChat()">
+  <button id="chat-bot-button" type="button" onclick="toggleChat()">
     <i class="fa-solid fa-headset"></i>
-  </button>
+</button>
   <div id="chat-interface" class="hidden">
     <div id="chat-header">
       <p>Amazing Day! How may I help you?</p>
@@ -498,7 +637,7 @@ $conn->close();
 
 </body>
 <script src="../../function/script/select-size.js"></script>
-<script src="../../function/script/product-size.js"></script>
+
 <script src="../../function/script/chatbot_questionslide.js"></script>
 <script src="../../function/script/chatbot-toggle.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

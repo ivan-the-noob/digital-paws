@@ -2,6 +2,24 @@
 
 session_start();
 $email = isset($_SESSION['email']);
+
+$email = $_SESSION['email'];
+
+require 'db.php';
+
+$sql = "SELECT product_name, total_price, quantity FROM cart WHERE email = '$email'";
+$result = $conn->query($sql);
+
+$cartItems = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $cartItems[] = $row;
+    }
+} else {
+    $cartItems = [];
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -55,23 +73,30 @@ $email = isset($_SESSION['email']);
                     </ul>
                     <div class="d-flex ml-auto">
                         <?php if ($email): ?>
+                            <!-- Profile Dropdown -->
                             <div class="dropdown second-dropdown">
-                                <button class="btn" type="button" id="dropdownMenuButton2"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                                     <img src="assets/img/customer.jfif" alt="Profile Image" class="profile">
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                                <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
                                     <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
                                     <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
                                 </ul>
                             </div>
 
+                            <!-- Cart Dropdown -->
+     
+                                <button>
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+
 
                         <?php else: ?>
-                        <a href="features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
+                            <!-- Login Button if User is Not Logged In -->
+                            <a href="features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
                         <?php endif; ?>
-                       
                     </div>
+
         </nav>
     </div>
     <section class="front relative-container">
