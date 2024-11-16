@@ -229,7 +229,7 @@ if (isset($_SESSION['email'])) {
                                     <input type="hidden" name="name" value="<?php echo $name; ?>">
                                     <input type="hidden" name="contact-num" value="<?php echo $contactNumber; ?>">
                                     <input type="hidden" name="address-search" value="<?php echo $addressSearch; ?>">
-                                    <input type="hidden" name="product_img" id="product_img">
+                                  
                                 </div>
                             </div>
                         </div>
@@ -268,9 +268,12 @@ if (isset($_SESSION['email'])) {
                         <!-- Product Card -->
                         <div class="col-md-6 mb-3">
                             <div class="card" id="product-card"></div>
-                            <input type="hidden" name="product_name" id="product_name" value="">
-                            <input type="hidden" name="quantity" id="quantity" value="">
-                            <input type="hidden" name="sub-total" id="sub-total" value="">
+                            <input type="hidden" name="product_name[]" id="product_name" value="">
+                            <input type="hidden" name="quantity[]" id="quantity" value="">
+                            <input type="hidden" name="sub_total[]" id="sub-total" value="">
+                            <input type="hidden" name="product_img[]" id="product_img" value="">
+                            <input type="hidden" name="cost[]" id="cost" value="">
+                            
                         </div>
 
                         <!-- Order Summary Card -->
@@ -285,6 +288,7 @@ if (isset($_SESSION['email'])) {
                                             ₱0.00
                                         </p>
                                         <input type="hidden" name="sub-total" value="0.00">
+                                        <input type="hidden" name="from_cart" value="true">
                                     </div>
 
                                     <!-- Shipping Fee Section -->
@@ -462,18 +466,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkboxes = document.querySelectorAll(".move-to-card-box");
     const cardBox = document.getElementById("card-box");
     const productCard = document.getElementById("product-card");
-    const subtotalDisplay = document.getElementById("total-cost-2"); // Subtotal display
-    const subtotalInput = document.querySelector('input[name="sub-total"]'); // Hidden input for subtotal
+    const subtotalDisplay = document.getElementById("total-cost-2");
+    const subtotalInput = document.querySelector('input[name="sub-total"]');
 
-    let subtotal = 0; // Start subtotal at 0
+    let subtotal = 0;
 
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener("change", function () {
-            const itemData = JSON.parse(this.dataset.item); // Get item data from the checkbox
+            const itemData = JSON.parse(this.dataset.item);
 
             if (this.checked) {
-                // Add item to selectedItems array
-                // Create a new card element for the card-box
                 const card = document.createElement("div");
                 card.classList.add("card", "p-3", "mt-2", "card-contents");
                 card.dataset.itemId = itemData.id;
@@ -488,8 +490,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                          alt="Product Image">
                                 </div>
                                 <div class="d-flex justify-content-between">
-                                    <h5 class="card-title mb-1 name="product_name">${itemData.product_name}</h5>
-                                    <p class="mb-1" name="quantity">${itemData.quantity}x</p>
+                                    <h5 class="card-title mb-1">${itemData.product_name}</h5>
+                                    <p class="mb-1">${itemData.quantity}x</p>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
@@ -500,48 +502,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 `;
 
-                // Append to the card box
                 cardBox.appendChild(card);
-
-                // Create a new card in product-card for the selected item
                 createProductCard(itemData);
 
-                // Update the subtotal by adding the item's price
                 subtotal += parseFloat(itemData.total_price);
                 updateSubtotal();
 
-                // Add hidden inputs for the product name and image
-                const hiddenProductName = document.querySelector('input[name="product_name"]');
-                const hiddenProductImg = document.querySelector('input[name="product_img"]');
-
-                if (hiddenProductName) {
-                    hiddenProductName.value = itemData.product_name;
-                }
-                if (hiddenProductImg) {
-                    hiddenProductImg.value = itemData.product_image;
-                }
+                // Update hidden inputs with arrays
+                updateHiddenInputs(itemData, "add");
             } else {
-                // Remove the item from the selectedItems array
-                // Remove the card element from card-box if unchecked
                 const cardToRemove = cardBox.querySelector(`div[data-item-id="${itemData.id}"]`);
                 if (cardToRemove) {
                     cardBox.removeChild(cardToRemove);
                 }
 
-                // Remove the card element from product-card if unchecked
                 const productCardToRemove = productCard.querySelector(`div[data-item-id="${itemData.id}"]`);
                 if (productCardToRemove) {
                     productCard.removeChild(productCardToRemove);
                 }
 
-                // Update the subtotal by subtracting the item's price
                 subtotal -= parseFloat(itemData.total_price);
                 updateSubtotal();
+
+                updateHiddenInputs(itemData, "remove");
             }
         });
     });
 
-    // Function to create a card in the product-card section for each selected item
     function createProductCard(itemData) {
         const card = document.createElement("div");
         card.classList.add("card", "p-3", "mt-2", "product-card-item");
@@ -568,20 +555,70 @@ document.addEventListener("DOMContentLoaded", function () {
                 <hr>
             </div>
         `;
-        
+
         productCard.appendChild(card);
     }
 
-    // Function to update the subtotal display
     function updateSubtotal() {
-        // Update the display with the subtotal value, formatted as currency
         subtotalDisplay.textContent = `₱${subtotal.toFixed(2)}`;
-
-        // Update the hidden input value for the subtotal (to submit with the form)
         subtotalInput.value = subtotal.toFixed(2);
     }
-});
 
+    function updateHiddenInputs(itemData, action) {
+        const productNames = document.querySelector('input[name="product_name[]"]');
+        const productImages = document.querySelector('input[name="product_img[]"]');
+        const quantities = document.querySelector('input[name="quantity[]"]');
+        const costs = document.querySelector('input[name="cost[]"]'); // New field for cost
+
+        if (action === "add") {
+            // Convert existing values to arrays, append new data
+            if (productNames) {
+                const updatedNames = JSON.parse(productNames.value || "[]");
+                updatedNames.push(itemData.product_name);
+                productNames.value = JSON.stringify(updatedNames);
+            }
+
+            if (productImages) {
+                const updatedImages = JSON.parse(productImages.value || "[]");
+                updatedImages.push(itemData.product_image);
+                productImages.value = JSON.stringify(updatedImages);
+            }
+
+            if (quantities) {
+                const updatedQuantities = JSON.parse(quantities.value || "[]");
+                updatedQuantities.push(itemData.quantity);
+                quantities.value = JSON.stringify(updatedQuantities);
+            }
+
+            if (costs) {
+                const updatedCosts = JSON.parse(costs.value || "[]");
+                updatedCosts.push(itemData.total_price); // Add the price to the cost array
+                costs.value = JSON.stringify(updatedCosts);
+            }
+        } else if (action === "remove") {
+            if (productNames) {
+                const updatedNames = JSON.parse(productNames.value || "[]").filter(name => name !== itemData.product_name);
+                productNames.value = JSON.stringify(updatedNames);
+            }
+
+            if (productImages) {
+                const updatedImages = JSON.parse(productImages.value || "[]").filter(image => image !== itemData.product_image);
+                productImages.value = JSON.stringify(updatedImages);
+            }
+
+            if (quantities) {
+                const updatedQuantities = JSON.parse(quantities.value || "[]").filter(qty => qty !== itemData.quantity);
+                quantities.value = JSON.stringify(updatedQuantities);
+            }
+
+            if (costs) {
+                const updatedCosts = JSON.parse(costs.value || "[]").filter(cost => cost !== itemData.total_price);
+                costs.value = JSON.stringify(updatedCosts);
+            }
+        }
+    }
+
+});
 
 
 

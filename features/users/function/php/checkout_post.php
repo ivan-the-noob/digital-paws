@@ -1,49 +1,83 @@
 <?php
-    session_start();
+session_start();
 require '../../../../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Debug: Print all POST data
+    echo "<pre>";
+    echo "POST Data:\n";
+    print_r($_POST);
+
+    echo "\nFiles Data:\n";
+    print_r($_FILES);
+
+    echo "\nSession Data:\n";
+    print_r($_SESSION);
+    echo "</pre>";
+
     // Sanitize and retrieve POST data
     $name = $_POST['name'];
     $email = isset($_SESSION['email']) ? $_SESSION['email'] : null; 
     $contact_num = $_POST['contact-num'];
     $address_search = $_POST['address-search'];
     $payment_method = $_POST['paymentMethod'];
-    $screenshot = isset($_FILES['screenshot']) ? $_FILES['screenshot']['name'] : null;  // Handle file input
+    $screenshot = isset($_FILES['screenshot']) ? $_FILES['screenshot']['name'] : null;
     $reference_id = isset($_POST['reference']) ? $_POST['reference'] : null;
 
-    // Product info
-    $product_name = $_POST['product_name'];  // Ensure to retrieve the product name(s) from the form
-    $quantity = $_POST['quantity'];
-    $sub_total = $_POST['sub-total'];
+    // Decode JSON-encoded arrays
+    $product_names = json_decode($_POST['product_name'][0], true);
+    $quantities = json_decode($_POST['quantity'][0], true);
+    $product_imgs = json_decode($_POST['product_img'][0], true);
+    $costs = json_decode($_POST['cost'][0], true); // Added line for cost
+
     $shipping_fee = $_POST['shipping-fee'];
     $total_amount = $_POST['total-amount'];
-    $product_img = $_POST['product_img'];  // Retrieve the product image
+
+    // Add 'from_cart' value: true if the order is from the cart
+    $from_cart = isset($_POST['from_cart']) && $_POST['from_cart'] == 'true' ? 1 : 0;
 
     // Handle file upload if screenshot is provided
     if ($screenshot) {
-        // Handle file upload, move it to the desired folder
-        $upload_dir = "../../../../assets/img/product";
+        $upload_dir = "../../../../assets/img/product/";
         $upload_file = $upload_dir . basename($_FILES["screenshot"]["name"]);
-        move_uploaded_file($_FILES["screenshot"]["tmp_name"], $upload_file);
+        if (!move_uploaded_file($_FILES["screenshot"]["tmp_name"], $upload_file)) {
+            echo "Failed to upload screenshot.";
+        }
     }
 
-    // SQL Query to Insert Data into Checkout Table
-   $sql = "INSERT INTO checkout (name, email, contact_num, address_search, payment_method, screenshot, reference_id, product_name, quantity, sub_total, shipping_fee, total_amount, product_img)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Prepare the SQL statement for insertion
+    $stmt = $conn->prepare(
+        "INSERT INTO checkout 
+        (name, email, contact_num, address_search, payment_method, screenshot, reference_id, 
+        product_name, quantity, sub_total, shipping_fee, total_amount, product_img, cost, from_cart)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+    );
 
-    // Prepare statement
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssdddss", $name, $email, $contact_num, $address_search, $payment_method, $screenshot, $reference_id, $product_name, $quantity, $sub_total, $shipping_fee, $total_amount, $product_img);
+    foreach ($product_names as $index => $product_name) {
+        $quantity = $quantities[$index];
+        $sub_total = $quantity * 49.00; // Example computation (replace with your logic)
+        $product_img = $product_imgs[$index];
+        $cost = $costs[$index]; // Get the cost for the current product
 
-    // Execute statement
-    if ($stmt->execute()) {
-        echo "Order successfully processed!";
+        // Bind parameters to the SQL statement
+        $stmt->bind_param(
+            "ssssssssdddssss", 
+            $name, $email, $contact_num, $address_search, $payment_method, 
+            $screenshot, $reference_id, $product_name, $quantity, $sub_total, 
+            $shipping_fee, $total_amount, $product_img, $cost, $from_cart
+        );
+
+        if (!$stmt->execute()) {
+            echo "Error: " . $stmt->error;
+        }
+    }
+
+    if ($stmt->error) {
+        echo "Final Error: " . $stmt->error;
     } else {
-        echo "Error: " . $stmt->error;
+        echo "Order successfully processed!";
     }
 
-    // Close statement and connection
     $stmt->close();
     $conn->close();
 }

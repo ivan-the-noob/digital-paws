@@ -129,8 +129,7 @@
 
   .pending{
     background-color: #FFF9C4 !important;
-    width: 50%;
-    margin-left: auto;
+    width: 150px;
     border-radius: 24px;
     display: flex;
     align-items: center;
@@ -143,8 +142,7 @@
 
   .cancel{
     background-color: red;
-    width: 50%;
-    margin-left: auto;
+    width: 150px;
     border-radius: 24px;
     display: flex;
     align-items: center;
@@ -163,7 +161,7 @@
   .to-ship-w{
     background-color: #E3F2FD; 
     border: 1px solid #EDEBEB;
-    width: 50%;
+    width: 150px;
     margin-left: auto;
     border-radius: 24px;
     display: flex;
@@ -176,7 +174,7 @@
   .to-receive-w{
     background-color: #E8F5E9; 
     border: 1px solid #EDEBEB;
-    width: 50%;
+    width: 150px;
     margin-left: auto;
     border-radius: 24px;
     display: flex;
@@ -203,7 +201,7 @@
   .cancelled-order{
     background-color: red;
     border: 1px solid #EDEBEB;
-    width: 80%;
+    width: 150px;
     margin-left: auto;
     border-radius: 24px;
     display: flex;
@@ -213,6 +211,10 @@
     font-weight: 700;
     color :#fff;
 
+  }
+
+  .img-fluid{
+    height: 10vh !important;
   }
 
 /*Container Section End*/

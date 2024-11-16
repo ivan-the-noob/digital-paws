@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productName = $_POST['product-name'];
     $quantity = $_POST['quantity'];
     $cost = $_POST['cost'];
-    $subTotal = $_POST['sub-total'];
+    $subTotal = $_POST['sub-total'] ?? 'null';
     $shippingFee = $_POST['shipping-fee'];
     $totalAmount = $_POST['total-amount'];
     $email = $_SESSION['email'] ?? ''; 

@@ -395,7 +395,7 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
                               <input type="hidden" name="product-name"
                                 value="<?= htmlspecialchars($product['product_name']) ?>">
                               <input type="hidden" name="size" value="25kg">
-                              <input type="hidden" name="quantity" value="1">
+                              <input type="hidden" name="quantity" id="quantity-hidden" value="1">
                               <input type="hidden" name="cost"
                                 value="<?= htmlspecialchars(number_format($product['cost'], 2)) ?>">
                             </div>
@@ -412,15 +412,14 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
                     <div class="card">
                       <div class="card-body">
                         <h5 class="card-title">Order Summary</h5>
-                        <div class="d-flex justify-content-between">
-                          <p>Subtotal:</p>
-                          <p class="mb-0 d-flex justify-content-center mt-2" id="total-cost-2"
-                            name="sub-total">
-                            ₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?>
-                          </p>
-                          <input type="hidden" name="sub-total"
-                            value="<?= htmlspecialchars(number_format($product['cost'], 2)) ?>">
-                        </div>
+                          <div class="d-flex justify-content-between">
+                            <p>Subtotal:</p>
+                            <p class="mb-0 d-flex justify-content-center mt-2" id="total-cost-2" name="sub-total">
+                              ₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?>
+                            </p>
+                            <input type="hidden" name="sub-total" 
+                                  value="<?= htmlspecialchars(number_format($product['cost'], 2)) ?>">
+                          </div>
                         <div class="d-flex justify-content-between">
                           <p>Shipping Fee:</p>
                           <p>₱<span id="shippingFee" name="shipping-fee">69.00</span></p>
@@ -460,10 +459,14 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
 
         // Function to update the total cost (Subtotal)
         function updateTotalCost(quantity, totalCostElement) {
-          const totalCost = (unitCost * quantity).toFixed(2); // Calculate total cost based on quantity
-          totalCostElement.textContent = `₱${totalCost} PHP`; // Update total cost
-          return totalCost; // Return the calculated total cost for further calculations
-        }
+              const totalCost = (unitCost * quantity).toFixed(2); // Calculate total cost based on quantity
+              totalCostElement.textContent = `₱${totalCost} PHP`; // Update total cost display
+              
+              // Update the hidden input for subtotal
+              document.querySelector('input[name="sub-total"]').value = totalCost; 
+
+              return totalCost; // Return the calculated total cost for further calculations
+          }
 
         // Function to update the total amount (Subtotal + Shipping Fee)
         function updateTotalAmount() {
@@ -480,25 +483,25 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
 
         // Sync the input value with quantity and update the display
         function syncQuantity(value) {
-              quantityInput.value = value;
+    quantityInput.value = value;
 
-              // Update the quantity display
-              const quantityDisplay = document.getElementById("quantity-display");
-              quantityDisplay.textContent = `${value}x`;
+    // Update the quantity display
+    const quantityDisplay = document.getElementById("quantity-display");
+    quantityDisplay.textContent = `${value}x`;
 
-              // Update both total cost elements
-              const totalCostDisplay1 = document.getElementById("total-cost-1");
-              const totalCostDisplay2 = document.getElementById("total-cost-2");
+    // Update both total cost elements
+    const totalCostDisplay1 = document.getElementById("total-cost-1");
+    const totalCostDisplay2 = document.getElementById("total-cost-2");
 
-              const subtotal = updateTotalCost(value, totalCostDisplay1); // Update total cost for the first div
-              updateTotalCost(value, totalCostDisplay2); // Update total cost for the second div
+    const subtotal = updateTotalCost(value, totalCostDisplay1); // Update total cost for the first div
+    updateTotalCost(value, totalCostDisplay2); // Update total cost for the second div
 
-              // Update the total amount (Subtotal + Shipping Fee)
-              updateTotalAmount();
+    // Update the total amount (Subtotal + Shipping Fee)
+    updateTotalAmount();
 
-              // Update the hidden input in the modal
-              document.querySelector('input[name="quantity"]').value = value;
-          }
+    // Update the hidden input for quantity
+    document.getElementById('quantity-hidden').value = value;
+}
 
 
 

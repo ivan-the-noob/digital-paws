@@ -17,8 +17,27 @@
 
 <?php
 session_start();
-$email = isset($_SESSION['email']);
+$email = isset($_SESSION['email']) ? $_SESSION['email'] : null;
 include '../../../../db.php';
+
+if (isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];  // Get the email from session
+    
+    // Prepare and execute the query to fetch orders where from_cart = 1 and match the email
+    $sql = "SELECT * FROM checkout WHERE from_cart = 1 AND email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);  // Bind the email parameter
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    // Fetch all orders as an associative array
+    $orders = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    // No email in session, so set orders as empty
+    $orders = [];
+}
+
+
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light">
@@ -135,34 +154,64 @@ include '../../../../db.php';
             $cancelled_orders[] = $row;
         }
     }
+
+
 ?>
 
 <!-- Displaying Orders -->
 <div class="orders">
-    <?php foreach ($orders as $order): ?>
-        <div class="card p-3 mt-4">
-            <div class="row align-items-center">
-                <div class="col-md-2">
-                    <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
-                </div>
-                <div class="col-md-7">
-                    <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
-                    <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
-                </div>
-                <div class="col-md-3 text-end">
-                    <div class="d-flex gap-1">
-                        <p class="p-2 pending">Pending</p>
-                        <button class="cancel" data-id="<?php echo $order['id']; ?>">Cancel</button>
-                    </div>
-                    <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
-                   
-                </div>
-            </div>
-            <hr>
-            <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
+    
+
+<?php if (!empty($orders)): ?> 
+    <div class="card p-3 mt-4">
+        <div class="d-flex gap-1 mb-3 justify-content-end">
+            <p class="p-2 pending">Pending</p>
+            <button class="cancel" data-id="<?php echo $orders[0]['id']; ?>">Cancel</button>
         </div>
-    <?php endforeach; ?>
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <?php
+                $totalSubTotal = 0; // Initialize the subtotal amount
+                $totalShippingFee = 0; // Initialize the shipping fee amount
+                
+                foreach ($orders as $order): 
+                    $totalSubTotal += $order['sub_total']; // Add each order's sub_total
+                    $totalShippingFee = $order['shipping_fee']; // Assuming all orders have the same shipping fee
+                ?>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
+                        </div>
+                        <div class="col-md-7">
+                            <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
+                            <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['sub_total'], 2); ?></span></p>
+                        </div>
+                    </div>
+                    <hr>
+                <?php endforeach; ?>
+
+                <!-- Total amount at the bottom of the card -->
+                <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalShippingFee, 2); ?></span></p>
+                <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalSubTotal + $totalShippingFee, 2); ?></span></p>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <p>No items in the cart for this email.</p>
+<?php endif; ?>
+
+    
 </div>
+
+
+
+
+
+
+
 <script>
  document.querySelectorAll('.cancel').forEach(button => {
     button.addEventListener('click', function() {
@@ -190,99 +239,171 @@ include '../../../../db.php';
 
 <!-- Displaying To-Ship Orders -->
 <div class="to-ship">
-    <?php foreach ($to_ship_orders as $order): ?>
-        <div class="card p-3 mt-4">
-            <div class="row align-items-center">
-                <div class="col-md-2">
-                    <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
-                </div>
-                <div class="col-md-7">
-                    <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
-                    <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
-                </div>
-                <div class="col-md-3 text-end">
-                    <p class="p-2 to-ship-w">To Ship</p>
-                    <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
-                  
-                </div>
-            </div>
-            <hr>
-            <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
+<?php if (!empty($to_ship_orders)): ?>
+    <div class="card p-3 mt-4">
+        <div class="d-flex gap-1 mb-3 justify-content-end">
+            <p class="p-2 to-ship-w">To Ship</p>
         </div>
-    <?php endforeach; ?>
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <?php
+                $totalToShipSubTotal = 0;
+                $totalToShipShippingFee = 0;
+                foreach ($to_ship_orders as $order):
+                    $totalToShipSubTotal += $order['cost']; // Add each order's cost
+                    $totalToShipShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                ?>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
+                        </div>
+                        <div class="col-md-7">
+                            <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
+                            <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['cost'], 2); ?></span></p>
+                        </div>
+                    </div>
+                    <hr>
+                <?php endforeach; ?>
+
+                <!-- Total amount at the bottom of the card -->
+                <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalToShipShippingFee, 2); ?></span></p>
+                <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalToShipSubTotal + $totalToShipShippingFee, 2); ?></span></p>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <p>No to-ship orders available.</p>
+<?php endif; ?>
 </div>
 
 <!-- Displaying To-Receive Orders -->
 <div class="to-receive">
-    <?php foreach ($to_receive_orders as $order): ?>
-        <div class="card p-3 mt-4">
-            <div class="row align-items-center">
-                <div class="col-md-2">
-                    <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
-                </div>
-                <div class="col-md-7">
-                    <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
-                    <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
-                </div>
-                <div class="col-md-3 text-end">
-                    <p class="p-2 to-receive-w">To Receive</p>
-                    <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
-                   
-                </div>
-            </div>
-            <hr>
-            <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
+<?php if (!empty($to_receive_orders)): ?>
+    <div class="card p-3 mt-4">
+        <div class="d-flex gap-1 mb-3 justify-content-end">
+            <p class="p-2 to-receive-w">To Receive</p>
         </div>
-    <?php endforeach; ?>
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <?php
+                $totalToReceiveSubTotal = 0;
+                $totalToReceiveShippingFee = 0;
+                foreach ($to_receive_orders as $order):
+                    $totalToReceiveSubTotal += $order['cost']; // Add each order's cost
+                    $totalToReceiveShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                ?>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
+                        </div>
+                        <div class="col-md-7">
+                            <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
+                            <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['cost'], 2); ?></span></p>
+                        </div>
+                    </div>
+                    <hr>
+                <?php endforeach; ?>
+
+                <!-- Total amount at the bottom of the card -->
+                <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalToReceiveShippingFee, 2); ?></span></p>
+                <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalToReceiveSubTotal + $totalToReceiveShippingFee, 2); ?></span></p>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <p>No to-receive orders available.</p>
+<?php endif; ?>
 </div>
 
 <!-- Displaying Completed Orders -->
 <div class="received-orders">
-    <?php foreach ($completed_orders as $order): ?>
-        <div class="card p-3 mt-4">
-            <div class="row align-items-center">
-                <div class="col-md-2">
-                    <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
-                </div>
-                <div class="col-md-7">
-                    <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
-                    <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
-                </div>
-                <div class="col-md-3 text-end">
-                    <p class="p-2 completed-orders">Completed Orders</p>
-                    <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
-                
-                </div>
-            </div>
-            <hr>
-            <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
+<?php if (!empty($completed_orders)): ?>
+    <div class="card p-3 mt-4">
+        <div class="d-flex gap-1 mb-3 justify-content-end">
+            <p class="p-2 completed-orders">Completed Orders</p>
         </div>
-    <?php endforeach; ?>
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <?php
+                $totalCompletedSubTotal = 0;
+                $totalCompletedShippingFee = 0;
+                foreach ($completed_orders as $order):
+                    $totalCompletedSubTotal += $order['cost']; // Add each order's cost
+                    $totalCompletedShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                ?>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
+                        </div>
+                        <div class="col-md-7">
+                            <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
+                            <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['cost'], 2); ?></span></p>
+                        </div>
+                    </div>
+                    <hr>
+                <?php endforeach; ?>
+
+                <!-- Total amount at the bottom of the card -->
+                <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalCompletedShippingFee, 2); ?></span></p>
+                <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalCompletedSubTotal + $totalCompletedShippingFee, 2); ?></span></p>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <p>No completed orders available.</p>
+<?php endif; ?>
 </div>
 
 
 <!-- Displaying Cancelled Orders -->
 <div class="cancelled-orders">
-    <?php foreach ($cancelled_orders as $order): ?>
-        <div class="card p-3 mt-4">
-            <div class="row align-items-center">
-                <div class="col-md-2">
-                    <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
-                </div>
-                <div class="col-md-7">
-                    <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
-                    <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
-                </div>
-                <div class="col-md-3 text-end">
-                    <p class="p-2 cancelled-order">Cancelled Orders</p>
-                    <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
-                 
-                </div>
-            </div>
-            <hr>
-            <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($order['total_amount'], 2); ?></span></p>
+<?php if (!empty($cancelled_orders)): ?>
+    <div class="card p-3 mt-4">
+        <div class="d-flex gap-1 mb-3 justify-content-end">
+            <p class="p-2 cancelled-order">Cancelled Orders</p>
         </div>
-    <?php endforeach; ?>
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <?php
+                $totalCancelledSubTotal = 0;
+                $totalCancelledShippingFee = 0;
+                foreach ($cancelled_orders as $order):
+                    $totalCancelledSubTotal += $order['cost']; // Add each order's cost
+                    $totalCancelledShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                ?>
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
+                        </div>
+                        <div class="col-md-7">
+                            <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
+                            <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['cost'], 2); ?></span></p>
+                        </div>
+                    </div>
+                    <hr>
+                <?php endforeach; ?>
+
+                <!-- Total amount at the bottom of the card -->
+                <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalCancelledShippingFee, 2); ?></span></p>
+                <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalCancelledSubTotal + $totalCancelledShippingFee, 2); ?></span></p>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <p>No cancelled orders available.</p>
+<?php endif; ?>
 </div>
 
 
