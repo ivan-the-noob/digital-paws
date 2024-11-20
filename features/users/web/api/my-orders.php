@@ -100,7 +100,6 @@ if (isset($_SESSION['email'])) {
       </div>
     </div>
     <?php
-    // Fetch orders with 'orders' status
     $sql = "SELECT * FROM checkout WHERE status = 'orders'";
     $result = $conn->query($sql);
 
@@ -111,7 +110,6 @@ if (isset($_SESSION['email'])) {
         }
     }
 
-    // Fetch orders with 'to-ship' status
     $sql_to_ship = "SELECT * FROM checkout WHERE status = 'to-ship'";
     $result_to_ship = $conn->query($sql_to_ship);
 
@@ -122,7 +120,6 @@ if (isset($_SESSION['email'])) {
         }
     }
 
-    // Fetch orders with 'to-receive' status
     $sql_to_receive = "SELECT * FROM checkout WHERE status = 'to-receive'";
     $result_to_receive = $conn->query($sql_to_receive);
 
@@ -133,7 +130,6 @@ if (isset($_SESSION['email'])) {
         }
     }
 
-    // Fetch orders with 'completed' status
     $sql_completed = "SELECT * FROM checkout WHERE status = 'received-order'";
     $result_completed = $conn->query($sql_completed);
 
@@ -144,7 +140,6 @@ if (isset($_SESSION['email'])) {
         }
     }
 
-    // Fetch orders with 'cancelled' status
     $sql_cancelled = "SELECT * FROM checkout WHERE status = 'cancel'";
     $result_cancelled = $conn->query($sql_cancelled);
 
@@ -158,52 +153,44 @@ if (isset($_SESSION['email'])) {
 
 ?>
 
-<!-- Displaying Orders -->
 <div class="orders">
-    
-
-<?php if (!empty($orders)): ?> 
-    <div class="card p-3 mt-4">
-        <div class="d-flex gap-1 mb-3 justify-content-end">
-            <p class="p-2 pending">Pending</p>
-            <button class="cancel" data-id="<?php echo $orders[0]['id']; ?>">Cancel</button>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-md-12">
-                <?php
-                $totalSubTotal = 0; // Initialize the subtotal amount
-                $totalShippingFee = 0; // Initialize the shipping fee amount
-                
-                foreach ($orders as $order): 
-                    $totalSubTotal += $order['sub_total']; // Add each order's sub_total
-                    $totalShippingFee = $order['shipping_fee']; // Assuming all orders have the same shipping fee
-                ?>
-                    <div class="row mb-2">
-                        <div class="col-md-2">
-                            <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
+    <?php if (!empty($orders)): ?> 
+        <div class="card p-3 mt-4">
+            <div class="d-flex gap-1 mb-3 justify-content-end">
+                <p class="p-2 pending">Pending</p>
+                <button class="cancel" data-id="<?php echo $orders[0]['id']; ?>">Cancel</button>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <?php
+                    $totalSubTotal = 0; 
+                    $totalShippingFee = 0;
+                    foreach ($orders as $order): 
+                        $totalSubTotal += $order['sub_total']; 
+                        $totalShippingFee = $order['shipping_fee']; 
+                    ?>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <img src="../../../../assets/img/product/<?php echo htmlspecialchars($order['product_img']); ?>" alt="Product Image" class="img-fluid" style="border-radius: 10px;" />
+                            </div>
+                            <div class="col-md-7">
+                                <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
+                                <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['sub_total'], 2); ?></span></p>
+                            </div>
                         </div>
-                        <div class="col-md-7">
-                            <h5 class="card-title mb-1"><?php echo htmlspecialchars($order['product_name']); ?></h5>
-                            <p class="mb-0">Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
-                        </div>
-                        <div class="col-md-3 text-end">
-                            <p class="mb-1">Subtotal: <span class="price">₱<?php echo number_format($order['sub_total'], 2); ?></span></p>
-                        </div>
-                    </div>
-                    <hr>
-                <?php endforeach; ?>
-
-                <!-- Total amount at the bottom of the card -->
-                <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalShippingFee, 2); ?></span></p>
-                <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalSubTotal + $totalShippingFee, 2); ?></span></p>
+                        <hr>
+                    <?php endforeach; ?>
+                    <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalShippingFee, 2); ?></span></p>
+                    <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalSubTotal + $totalShippingFee, 2); ?></span></p>
+                </div>
             </div>
         </div>
-    </div>
-<?php else: ?>
-    <p>No items in the cart for this email.</p>
-<?php endif; ?>
-
-    
+    <?php else: ?>
+        <p>No items in the cart for this email.</p>
+    <?php endif; ?>   
 </div>
 
 
@@ -237,7 +224,6 @@ if (isset($_SESSION['email'])) {
 </script>
 
 
-<!-- Displaying To-Ship Orders -->
 <div class="to-ship">
 <?php if (!empty($to_ship_orders)): ?>
     <div class="card p-3 mt-4">
@@ -250,8 +236,8 @@ if (isset($_SESSION['email'])) {
                 $totalToShipSubTotal = 0;
                 $totalToShipShippingFee = 0;
                 foreach ($to_ship_orders as $order):
-                    $totalToShipSubTotal += $order['cost']; // Add each order's cost
-                    $totalToShipShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                    $totalToShipSubTotal += $order['cost']; 
+                    $totalToShipShippingFee = $order['shipping_fee']; 
                 ?>
                     <div class="row mb-2">
                         <div class="col-md-2">
@@ -268,7 +254,6 @@ if (isset($_SESSION['email'])) {
                     <hr>
                 <?php endforeach; ?>
 
-                <!-- Total amount at the bottom of the card -->
                 <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalToShipShippingFee, 2); ?></span></p>
                 <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalToShipSubTotal + $totalToShipShippingFee, 2); ?></span></p>
             </div>
@@ -279,7 +264,6 @@ if (isset($_SESSION['email'])) {
 <?php endif; ?>
 </div>
 
-<!-- Displaying To-Receive Orders -->
 <div class="to-receive">
 <?php if (!empty($to_receive_orders)): ?>
     <div class="card p-3 mt-4">
@@ -292,8 +276,8 @@ if (isset($_SESSION['email'])) {
                 $totalToReceiveSubTotal = 0;
                 $totalToReceiveShippingFee = 0;
                 foreach ($to_receive_orders as $order):
-                    $totalToReceiveSubTotal += $order['cost']; // Add each order's cost
-                    $totalToReceiveShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                    $totalToReceiveSubTotal += $order['cost'];
+                    $totalToReceiveShippingFee = $order['shipping_fee']; 
                 ?>
                     <div class="row mb-2">
                         <div class="col-md-2">
@@ -310,7 +294,6 @@ if (isset($_SESSION['email'])) {
                     <hr>
                 <?php endforeach; ?>
 
-                <!-- Total amount at the bottom of the card -->
                 <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalToReceiveShippingFee, 2); ?></span></p>
                 <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalToReceiveSubTotal + $totalToReceiveShippingFee, 2); ?></span></p>
             </div>
@@ -321,7 +304,6 @@ if (isset($_SESSION['email'])) {
 <?php endif; ?>
 </div>
 
-<!-- Displaying Completed Orders -->
 <div class="received-orders">
 <?php if (!empty($completed_orders)): ?>
     <div class="card p-3 mt-4">
@@ -334,8 +316,8 @@ if (isset($_SESSION['email'])) {
                 $totalCompletedSubTotal = 0;
                 $totalCompletedShippingFee = 0;
                 foreach ($completed_orders as $order):
-                    $totalCompletedSubTotal += $order['cost']; // Add each order's cost
-                    $totalCompletedShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                    $totalCompletedSubTotal += $order['cost']; 
+                    $totalCompletedShippingFee = $order['shipping_fee']; 
                 ?>
                     <div class="row mb-2">
                         <div class="col-md-2">
@@ -352,7 +334,6 @@ if (isset($_SESSION['email'])) {
                     <hr>
                 <?php endforeach; ?>
 
-                <!-- Total amount at the bottom of the card -->
                 <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalCompletedShippingFee, 2); ?></span></p>
                 <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalCompletedSubTotal + $totalCompletedShippingFee, 2); ?></span></p>
             </div>
@@ -364,7 +345,6 @@ if (isset($_SESSION['email'])) {
 </div>
 
 
-<!-- Displaying Cancelled Orders -->
 <div class="cancelled-orders">
 <?php if (!empty($cancelled_orders)): ?>
     <div class="card p-3 mt-4">
@@ -377,8 +357,8 @@ if (isset($_SESSION['email'])) {
                 $totalCancelledSubTotal = 0;
                 $totalCancelledShippingFee = 0;
                 foreach ($cancelled_orders as $order):
-                    $totalCancelledSubTotal += $order['cost']; // Add each order's cost
-                    $totalCancelledShippingFee = $order['shipping_fee']; // Assuming same shipping fee for all orders
+                    $totalCancelledSubTotal += $order['cost']; 
+                    $totalCancelledShippingFee = $order['shipping_fee'];
                 ?>
                     <div class="row mb-2">
                         <div class="col-md-2">
@@ -395,7 +375,6 @@ if (isset($_SESSION['email'])) {
                     <hr>
                 <?php endforeach; ?>
 
-                <!-- Total amount at the bottom of the card -->
                 <p class="total-row mb-1 d-flex justify-content-end">Shipping Fee: <span class="price">₱<?php echo number_format($totalCancelledShippingFee, 2); ?></span></p>
                 <p class="total-row d-flex justify-content-end">Total: <span class="price">₱<?php echo number_format($totalCancelledSubTotal + $totalCancelledShippingFee, 2); ?></span></p>
             </div>

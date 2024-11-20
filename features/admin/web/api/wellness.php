@@ -69,6 +69,19 @@ if (isset($_GET['message'])) {
                 <i class="fa-solid fa-calendar-check"></i>
                 <span>Booking Request</span>
             </a>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center " id="checkoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span class="ms-2">Checkout</span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="checkoutDropdown">
+                    <li><a class="dropdown-item" href="pending_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending CheckOut</span></a></li>
+                    <li><a class="dropdown-item" href="to-ship_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Ship CheckOut</span></a></li>
+                    <li><a class="dropdown-item" href="to-receive.php"><i class="fa-solid fa-calendar-check"></i> <span>To-Receive CheckOut</span></a></li>
+                    <li><a class="dropdown-item" href="delivered_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Delivered</span></a></li>
+                    <li><a class="dropdown-item" href="decline.php"><i class="fa-solid fa-calendar-check"></i> <span>Declined</span></a></li>
+                </ul>
+            </div> 
 
             <a href="check-up.php">
                 <i class="fa-solid fa-file-alt"></i>
@@ -78,6 +91,7 @@ if (isset($_GET['message'])) {
                 <i class="fa-solid fa-file-alt"></i>
                 <span>Wellness Form</span>
             </a>
+            
             <a href="prescription.php">
                 <i class="fa-solid fa-file-prescription"></i>
                 <span>Prescription</span>

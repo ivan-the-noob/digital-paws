@@ -162,13 +162,9 @@ $conn->close();
             <div class="slider-container">
                 <div class="slider-wrapper">
                     <?php
-          require 'db.php';
-
-          include 'features/admin/function/php/view_service.php';
-
-
-
-          ?>
+                        require 'db.php';
+                        include 'features/admin/function/php/view_service.php';
+                        ?>
                     <?php if (!empty($services)): ?>
                     <?php foreach ($services as $service): ?>
                     <div
@@ -277,7 +273,6 @@ $conn->close();
                 <?php
           require 'db.php';
 
-          // Modify SQL to get the last 6 products
           $sql = "SELECT * FROM product ORDER BY id DESC LIMIT 6";
           $result = $conn->query($sql);
         ?>
