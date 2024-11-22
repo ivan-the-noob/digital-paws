@@ -1,3 +1,17 @@
+
+<?php 
+session_start();
+
+require '../../../../db.php';
+if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
+    $email = $_SESSION['email'];
+    $profile_picture = $_SESSION['profile_picture'];
+} else {
+    header("Location: features/users/web/api/login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,73 +22,81 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
   <link rel="stylesheet" href="../../css/about-us.css">
 
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container">
-      <a class="navbar-brand d-none d-md-block" href="#">
-        <img src="../../../../assets/img/logo.png" alt="Logo" width="30" height="30">
-      </a>
+<div class="navbar-container">
+<nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+            <a class="navbar-brand d-none d-lg-block" href="#">
+                    <img src="assets/img/logo.png" alt="Logo" width="30" height="30">
+                </a>
 
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-          style="stroke: black; fill: none;">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-        </svg>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        style="stroke: black; fill: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
 
-      </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../../index.php">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About Us</a>
+                        </li>
+                       
+                    </ul>
+                    <div class="d-flex ml-auto">
+                        <?php if ($email): ?>
+                            <!-- Profile Dropdown -->
+                            <div class="dropdown second-dropdown">
+                                <button class="btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../../../assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
+                                </button>
+                                <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
+                                    <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
+                                    <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
+                                </ul>
+                            </div>
+                          <?php
+                            include '../../function/php/count_cart.php';
+                          ?>
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                        <a href="../../function/php/update_cart_status.php" class="header-cart">
+                            <span class="material-symbols-outlined">
+                                shopping_cart
+                            </span>
 
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="../../../../../user.html">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About Us</a>
-          </li>
-        </ul>
-          <!--Notification-->
-        <div class="d-flex ml-auto align-items-center">
-          <div class="dropdown first-dropdown">
-            <button class="" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-bell"></i>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <h5 class="notification-title">Notification</h5>
-                <div class="notification-content alert alert-success">
-                  <strong>Appointment Confirmed!</strong>
-                  <p class="notification-text">Your appointment has been confirmed!</p>
-                  <p class="code">Code:   OVAS-01234</p>
-                  <a href="/features/users/web/api/appointment.html" onclick="localStorage.setItem('showBookedHistory', 'true');">View Details</a>
-              </div>
-                <div class="notification-content alert-primary">
-                    <strong>Successfully Booked!</strong>
-                    <p class="notification-text">You successfully booked!</p>
-                </div>
-                <div class="notification-content alert-danger">
-                  <strong>Rejected</strong>
-                  <p class="notification-text">Your appointment has been rejected.</p>
-              </div>
-          </div>
-        </div>
-          <!--Notification End-->
-          <div class="dropdown">
-              <button class=" dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="../../../../assets/img/customer.jfif" alt="" class="profile">
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="../../../users/web/api/dashboard.html">Profile</a>
-                  <a class="dropdown-item" href="login.html">Logout</a>
-              </div>
-          </div>
-        </div>
-      </div>
+                            <?php if ($newCartData > 0): ?>
+                                <span class="badge"><?= $newCartData ?></span>
+                            <?php endif; ?>
+                        </a>
+                                <a href="my-orders.php" class="header-cart">
+                                    <span class="material-symbols-outlined">
+                                        local_shipping
+                                    </span>
+                                </a>
+                            </div>
+                            </div>
+
+
+                        <?php else: ?>
+                            <a href="features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
+                        <?php endif; ?>
+                    </div>
+
+        </nav>
     </div>
-  </nav>
     <!--About Us Section-->
   <section class="about-us py-5">
     <div class="container">
@@ -101,7 +123,7 @@
                 <img src="../../../../assets/svg/call-icon.svg" alt="Call Icon">
               </div>
               <div class="contact-title">Call</div>
-              <div class="contact-info">09338182822</div>
+              <div class="contact-info">4091254</div>
             </div>
           </div>
 
@@ -111,7 +133,7 @@
                 <img src="../../../../assets/svg/email-icon.svg" alt="Email Icon">
               </div>
               <div class="contact-title">Email</div>
-              <div class="contact-info">bardyardpets@gmail.com</div>
+              <div class="contact-info">happyvetanimalclinic@gmail.com</div>
             </div>
           </div>
           <div class="col-lg-2 col-md-12 mb-4 d-flex flex-column align-items-center">
@@ -121,7 +143,7 @@
               </div>
               <div class="contact-title">Location</div>
               <div class="contact-info">
-                <p>2nd Floor A & A Building Magdiwang Highway, Noveleta, Philippines, 4105</p>
+                <p>Zoneth Commercial Building, Unit E, Purok 9, Governor's drive, San Agustin, Trece Martires, Philippines, 4109</p>
               </div>
             </div>
           </div>
@@ -204,75 +226,79 @@
     </svg>
   </div>
     <!--Footer-->
-  <footer class="footer" id="reviews">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <h5>Pawfect</h5>
-          <ul class="list-unstyled">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#services">Our Services</a></li>
-            <li><a href="#review">Review</a></li>
-          </ul>
+    <footer class="footer" id="reviews">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Happy Vet Animal Clinic </h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#services">Our Services</a></li>
+                        <li><a href="#review">Review</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i>
+                                Facebook</a></li>
+                        <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i>
+                                Instagram</a></li>
+                        <li><a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p>Email: happyvetanimalclinic@gmail.com</p>
+                    <p>Phone: 4091254</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <p>&copy; 2024 Happy Vet Animal Clinic. All Rights Reserved.</p>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-          <h5>Follow Us</h5>
-          <ul class="list-unstyled">
-            <li><a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i> Facebook</a></li>
-            <li><a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
-            <li><a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i> YouTube</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          <h5>Contact Us</h5>
-          <p>Email: bardyardpets@gmail.com</p>
-          <p>Phone: 09338182822</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col text-center">
-          <p>&copy; 2024 Pawfect. All Rights Reserved.</p>
-        </div>
-      </div>
-    </div>
-  </footer>
+    </footer>
     <!--Footer End-->
 
       <!--Chat Bot-->
-  <button id="chat-bot-button" onclick="toggleChat()">
-    <i class="fa-solid fa-headset"></i>
-  </button>
+      <button id="chat-bot-button" onclick="toggleChat()">
+        <i class="fa-solid fa-headset"></i>
+    </button>
 
-  <div id="chat-interface" class="hidden">
+    <div id="chat-interface" class="hidden">
     <div id="chat-header">
-      <p>Amazing Day! How may I help you?</p>
-      <button onclick="toggleChat()">X</button>
+        <p>Amazing Day! How may I help you?</p>
+        <button onclick="toggleChat()">X</button>
     </div>
     <div id="chat-body">
-      <div class="button-bot">
-        <button>How to book?</button>
-        <button>?</button>
-        <button>How to book?</button>
-        <button>How to book?</button>
-        <button>How to book?</button>
-        <button>How to book?</button>
-      </div>
+    <div class="button-bot">
+            <button onclick="sendResponse('How to log in?')">How to log in?</button>
+            <button onclick="sendResponse('How to book?')">How to book?</button>
+            <button onclick="sendResponse('What are the services?')">What are the services?</button>
+            <button onclick="sendResponse('Contact information?')">Contact information?</button>
+        </div>
+        
+        <div class="admin mt-3">
+            <div class="admin-chat">
+                <img src="../../../../assets/img/logo.png" alt="Admin">
+                <p>Admin</p>
+            </div>
+            <p class="text" id="typing-text">Hello, I am Chat Bot. Please Ask me a question just by pressing the question buttons.</p>
+        </div>
+      
     </div>
     <div class="line"></div>
-    <div class="admin mt-3">
-      <div class="admin-chat">
-        <img src="../../../../assets/img/vet logo.jpg" alt="Admin">
-        <p>Admin</p>
-      </div>
-      <p class="text">Hello, I am Chat Bot. Please Ask me a question just by pressing the question buttons.</p>
-    </div>
-  </div>
+</div>
     <!--Chat Bot End-->
 
 
 
 </body>
+<script src="../../function/script/chat-bot.js"></script>
 <script src="../../function/script/chatbot_questionslide.js"></script>
 <script src="../../function/script/chatbot-toggle.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -3,7 +3,6 @@ session_start();
 
 include '../../../../db.php'; 
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -20,8 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Verify the password
         if (password_verify($password, $user['password'])) {
+            // Set session variables
             $_SESSION['email'] = $email;
+            $_SESSION['profile_picture'] = $user['profile_picture']; // Corrected line
             $_SESSION['role'] = $user['role'];
+
+            // Redirect based on role
             if ($user['role'] === 'user') {
                 header("Location: ../../../../index.php");
             } else {

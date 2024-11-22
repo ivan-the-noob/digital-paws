@@ -157,10 +157,17 @@ $conn->close();
       <button class="quantity-btn" id="increment-btn">+</button> <!-- Increment button -->
     </div>
 
+    <?php
+    $triggerModal = isset($_GET['triggerModal']) && $_GET['triggerModal'] == 'true';
+    ?>
     <button class="add-to-cart mt-2" data-bs-toggle="modal" data-bs-target="#addToCartModal" onclick="showCartModal()">Add to cart</button>
     <button class="buy-it-now mt-2" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" onclick="openOrderDetailsModal()">Buy it now</button>
   </div>
+
+  
 </div>
+
+
 
 <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-bottom-centered">
@@ -296,6 +303,14 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
 
 
       </script>
+      <script>
+      <?php if ($triggerModal): ?>
+        document.addEventListener("DOMContentLoaded", function () {
+          document.querySelector('.add-to-cart').click();
+        });
+      <?php endif; ?>
+    </script>
+  
 
 
 

@@ -16,17 +16,14 @@
 
 <?php
 session_start();
-$email = isset($_SESSION['email']);
 include '../../../../db.php';
 
-include '../../../../db.php';
-
-session_start();
-$email = isset($_SESSION['email']);
-
-if (!isset($_SESSION['email'])) { 
-  header("Location: ../../../users/web/api/login.php"); 
-  exit(); 
+if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
+  $email = $_SESSION['email'];
+  $profile_picture = $_SESSION['profile_picture'];
+} else {
+  header("Location: ../../web/api/login.php");
+  exit();
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $ownerName = $_POST['ownerName'];
@@ -39,24 +36,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $service = $_POST['service'];
   $payment = $_POST['payment'];
   $appointmentTime = $_POST['appointmentTime'];
-  $appointmentDate = date('Y-m-d'); // Assume today's date for the appointment
-  $latitude = $_POST['latitude']; // Capture latitude
-  $longitude = $_POST['longitude']; // Capture longitude
-  $addInfo = $_POST['add-info']; // Capture additional information
+  $appointmentDate = date('Y-m-d'); 
+  $latitude = $_POST['latitude'];
+  $longitude = $_POST['longitude']; 
+  $addInfo = $_POST['add-info']; 
 
 
   $stmt = $conn->prepare("INSERT INTO appointment (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, appointment_time, appointment_date, latitude, longitude, add_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 
-// Check if prepare() failed
 if ($stmt === false) {
     die("Error preparing statement: " . $conn->error);
 }
 
-// Bind parameters
 $stmt->bind_param("ssssssisssssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $appointmentTime, $appointmentDate, $latitude, $longitude, $addInfo);
 
-// Execute the statement
 if ($stmt->execute()) {
     echo "New record created successfully";
 } else {
@@ -100,7 +94,7 @@ $conn->close();
                             <div class="dropdown second-dropdown">
                                 <button class="btn" type="button" id="dropdownMenuButton2"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="../../../../assets/img/customer.jfif" alt="Profile Image" class="profile">
+                                        <img src="../../../../assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
                                     <li><a class="dropdown-item" href="/features/users/web/api/dashboard.html">Profile</a></li>
@@ -221,48 +215,42 @@ $conn->close();
 
              
 
-              <?php
-require '../../../../db.php';
+  <?php
+  require '../../../../db.php';
 
-try {
-    // Fetch services from the database
-    $sql = "SELECT service_name, cost, discount, service_type FROM service_list";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
+  try {
+      $sql = "SELECT service_name, cost, discount, service_type FROM service_list";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->get_result();
 
-    // Initialize arrays to store services by type
-    $medical_services = [];
-    $non_medical_services = [];
+      $medical_services = [];
+      $non_medical_services = [];
 
-    // Organize services by type and calculate discounted cost
-    while ($row = $result->fetch_assoc()) {
-        // Calculate the discounted cost
-        $discounted_cost = $row['cost'] - ($row['cost'] * ($row['discount'] / 100));
-        
-        // Prepare service data
-        $service_data = [
-            'service_name' => $row['service_name'],
-            'cost' => number_format($row['cost'], 2), // Format cost
-            'discount' => $row['discount'],
-            'discounted_cost' => number_format($discounted_cost, 2),
-            'service_type' => $row['service_type']
-        ];
+      while ($row = $result->fetch_assoc()) {
+          $discounted_cost = $row['cost'] - ($row['cost'] * ($row['discount'] / 100));
+          
+          $service_data = [
+              'service_name' => $row['service_name'],
+              'cost' => number_format($row['cost'], 2), 
+              'discount' => $row['discount'],
+              'discounted_cost' => number_format($discounted_cost, 2),
+              'service_type' => $row['service_type']
+          ];
 
-        if (strtolower($row['service_type']) === 'medical') {
-            $medical_services[] = $service_data;
-        } elseif (strtolower($row['service_type']) === 'non-medical') {
-            $non_medical_services[] = $service_data;
-        }
-    }
+          if (strtolower($row['service_type']) === 'medical') {
+              $medical_services[] = $service_data;
+          } elseif (strtolower($row['service_type']) === 'non-medical') {
+              $non_medical_services[] = $service_data;
+          }
+      }
 
-    // Close the statement
-    $stmt->close();
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
+      $stmt->close();
+  } catch (Exception $e) {
+      echo "Error: " . $e->getMessage();
+  }
 
-$conn->close();
+  $conn->close();
 ?>
 
 <!-- HTML Select Element -->

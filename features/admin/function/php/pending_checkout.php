@@ -55,19 +55,24 @@ if (!$result) {
         echo "<td>" . htmlspecialchars($details['email']) . "</td>";
         echo "<td>";
         echo "<button class='btn btn-info' data-toggle='modal' data-target='#viewModal'
-        data-id='" . htmlspecialchars($details['id']) . "'
-        data-name='" . htmlspecialchars($details['name']) . "'
-        data-email='" . htmlspecialchars($details['email']) . "'
-        data-contact-num='" . htmlspecialchars($details['contact_num']) . "'
-        data-address-search='" . htmlspecialchars($details['address_search']) . "'
-        data-payment-method='" . htmlspecialchars($details['payment_method']) . "'
-        data-products='" . htmlspecialchars(json_encode($details['products'])) . "'
-        data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "'
-        data-total-amount='" . htmlspecialchars($details['total_amount']) . "'
-        data-latitude='" . htmlspecialchars($details['latitude']) . "'
-        data-longitude='" . htmlspecialchars($details['longitude']) . "'
-        data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
-        data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>View</button>";
+            data-id='" . htmlspecialchars($details['id']) . "'
+            data-name='" . htmlspecialchars($details['name']) . "'
+            data-email='" . htmlspecialchars($details['email']) . "'
+            data-contact-num='" . htmlspecialchars($details['contact_num']) . "'
+            data-address-search='" . htmlspecialchars($details['address_search']) . "'
+            data-payment-method='" . htmlspecialchars($details['payment_method']) . "'
+            data-products='" . htmlspecialchars(json_encode($details['products'])) . "'
+            data-shipping-fee='" . htmlspecialchars($details['shipping_fee']) . "'
+            data-total-amount='" . htmlspecialchars($details['total_amount']) . "'
+            data-latitude='" . htmlspecialchars($details['latitude']) . "'
+            data-longitude='" . htmlspecialchars($details['longitude']) . "'
+            data-screenshot='" . htmlspecialchars($details['screenshot']) . "'
+            data-reference_id='" . htmlspecialchars($details['reference_id']) . "'>
+            View</button>";
+    
+        echo "<button type='button' class='btn btn-danger' onclick='submitDeclineForm(" . htmlspecialchars($details['id']) . ")'>Decline</button>";
+    
+        echo "<button type='submit' class='btn btn-primary'>Approve</button>";
         echo "</td>";
         echo "</tr>";
         $count++;
@@ -183,7 +188,7 @@ if (isset($_GET['message'])) {
                 <input type="hidden" name="quantity" id="hiddenQuantity">
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" onclick="submitDecline()">Decline</button>
+                        <button type="button" class="btn btn-danger" onclick="submitDeclineForm()">Decline</button>
                         <button type="submit" class="btn btn-primary">Approve</button>
                     </div>
                 </form>
@@ -192,13 +197,7 @@ if (isset($_GET['message'])) {
     </div>
 </div>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-
-
-
-
-   
-
-</script>
+<script src="../../function/script/decline_order.js"></script>

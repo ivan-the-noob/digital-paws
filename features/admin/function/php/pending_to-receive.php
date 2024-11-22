@@ -183,7 +183,7 @@ if (isset($_GET['message'])) {
                 <input type="hidden" name="quantity" id="hiddenQuantity">
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" onclick="submitDecline()">Decline</button>
+                        <button type="button" class="btn btn-danger" onclick="submitDeclineForm()">Decline</button>
                         <button type="submit" class="btn btn-primary">Approve</button>
                     </div>
                 </form>
@@ -193,12 +193,6 @@ if (isset($_GET['message'])) {
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../../function/script/decline_order.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
 
-
-
-
-   
-
-</script>

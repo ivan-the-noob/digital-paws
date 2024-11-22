@@ -1,9 +1,13 @@
 <?php
 
 session_start();
-$email = isset($_SESSION['email']);
-
-$email = $_SESSION['email'];
+if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
+    $email = $_SESSION['email'];
+    $profile_picture = $_SESSION['profile_picture'];
+} else {
+    header("Location: features/users/web/api/login.php");
+    exit();
+}
 
 require 'db.php';
 
@@ -19,7 +23,9 @@ if ($result->num_rows > 0) {
     $cartItems = [];
 }
 
+
 $conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +39,11 @@ $conn->close();
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="features/users/css/index.css">
-     <link rel="icon" href="assets/img/logo.png" type="image/x-icon">
+    <link rel="icon" href="assets/img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
 </head>
 
 <body>
@@ -76,23 +86,38 @@ $conn->close();
                             <!-- Profile Dropdown -->
                             <div class="dropdown second-dropdown">
                                 <button class="btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="assets/img/customer.jfif" alt="Profile Image" class="profile">
+                                <img src="assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
                                 </button>
                                 <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
                                     <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
                                     <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
                                 </ul>
                             </div>
+                          <?php 
+                            require 'db.php';
+                            include 'features/users/function/php/count_cart.php';
+                            
+                          ?>
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                        <a href="features/users/function/php/update_cart_status.php" class="header-cart">
+                            <span class="material-symbols-outlined">
+                                shopping_cart
+                            </span>
 
-                            <!-- Cart Dropdown -->
-     
-                                <button>
-                                    <i class="fas fa-shopping-cart"></i>
-                                </button>
+                            <?php if ($newCartData > 0): ?>
+                                <span class="badge"><?= $newCartData ?></span>
+                            <?php endif; ?>
+                        </a>
+                                <a href="features/users/web/api/my-orders.php" class="header-cart">
+                                    <span class="material-symbols-outlined">
+                                        local_shipping
+                                    </span>
+                                </a>
+                            </div>
+                            </div>
 
 
                         <?php else: ?>
-                            <!-- Login Button if User is Not Logged In -->
                             <a href="features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
                         <?php endif; ?>
                     </div>
@@ -135,10 +160,8 @@ $conn->close();
 
     <div class="wave-container1" id="about-us">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 160" class="wave1">
-            <!-- Top Border Path -->
             <path fill="none" stroke="#EA6B35" stroke-width="4"
                 d="M0,64L60,74.7C120,85,240,107,360,106.7C480,107,600,85,720,69.3C840,53,960,43,1080,48C1200,53,1320,75,1380,85.3L1440,96" />
-            <!-- Wave Path -->
             <path fill="#F8EBDC" fill-opacity="1"
                 d="M0,64L60,74.7C120,85,240,107,360,106.7C480,107,600,85,720,69.3C840,53,960,43,1080,48C1200,53,1320,75,1380,85.3L1440,96L1440,160L0,160Z" />
         </svg>
@@ -146,7 +169,7 @@ $conn->close();
 
 
     <section class="services" id="services">
-        <p class="text-center">We offer you</p>
+        <p class="text-center service-title">We offer you</p>
         <h2 class="text-center">Our Services</h2>
 
         <div class="checkbox-container text-start">
@@ -243,7 +266,6 @@ $conn->close();
                     </div>
                 </div>
 
-                <!-- Right section with image -->
                 <div class="col-md-4 d-flex justify-content-center dog-image">
                     <img src="assets/img/how it works/dog.png" alt="Dog Image" class="img-fluid">
                 </div>
@@ -256,70 +278,57 @@ $conn->close();
 
 
     <section class="essentials py-5">
-        <div class="how-headings col-12 text-center mt-4">
-            <p class="mb-0">Explore pet care</p>
-            <h2 class="mb-4">Essentials</h2>
-        </div>
-        <div class="container">
-            <div class="row align-items-start justify-content-center">
-                <div class="col-lg-3 col-md-4 col-12 mb-3">
-                    <div class="essentials-button d-flex flex-column align-items-start">
-                        <button>Pet Food</button>
-                        <button>Pet Toys</button>
-                        <button>Supplements</button>
-                        <a href="#">More</a>
-                    </div>
+    <div class="how-headings col-12 text-center mt-4">
+        <p class="mb-0">Explore pet care</p>
+        <h2 class="mb-4">Essentials</h2>
+    </div>
+    <div class="container">
+        <div class="row align-items-start justify-content-center">
+            <div class="col-lg-3 col-md-4 col-12 mb-3">
+                <div class="essentials-button d-flex flex-column align-items-start">
+                    <button onclick="filterProducts('petfood')">Pet Food</button>
+                    <button onclick="filterProducts('pettoys')">Pet Toys</button>
+                    <button onclick="filterProducts('supplements')">Supplements</button>
+                    <button onclick="filterProducts('all')">Show All</button>
                 </div>
-                <?php
-          require 'db.php';
+            </div>
+            <?php
+            require 'db.php';
 
-          $sql = "SELECT * FROM product ORDER BY id DESC LIMIT 6";
-          $result = $conn->query($sql);
-        ?>
-                <div class="col-lg-9 col-md-8 col-12">
-                    <div class="row">
-                        <!-- Product 1 -->
-                        <?php if ($result->num_rows > 0): ?>
+            $sql = "SELECT * FROM product ORDER BY id DESC LIMIT 6";
+            $result = $conn->query($sql);
+            ?>
+            <div class="col-lg-9 col-md-8 col-12">
+                <div class="row">
+                    <?php if ($result->num_rows > 0): ?>
                         <?php while ($product = $result->fetch_assoc()): ?>
-                        <div class="col-lg-4 col-md-6 col-12 mb-4">
-                            <div class="product">
-                                <!-- Display product image -->
-                                <img src="assets/img/product/<?= $product['product_img'] ?>" alt="Product Image">
-
-                    <!-- Display product name -->
-                    <h5 class=" mt-4" name="product_name"><?= htmlspecialchars($product['product_name']) ?>
-                                </h5>
-
-                                <!-- Display product description -->
-                                <p name="description"><?= htmlspecialchars($product['description']) ?></p>
-
-                                <!-- Display product price -->
-                                <div class="d-flex prices">
-                                    <p class="tag align-items-center mb-0 d-flex">PHP</p>
-                                    <p class="price" name="cost">
-                                        <?= htmlspecialchars(number_format($product['cost'], 2)) ?></p>
-                                </div>
-
-                                <!-- Action buttons -->
-                                <div class="d-flex justify-content-between item-btn">
-                                <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>" class="btn buy-now">
-                                    BUY NOW!
-                                </a>
-                                    <button class="btn add-to-cart"><i class="fas fa-shopping-cart"></i></button>
+                            <div class="col-lg-4 col-md-6 col-12 mb-4 product-item" data-type="<?= strtolower($product['type']) ?>">
+                                <div class="product">
+                                    <img src="assets/img/product/<?= $product['product_img'] ?>" alt="Product Image">
+                                    <h5 class="mt-4 product_name"><?= htmlspecialchars($product['product_name']) ?></h5>
+                                    <div class="d-flex prices">
+                                        <p class="tag align-items-center mb-0 d-flex">PHP</p>
+                                        <p class="price"><?= htmlspecialchars(number_format($product['cost'], 2)) ?></p>
+                                    </div>
+                                    <div class="d-flex justify-content-between item-btn">
+                                        <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>" class="btn buy-now">BUY NOW!</a>
+                                        <a href="features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>&triggerModal=true" class="btn add-to-cart">
+                                            <span class="material-symbols-outlined">shopping_cart</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endwhile; ?>
-                        <?php else: ?>
+                    <?php else: ?>
                         <p>No products available.</p>
-                        <?php endif; ?>
-
-
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+
 
 
 
@@ -344,7 +353,7 @@ $conn->close();
                         range of services
                         tailored to meet the unique needs of each pet, ensuring they leave happy and healthy.
                     </p>
-                    <a href="#" class="btn learn-more-btn">Learn more</a>
+                    <a href="features/users/web/api/about-us.php" class="btn learn-more-btn">Read more</a>
                 </div>
 
             </div>
@@ -392,119 +401,152 @@ $conn->close();
         </div>
     </div>
 
-    <section class="choose-us py-5" id="choose-us">
-        <h3 class="mb-4" id="review">Why Choose Us</h3>
-        <div class="container ">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <div class="testimonial-card-custom p-3 review-box" id="translate-1">
-                        <div class="d-flex align-items-center">
-                            <img src="assets/img/customer.jfif" alt="Ivan Ablanida" width="50" height="50">
-                            <div class="ml-3">
-                                <p class="testimonial-title">Ivan Ablanida</p>
-                            </div>
-                        </div>
-                        <p class="mt-3">Booking a pet appointment at Pawfect was a breeze. The staff was incredibly
-                            friendly, and
-                            the online booking system made it simple to schedule a visit. Highly recommended for anyone
-                            looking for a
-                            hassle-free experience.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <div class="testimonial-card-custom p-3 review-box" id="translate-2">
-                        <div class="d-flex align-items-center">
-                            <img src="assets/img/customer.jfif" alt="Jannray Mostajo" width="50" height="50">
-                            <div class="ml-3">
-                                <p class="testimonial-title">Jannray Mostajo</p>
-                            </div>
-                        </div>
-                        <p class="mt-3">The appointment booking process was seamless. The user-friendly platform allowed
-                            me to
-                            easily select a time slot that fit my schedule. The clinic's professionalism and care for my
-                            pet made the
-                            experience even better.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <div class="testimonial-card-custom p-3 review-box" id="translate-3">
-                        <div class="d-flex align-items-center">
-                            <img src="assets/img/customer.jfif" alt="Prince Jherico" width="50" height="50">
-                            <div class="ml-3">
-                                <p class="testimonial-title">Prince Jherico</p>
-                            </div>
-                        </div>
-                        <p class="mt-3">I was impressed with how easy it was to book an appointment for my pet. The
-                            online system
-                            was intuitive, and I appreciated the reminder notifications. The staff was welcoming and
-                            knowledgeable,
-                            making the entire process smooth and stress-free.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <div class="testimonial-card-custom p-3 review-box" id="translate-4">
-                        <div class="d-flex align-items-center">
-                            <img src="assets/img/customer.jfif" alt="Johnloyd Belen" width="50" height="50">
-                            <div class="ml-3">
-                                <p class="testimonial-title">Johnloyd Belen</p>
-                            </div>
-                        </div>
-                        <p class="mt-3">Booking a pet appointment at Pawfect was incredibly convenient. The staff was
-                            responsive and
-                            caring, ensuring a positive experience for both me and my pet. The efficient booking system
-                            saved me time
-                            and made the process effortless.</p>
-                    </div>
-                </div>
+    <?php
+// Include database connection
+require 'db.php';
 
-            </div>
-        </div>
-    </section>
+// Query to fetch the latest 4 reviews where status = 1
+$query = "
+    SELECT review.email, review.profile_picture, review.review, review.last_reviewed, users.name
+    FROM review
+    LEFT JOIN users ON review.email = users.email
+    WHERE review.status = 1
+    ORDER BY review.last_reviewed DESC
+    LIMIT 4
+";
+$result = $conn->query($query);
+?>
 
-
-    <section class="review">
-        <div class="container review-section">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <h2 class="text-center">Leave Us A Review</h2>
-                    <form class="review-form">
-                        <div class="form-group">
-                            <textarea class="form-control" id="comment" rows="4"
-                                placeholder="Leave Your Comment"></textarea>
+<section class="choose-us py-5" id="choose-us">
+    <h3 class="mb-4" id="review">Testimonials</h3>
+    <div class="container">
+        <div class="row">
+            <?php
+            // Loop through each review and display it
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $name = $row['name'] ? $row['name'] : 'Anonymous'; // If name is not found, use "Anonymous"
+                    $profile_picture = $row['profile_picture'];
+                    $review = $row['review'];
+                    $last_reviewed = $row['last_reviewed'];
+            ?>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="testimonial-card-custom p-3 review-box">
+                    <div class="d-flex align-items-center">
+                        <!-- Profile Picture -->
+                        <img src="assets/img/<?= htmlspecialchars($profile_picture) ?>" alt="<?= htmlspecialchars($name) ?>" width="50" height="50">
+                        <div class="ml-3">
+                            <!-- Name and Last Reviewed Date -->
+                            <p class="testimonial-title"><?= htmlspecialchars($name) ?> 
+                                <span class="text-muted"> <?= $last_reviewed ? '(' . date("M j, Y", strtotime($last_reviewed)) . ')' : '' ?></span>
+                            </p>
                         </div>
-                        <button type="submit" class="mt-3 submit ">Submit</button>
-                    </form>
+                    </div>
+                    <!-- Review Content -->
+                    <p class="mt-3"><?= nl2br(htmlspecialchars($review)) ?></p>
                 </div>
             </div>
+            <?php
+                }
+            } else {
+                echo "<p>No reviews available.</p>";
+            }
+            ?>
         </div>
-    </section>
+    </div>
+</section>
+
+<?php
+$conn->close(); 
+?>
+
+    
+
+  
+
+    <?php
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
+
+    if ($status == 'success') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Review submitted successfully!',
+                    showConfirmButton: true
+                });
+              </script>";
+    } elseif ($status == 'already_reviewed') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'You have already submitted a review today!',
+                    showConfirmButton: true
+                });
+              </script>";
+    } elseif ($status == 'empty') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Review cannot be empty.',
+                    showConfirmButton: true
+                });
+              </script>";
+    } elseif ($status == 'error') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an error submitting your review!',
+                    showConfirmButton: true
+                });
+              </script>";
+    }
+}
+?>
+
+<section class="review" id="review">
+    <div class="container review-section">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="text-center">Leave Us A Review</h2>
+                <form class="review-form" action="features/users/function/php/review.php" method="POST">
+                    <div class="form-group">
+                        <textarea class="form-control" name="comment" rows="4" placeholder="Leave Your Comment" required></textarea>
+                    </div>
+                    <button type="submit" class="mt-3 submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
 
 
     <div class="container contact-section">
         <div class="row align-items-center">
             <div class="col-lg-4 col-md-6 contact-card">
                 <h3>Contact Us</h3>
-                <p><i class="bi bi-telephone-fill"></i> (09) 33-818-2822</p>
-                <p><i class="bi bi-envelope-fill"></i> willie.jennings@example.com</p>
-                <p><i class="bi bi-envelope-fill"></i> bill.sanders@example.com</p>
-                <p><i class="bi bi-geo-alt-fill"></i> 2118 Thornridge Cir, Syracuse, Connecticut 35624</p>
+                <p><i class="bi bi-telephone-fill"></i> 4091254</p>
+                <p><i class="bi bi-envelope-fill"></i> happyvetanimalclinic@gmail.com</p>
+                <p><i class="bi bi-envelope-fill"></i> docexample@gmail.com</p>
+                <p><i class="bi bi-geo-alt-fill"></i> Zoneth Commercial Building, Unit E, Purok 9, Governor's drive, San Agustin, Trece Martires, Philippines, 4109</p>
             </div>
 
             <!-- Contact Form -->
             <div class="col-lg-4 col-md-6 form-section">
-                <form>
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="email" placeholder="Email">
-                    </div>
-                    <div class="mb-3">
-                        <input type="tel" class="form-control" id="phone" placeholder="Phone number">
-                    </div>
-                    <div class="mb-3">
-                        <textarea class="form-control" id="message" rows="5"
-                            placeholder="Leave your message here"></textarea>
-                    </div>
-                    <button type="submit" class="btn submit-btn">Submit</button>
-                </form>
+            <form method="POST" action="features/users/function/php/contact.php">
+                <div class="mb-3">
+                    <textarea class="form-control" name="comment" id="message" rows="7" placeholder="Leave your message here" required></textarea>
+                </div>
+                <button type="submit" class="btn submit-btn">Submit</button>
+            </form>
+
             </div>
 
             <!-- Illustration -->
@@ -525,7 +567,7 @@ $conn->close();
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h5>Pawfect</h5>
+                    <h5>Happy Vet Animal Clinic </h5>
                     <ul class="list-unstyled">
                         <li><a href="#home">Home</a></li>
                         <li><a href="#about">About Us</a></li>
@@ -546,17 +588,61 @@ $conn->close();
                 </div>
                 <div class="col-md-4">
                     <h5>Contact Us</h5>
-                    <p>Email: bardyardpets@gmail.com</p>
-                    <p>Phone: 09338182822</p>
+                    <p>Email: happyvetanimalclinic@gmail.com</p>
+                    <p>Phone: 4091254</p>
                 </div>
             </div>
             <div class="row">
                 <div class="col text-center">
-                    <p>&copy; 2024 Pawfect. All Rights Reserved.</p>
+                    <p>&copy; 2024 Happy Vet Animal Clinic. All Rights Reserved.</p>
                 </div>
             </div>
         </div>
     </footer>
+
+    <?php
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
+
+    if ($status == 'success') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Your message has been submitted successfully!',
+                    showConfirmButton: true
+                });
+              </script>";
+    } elseif ($status == 'already_submitted') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'You have already submitted a message today!',
+                    showConfirmButton: true
+                });
+              </script>";
+    } elseif ($status == 'empty') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Your message cannot be empty.',
+                    showConfirmButton: true
+                });
+              </script>";
+    } elseif ($status == 'error') {
+        echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an error submitting your message!',
+                    showConfirmButton: true
+                });
+              </script>";
+    }
+}
+?>
 
  <button id="chat-bot-button" onclick="toggleChat()">
         <i class="fa-solid fa-headset"></i>
@@ -600,6 +686,7 @@ $conn->close();
 <script src="features/users/function/script/scroll-choose_us.js"></script>
 <script src="features/users/function/script/scroll-service.js"></script>
 <script src="features/users/function/script/services-carousel.js"></script>
+<script src="features/users/function/script/filter.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

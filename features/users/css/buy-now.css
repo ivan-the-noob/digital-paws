@@ -212,7 +212,7 @@ h3{
   margin: auto;
 }
 #main-product-img{
-  height: auto !important;
+  height: 50vh !important;
 }
 
 .product .btn {
