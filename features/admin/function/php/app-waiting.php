@@ -1,7 +1,7 @@
 <?php
 include '../../../../db.php';
 
-$sql = "SELECT * FROM appointment WHERE status = 'pending'";
+$sql = "SELECT * FROM appointment WHERE status = 'waiting'";
 $result = $conn->query($sql);
 
 

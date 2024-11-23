@@ -35,7 +35,6 @@ if ($result->num_rows > 0) {
         $cdv = htmlspecialchars($row['cdv'], ENT_QUOTES, 'UTF-8');
         $cbc = htmlspecialchars($row['cbc'], ENT_QUOTES, 'UTF-8');
 
-        // Card for each check-up record
         $checkupCards .= "
             <div class='col-md-3 mt-2 card-wrapper'>
                 <div class='card mb-3'>
@@ -48,7 +47,6 @@ if ($result->num_rows > 0) {
                 </div>
             </div>";
 
-        // Modal for each check-up record
         $checkupCards .= "
         <div class='modal fade' id='checkupModal-$id' tabindex='-1' aria-labelledby='checkupModalLabel-$id' aria-hidden='true'>
             <div class='modal-dialog'>

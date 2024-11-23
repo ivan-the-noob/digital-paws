@@ -22,15 +22,23 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
         $lastYear -= 1;
     }
 
-    $sql = "SELECT MONTH(created_at) as month, YEAR(created_at) as year, SUM(payment) as total
-            FROM appointment
-            WHERE (YEAR(created_at) = $currentYear AND MONTH(created_at) = $currentMonth)
-               OR (YEAR(created_at) = $lastYear AND MONTH(created_at) = $lastMonth)
-            GROUP BY YEAR(created_at), MONTH(created_at)
-            ORDER BY YEAR(created_at), MONTH(created_at)";
+    // SQL query to fetch payment data from both `appointment` and `manual_input`
+    $sql = "
+        SELECT MONTH(created_at) as month, YEAR(created_at) as year, SUM(payment) as total
+        FROM (
+            -- Appointment sales where status is 'finish'
+            SELECT created_at, payment FROM appointment WHERE status = 'finish'
+            UNION ALL
+            -- Manual sales from the manual_input table
+            SELECT created_at, sales_amount as payment FROM manual_input
+        ) AS all_sales
+        WHERE YEAR(created_at) = $currentYear  -- Filter for the current year
+        GROUP BY YEAR(created_at), MONTH(created_at)
+        ORDER BY YEAR(created_at), MONTH(created_at)";
 
     $result = $conn->query($sql);
 
+    // Initialize the payments array for current and last month
     $payments = [
         'currentMonth' => array_fill(0, 12, 0),
         'lastMonth' => array_fill(0, 12, 0)
@@ -49,90 +57,16 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
 
     $conn->close();
 
+    // Return the result as a JSON object for the frontend
     echo json_encode($payments);
     exit;
 }
 ?>
 
-<?php
-if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
-    header('Content-Type: application/json');
 
-    include '../../../../db.php';
 
-    $currentYear = date('Y');
-    $currentMonth = date('n'); // 1 for January, 12 for December
 
-    // Initialize arrays for weeks
-    $weeks = [
-        'currentWeek' => array_fill(0, 4, 0), // Week 1, Week 2, Week 3, Week 4
-        'lastWeek' => array_fill(0, 4, 0)
-    ];
 
-    // Query for current month data
-    $sql = "SELECT DAY(created_at) AS day, SUM(payment) AS total
-            FROM appointment
-            WHERE YEAR(created_at) = $currentYear AND MONTH(created_at) = $currentMonth
-            GROUP BY DAY(created_at)
-            ORDER BY DAY(created_at)";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $day = intval($row['day']);
-            $total = floatval($row['total']);
-
-            // Determine week based on day
-            if ($day >= 1 && $day <= 7) {
-                $weeks['currentWeek'][0] += $total; // Week 1
-            } elseif ($day >= 8 && $day <= 14) {
-                $weeks['currentWeek'][1] += $total; // Week 2
-            } elseif ($day >= 15 && $day <= 21) {
-                $weeks['currentWeek'][2] += $total; // Week 3
-            } elseif ($day >= 22 && $day <= 30) {
-                $weeks['currentWeek'][3] += $total; // Week 4
-            }
-        }
-    }
-
-    // Calculate last month's weekly data
-    $lastMonth = $currentMonth - 1;
-    if ($lastMonth == 0) {
-        $lastMonth = 12;
-        $currentYear--;
-    }
-
-    $sql = "SELECT DAY(created_at) AS day, SUM(payment) AS total
-            FROM appointment
-            WHERE YEAR(created_at) = $currentYear AND MONTH(created_at) = $lastMonth
-            GROUP BY DAY(created_at)
-            ORDER BY DAY(created_at)";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $day = intval($row['day']);
-            $total = floatval($row['total']);
-
-            // Determine week based on day
-            if ($day >= 1 && $day <= 7) {
-                $weeks['lastWeek'][0] += $total; // Week 1
-            } elseif ($day >= 8 && $day <= 14) {
-                $weeks['lastWeek'][1] += $total; // Week 2
-            } elseif ($day >= 15 && $day <= 21) {
-                $weeks['lastWeek'][2] += $total; // Week 3
-            } elseif ($day >= 22 && $day <= 30) {
-                $weeks['lastWeek'][3] += $total; // Week 4
-            }
-        }
-    }
-
-    $conn->close();
-
-    echo json_encode($weeks);
-    exit;
-}
-?>
 
 
 <!DOCTYPE html>
@@ -163,10 +97,20 @@ if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
                 <i class="fa-solid fa-users"></i>
                 <span>Users</span>
             </a>
-            <a href="app-req.php">
-                <i class="fa-solid fa-calendar-check"></i>
-                <span>Booking Request</span>
-            </a>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="checkoutDropdowns" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span class="ms-2">Booking</span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="checkoutDropdowns">
+                    <li><a class="dropdown-item" href="app-req.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-waiting.php"><i class="fa-solid fa-calendar-check"></i> <span>Waiting Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-ongoing.php"><i class="fa-solid fa-calendar-check"></i> <span>On Going Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-finish.php"><i class="fa-solid fa-calendar-check"></i> <span>Finished Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-cancel.php"><i class="fa-solid fa-calendar-check"></i> <span>Cancelled Bookings</span></a></li>
+                   
+                </ul>
+            </div>
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center dropdown-toggle" id="checkoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-calendar-check"></i>
@@ -181,18 +125,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
                 </ul>
             </div> 
 
-            <a href="check-up.php">
-                <i class="fa-solid fa-file-alt"></i>
-                <span>Check Up Form</span>
-            </a>
-            <a href="wellness.php">
-                <i class="fa-solid fa-file-alt"></i>
-                <span>Wellness Form</span>
-            </a>
-            <a href="prescription.php">
-                <i class="fa-solid fa-file-prescription"></i>
-                <span>Prescription</span>
-            </a>
+           
 
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>
@@ -239,7 +172,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
         <!--Notification and Profile Admin End-->
         <!--Pos Card with graphs-->
         <div class="dashboard">
-            <h3>Dashboard</h3>
+            <div class="d-flex justify-content-between">
+                <h3>Dashboard</h3>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#salesModal">
+                    + Sales
+                </button>
+            </div>
             <div class="row card-box">
                 <div class="col-12 col-md-6 col-lg-3 cc">
                     <div class="card">
@@ -307,16 +245,93 @@ if (isset($_GET['action']) && $_GET['action'] === 'getWeeklyPayments') {
                     <canvas id="salesChart"></canvas>
                 </div>
                 <div class="chart-container">
-                    <canvas id="weekSalesChart"></canvas>
+                    
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="salesModal" tabindex="-1" aria-labelledby="salesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="salesModalLabel">Add Sales</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="salesForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="salesAmount" class="form-label">Sales Amount:</label>
+                        <input type="number" step="0.01" class="form-control" id="salesAmount" name="salesAmount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="salesMonth" class="form-label">Month:</label>
+                        <select class="form-select" id="salesMonth" name="salesMonth" required>
+                            <option value="" disabled selected>Select Month</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="salesYear" class="form-label">Year:</label>
+                        <input type="number" class="form-control" id="salesYear" name="salesYear" 
+                               min="2000" max="2100" value="<?= date('Y') ?>" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("salesForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const salesAmount = document.getElementById("salesAmount").value;
+    const salesMonth = document.getElementById("salesMonth").value;
+    const salesYear = document.getElementById("salesYear").value;
+
+    const form = new FormData();
+    form.append("action", "addSales");
+    form.append("salesAmount", salesAmount);
+    form.append("salesMonth", salesMonth);
+    form.append("salesYear", salesYear);
+
+    fetch("../../function/php/add_sales.php", {
+        method: "POST",
+        body: form,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Sales added successfully!");
+            location.reload();
+        } else {
+            alert("Failed to add sales: " + data.message);
+        }
+    })
+    .catch(error => console.error("Error:", error));
+});
+</script>
+
         <!--Pos Card with graphs End-->
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="../../function/script/month-chart.js"></script>
         <script src="../../function/script/toggle-menu.js"></script>
-        <script src="../../function/script/week-chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 

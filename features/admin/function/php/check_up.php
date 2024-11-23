@@ -1,10 +1,9 @@
 <?php
-include '../../../../db.php'; // Ensure this file has the correct connection settings
+include '../../../../db.php'; 
 
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect form data
     $owner_name = $_POST['owner_name'];
     $date = $_POST['date'];
     $address = $_POST['address'];
@@ -29,21 +28,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cbc = $_POST['cbc'];
 
 
-    // Prepare SQL statement
     $sql = "INSERT INTO check_up (owner_name, date, address, active_number, pet_name, species, color, pet_birthdate, gender, breed, diet, bcs, stool, chief_complaint, treatment, vomiting, ticks_fleas, lepto, chw, cpv, cdv, cbc) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
 
-    // Check if the prepare() failed
     if ($stmt === false) {
-        die("Error preparing the statement: " . $conn->error);  // Display the MySQL error
+        die("Error preparing the statement: " . $conn->error);  
     }
 
-    // Bind parameters
     $stmt->bind_param("ssssssssssssssssssssss", $owner_name, $date, $address, $active_number, $pet_name, $species, $color, $pet_birthdate, $gender, $breed, $diet, $bcs, $stool, $chief_complaint, $treatment, $vomiting, $ticks_fleas, $lepto, $chw, $cpv, $cdv, $cbc);
 
-    // Execute statement and check for success
     if ($stmt->execute()) {
         header("Location: ../../web/api/check-up.php?message=Data saved successfully!");
         exit(); 
@@ -51,7 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error executing statement: " . $stmt->error;
     }
 
-    // Close the statement and connection
     $stmt->close();
 }
 
@@ -59,12 +53,9 @@ $conn->close();
 ?>
 
 <?php
-    // Check if the message parameter is set in the URL
     if (isset($_GET['message'])) {
-        // Escape the message to prevent XSS attacks
         $message = htmlspecialchars($_GET['message'], ENT_QUOTES, 'UTF-8');
 
-        // Display the message using SweetAlert
         echo "<script>
             window.onload = function() {
                 swal({

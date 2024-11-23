@@ -15,7 +15,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
     <title>User Account | Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/orders.css">
+    <link rel="stylesheet" href="../../css/app-req.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
@@ -38,9 +38,23 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 <i class="fa-solid fa-users"></i>
                 <span>Users</span>
             </a>
-           
+            
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle" id="checkoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <a href="#" class="d-flex align-items-center" id="checkoutDropdowns" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span class="ms-2">Booking</span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="checkoutDropdowns">
+                    <li><a class="dropdown-item" href="app-req.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending Bookings</span></a></li>
+                    <li><a class="dropdown-item navbar-highlight" href="app-waiting.php"><i class="fa-solid fa-calendar-check"></i> <span>Waiting Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-ongoing.php"><i class="fa-solid fa-calendar-check"></i> <span>On Going Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-finish.php"><i class="fa-solid fa-calendar-check"></i> <span>Finished Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-cancel.php"><i class="fa-solid fa-calendar-check"></i> <span>Cancelled Bookings</span></a></li>
+                   
+                </ul>
+            </div> 
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="checkoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-calendar-check"></i>
                     <span class="ms-2">Checkout</span>
                 </a>
@@ -52,22 +66,8 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     <li><a class="dropdown-item" href="decline.php"><i class="fa-solid fa-calendar-check"></i> <span>Declined</span></a></li>
                 </ul>
             </div> 
-           
 
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="checkoutDropdowns" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    <span class="ms-2">Booking</span>
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="checkoutDropdowns">
-                    <li><a class="dropdown-item" href="app-req.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-waiting.php"><i class="fa-solid fa-calendar-check"></i> <span>Waiting Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-ongoing.php"><i class="fa-solid fa-calendar-check"></i> <span>On Going Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-finish.php"><i class="fa-solid fa-calendar-check"></i> <span>Finished Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-cancel.php"><i class="fa-solid fa-calendar-check"></i> <span>Cancelled Bookings</span></a></li>
-                   
-                </ul>
-            </div>
+        
 
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>
@@ -112,12 +112,12 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
         </div>
         <!--Notification and Profile Admin-->
         <div class="app-req">
-            <h3>To Ship CheckOut</h3>
+            <h3>Waiting</h3>
             <div class="walk-in px-lg-5">
                 <div class="mb-3 x d-flex">
                     <div class="search">
                         <div class="search-bars">
-                            <i class="fa fa-search"></i>
+                            <i class="fa fa-search"></i> <!-- Updated icon for search -->
                             <input type="text" class="form-control" placeholder="Search..." id="search-input">
                         </div>
                     </div>
@@ -131,14 +131,15 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                             <th>#</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Actions</th>
+                            <th>Services</th>
+                            <th>Buttons</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
 
                         <?php
                         include '../../../../db.php';
-                        include '../../function/php/pending_to-ship.php'
+                        include '../../function/php/app-waiting.php'
                         ?>
 
                     </tbody>
@@ -192,7 +193,6 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
 <script src="../../function/script/toggle-menu.js"></script>
 <script src="../../function/script/pagination.js"></script>
 <script src="../../function/script/drop-down.js"></script>
-<script src="../../function/script/order.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </html>

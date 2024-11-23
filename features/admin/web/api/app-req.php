@@ -38,10 +38,20 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 <i class="fa-solid fa-users"></i>
                 <span>Users</span>
             </a>
-            <a href="app-req.php" class="navbar-highlight">
-                <i class="fa-solid fa-calendar-check"></i>
-                <span>Booking Request</span>
-            </a>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="checkoutDropdowns" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span class="ms-2">Booking</span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="checkoutDropdowns">
+                    <li><a class="dropdown-item navbar-highlight" href="app-req.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-waiting.php"><i class="fa-solid fa-calendar-check"></i> <span>Waiting Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-ongoing.php"><i class="fa-solid fa-calendar-check"></i> <span>On Going Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-finish.php"><i class="fa-solid fa-calendar-check"></i> <span>Finished Bookings</span></a></li>
+                    <li><a class="dropdown-item" href="app-cancel.php"><i class="fa-solid fa-calendar-check"></i> <span>Cancelled Bookings</span></a></li>
+                   
+                </ul>
+            </div> 
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="checkoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-calendar-check"></i>
@@ -56,19 +66,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                 </ul>
             </div> 
 
-            <a href="check-up.php">
-                <i class="fa-solid fa-file-alt"></i>
-                <span>Check Up Form</span>
-            </a>
-            <a href="wellness.php">
-                <i class="fa-solid fa-file-alt"></i>
-                <span>Wellness Form</span>
-            </a>
-            <a href="prescription.php">
-                <i class="fa-solid fa-file-prescription"></i>
-                <span>Prescription</span>
-            </a>
-
+          
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>
                 <a href="service-list.php">
