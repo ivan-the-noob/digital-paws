@@ -5,6 +5,7 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
     header("Location: ../../../users/web/api/login.php");
     exit();
 }
+$email = $_SESSION['email'];
 
 if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
     header('Content-Type: application/json');
@@ -57,17 +58,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
 
     $conn->close();
 
-    // Return the result as a JSON object for the frontend
     echo json_encode($payments);
     exit;
 }
 ?>
-
-
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -244,9 +238,34 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
                 <div class="chart-container">
                     <canvas id="salesChart"></canvas>
                 </div>
-                <div class="chart-container">
-                    
-                </div>
+                <div class="global-container">
+                <?php 
+require '../../../../db.php';
+
+$sql = "SELECT * FROM global_reports ORDER BY cur_time DESC"; 
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Output the reports
+    while ($row = $result->fetch_assoc()) {
+        $message = $row['message'];
+        $time = $row['cur_time']; // Assuming current_time is a TIMESTAMP column
+        
+        
+        // Display the message and time
+        echo "<div class='report'>";
+        echo "<p>$message<span class='report-time'> $time</span></p><hr>";
+        echo "</div>";
+    }
+} else {
+    echo "<p>No reports available.</p>";
+}
+
+$conn->close();
+?>
+
+   
+</div>
             </div>
         </div>
 

@@ -9,6 +9,7 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/cart.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   
 </head>
@@ -51,18 +52,17 @@ if (isset($_SESSION['email'])) {
     exit;
   }
 
-// Ensure the session email is set
+  
+
 if (isset($_SESSION['email'])) {
     $email = $_SESSION['email'];
 
-    // Select all data from the cart where the email matches the session email
     $query = "SELECT * FROM cart WHERE email = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $email);  // "s" denotes string type for email
+    $stmt->bind_param("s", $email); 
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Check if any rows are returned and store them in the array
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $cart_items[] = $row;
@@ -78,53 +78,79 @@ if (isset($_SESSION['email'])) {
 }
 
 
+
+
 ?>
 
+<div class="navbar-container">
 <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container">
-        <a class="navbar-brand d-none d-lg-block" href="#">
-            <img src="assets/img/logo.pngs" alt="Logo" width="30" height="30">
-        </a>
+            <div class="container">
+            <a class="navbar-brand d-none d-lg-block" href="#">
+                    <img src="../../../../assets/img/logo.png" alt="Logo" width="30" height="30">
+                </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                style="stroke: black; fill: none;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
-                </path>
-            </svg>
-        </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        style="stroke: black; fill: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
 
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav d-flex ">
-                <li class="nav-item">
-                    <a class="nav-link" href="../../../../index.php">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Appointment</a>
-                </li>
-            </ul>
-            <div class="d-flex ml-auto">
-                <?php if ($email): ?>
-                    <div class="dropdown second-dropdown">
-                        <button class="btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <img src="../../../../assets/img/customer.jfif" alt="Profile Image" class="profile">
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                            <li><a class="dropdown-item" href="/features/users/web/api/dashboard.html">Profile</a></li>
-                            <li><a class="dropdown-item"
-                                    href="../../../../features/users/function/authentication/logout.php">Logout</a></li>
-                        </ul>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../../index.php">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Cart</a>
+                        </li>
+                     
+                    </ul>
+                    <div class="d-flex ml-auto">
+                        <?php if ($email): ?>
+                            <!-- Profile Dropdown -->
+                            <div class="dropdown second-dropdown">
+                                <button class="btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../../../assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
+                                </button>
+                                <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
+                                    <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
+                                    <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
+                                </ul>
+                            </div>
+                          <?php 
+                            require '../../../../db.php';
+                            include '../../function/php/count_cart.php';
+                            
+                          ?>
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                        <a href="../../function/php/update_cart_status.php" class="header-cart">
+                            <span class="material-symbols-outlined">
+                                shopping_cart
+                            </span>
+
+                            <?php if ($newCartData > 0): ?>
+                                <span class="badge"><?= $newCartData ?></span>
+                            <?php endif; ?>
+                        </a>
+                                <a href="my-orders.php" class="header-cart">
+                                    <span class="material-symbols-outlined">
+                                        local_shipping
+                                    </span>
+                                </a>
+                            </div>
+                            </div>
+
+
+                        <?php else: ?>
+                            <a href="login.php" class="btn-theme" type="button">Login</a>
+                        <?php endif; ?>
                     </div>
 
-
-                <?php else: ?>
-                    <a href="../../../features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
-                <?php endif; ?>
-
-            </div>
-</nav>
+        </nav>
+    </div>
 
 <style>
     input[type="checkbox"] {
@@ -191,7 +217,7 @@ if (isset($_SESSION['email'])) {
         <div class="col-md-6">
             <div class="cart-container">
                 <div class="card-box" id="card-box">
-                    <p>Selected items will appear here.</p>
+                    <p class="p-3">Check Out Now</p>
                 </div>
                 <div class="div">
                     <p>Total Amount:</p>

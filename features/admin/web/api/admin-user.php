@@ -255,7 +255,6 @@ $conn->close();
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
 
-                                        <!-- Modal -->
                                         <div class="modal fade" id="editUserModal-<?php echo $user['id']; ?>" tabindex="-1"
                                             aria-labelledby="editUserModalLabel-<?php echo $user['id']; ?>" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered">
@@ -269,7 +268,6 @@ $conn->close();
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <!-- Form to update user -->
                                                         <form action="../../function/php/edit_user.php" method="POST">
                                                             <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
 

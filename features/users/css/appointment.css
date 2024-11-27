@@ -329,8 +329,9 @@
 
 .modal-body label{
     color: #7A3015;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
+    opacity: 80%;
 }
 .modal-body h6{
     color:#7A3015;

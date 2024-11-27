@@ -18,6 +18,7 @@
 session_start();
 include '../../../../db.php';
 
+// Check if the user is logged in
 if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
   $email = $_SESSION['email'];
   $profile_picture = $_SESSION['profile_picture'];
@@ -25,6 +26,8 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
   header("Location: ../../web/api/login.php");
   exit();
 }
+
+// Handle POST request for booking an appointment
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $ownerName = $_POST['ownerName'];
   $contactNum = $_POST['contactNum'];
@@ -35,34 +38,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $age = $_POST['age'];
   $service = $_POST['service'];
   $payment = $_POST['payment'];
-  $appointmentTime = $_POST['appointmentTime'];
   $appointmentDate = date('Y-m-d'); 
   $latitude = $_POST['latitude'];
   $longitude = $_POST['longitude']; 
   $addInfo = $_POST['add-info']; 
 
+  // Prepare the SQL statement to insert into the appointment table
+  $stmt = $conn->prepare("INSERT INTO appointment (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, appointment_date, latitude, longitude, add_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-  $stmt = $conn->prepare("INSERT INTO appointment (owner_name, contact_num, email, barangay, pet_type, breed, age, service, payment, appointment_time, appointment_date, latitude, longitude, add_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  if ($stmt === false) {
+      die("Error preparing statement: " . $conn->error);
+  }
 
+  // Bind the parameters
+  $stmt->bind_param("ssssssissssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $appointmentDate, $latitude, $longitude, $addInfo);
 
-if ($stmt === false) {
-    die("Error preparing statement: " . $conn->error);
-}
+  // Execute the query and check if successful
+  if ($stmt->execute()) {
+    // Log the appointment booking event in the global_reports table
+    $appointmentTime = date("h:i A | m/d/Y"); // Current time of appointment booking
+    $message = "$email booked an appointment at $appointmentTime";
 
-$stmt->bind_param("ssssssisssssss", $ownerName, $contactNum, $email, $barangay, $petType, $breed, $age, $service, $payment, $appointmentTime, $appointmentDate, $latitude, $longitude, $addInfo);
+    // Prepare the SQL statement to insert into the global_reports table
+    $log_sql = "INSERT INTO global_reports (message, cur_time) VALUES (?, NOW())";
+    $log_stmt = $conn->prepare($log_sql);
+    $log_stmt->bind_param("s", $message);
+    $log_stmt->execute();
+    $log_stmt->close();
 
-if ($stmt->execute()) {
-    echo "New record created successfully";
-} else {
+    // Success message
+    echo "New appointment booked successfully";
+  } else {
     echo "Error: " . $stmt->error;
-}
+  }
 
-// Close connection
-$stmt->close();
-$conn->close();
+  // Close statement and connection
+  $stmt->close();
+  $conn->close();
 }
-
 ?>
+
 
 <body onload="initAutocomplete()">
 <nav class="navbar navbar-expand-lg navbar-light">
@@ -144,10 +159,7 @@ $conn->close();
             <p>Appointment Schedule</p>
             <div id="modalContent" class="col-6"></div>
           </div>
-          <div class="col-md-6 d-flex flex-column">
-            <label for="appointmentTime">Select Time:</label>
-            <input type="time" id="appointmentTime" name="appointmentTime" style="width: 150px;" min="09:00" max="17:00" onchange="validateTime()">
-          </div>
+         
         </div>
         <div class="line w-100 my-3"></div>
         <div class="row">
@@ -163,8 +175,9 @@ $conn->close();
                 <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="09123456789" required>
               </div>
               <div class="form-group">
-                <label for="ownerEmail" class="form-label">Email</label>
-                <input type="email" class="form-control" id="ownerEmail" name="ownerEmail" placeholder="bardyardpets@gmail.com" required>
+                  <label for="ownerEmail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="ownerEmail" name="ownerEmail" 
+                        value="<?php echo htmlspecialchars($email); ?>" readonly required>
               </div>
             </div>
             
@@ -211,10 +224,6 @@ $conn->close();
             
             <div class="col-md-6 mt-3">
               <h6>Services</h6>
-          
-
-             
-
   <?php
   require '../../../../db.php';
 
