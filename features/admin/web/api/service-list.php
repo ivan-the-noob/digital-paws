@@ -171,8 +171,8 @@ $conn->close();
                                     <label for="categoryType">Type</label>
                                     <select class="form-control mt-2" id="categoryType" name="service_type">
                                         <option value="">Select Type</option>
-                                        <option value="medical">Medical</option>
-                                        <option value="non-medical">Non-Medical</option>
+                                        <option value="home">Home</option>
+                                        <option value="clinic">Clinic</option>
                                     </select>
                                 </div>
 

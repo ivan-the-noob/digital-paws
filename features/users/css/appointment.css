@@ -206,10 +206,16 @@
     text-align: start;
 }
 
+.fc .fc-daygrid-day-number{
+    padding: 0 !important;
+}
+
 #totalPayment{
     font-weight: 600 !important;
     font-size: 20px !important;
 }
+
+
 /*Appointment History End*/
 
 /* Calendar Section */
@@ -318,8 +324,12 @@
     color: #7A3015;
 }
 .fc-scrollgrid-sync-inner a {
-    color: #7A3015;
+    color: #fff;
     text-decoration: none;
+}
+
+.fc .fc-col-header-cell-cushion {
+    color: #7A3015;
 }
 
 
@@ -419,6 +429,27 @@ input[type="number"]::-webkit-inner-spin-button {
     border-color: #7A3015 !important;
 }
 
+.pet-divide{
+    margin-top: 40px !important;
+}
+
+.fc-button-group{
+    padding-top: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.status{
+    color: #fff !important;
+    padding: 4px 8px;
+    border-radius: 5px;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+}
 
 
 

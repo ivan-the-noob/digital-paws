@@ -16,6 +16,8 @@
 
 <?php
 session_start();
+
+
 include '../../../../db.php';
 
 // Check if the user is logged in
@@ -38,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $age = $_POST['age'];
   $service = $_POST['service'];
   $payment = $_POST['payment'];
-  $appointmentDate = date('Y-m-d'); 
+  $appointmentDate = $_POST['appointment_date']; 
   $latitude = $_POST['latitude'];
   $longitude = $_POST['longitude']; 
   $addInfo = $_POST['add-info']; 
@@ -77,6 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $conn->close();
 }
 ?>
+
 
 
 <body onload="initAutocomplete()">
@@ -148,7 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="modal-content">
       <div class="modal-header d-flex justify-content-between">
         <h5 class="modal-title" id="modalLabel">Book Your Desired Schedule</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button"  data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -158,6 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <div class="col-md-6">
             <p>Appointment Schedule</p>
             <div id="modalContent" class="col-6"></div>
+            <input type="hidden" id="appointment_date" name="appointment_date" value="">
           </div>
          
         </div>
@@ -168,17 +172,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <h6>Owner Information</h6>
           <div class="form-group">
           <label for="ownerName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="Racel Mae Loquellano" required>
+                <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="Ex. Ivan Ablanida" required>
               </div>
               <div class="form-group">
                 <label for="contactNum" class="form-label">Contact #</label>
-                <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="09123456789" required>
+                <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Ex. 09123456879" required>
               </div>
               <div class="form-group">
                   <label for="ownerEmail" class="form-label">Email</label>
                   <input type="email" class="form-control" id="ownerEmail" name="ownerEmail" 
                         value="<?php echo htmlspecialchars($email); ?>" readonly required>
               </div>
+              <h6 class="pet-divide">Pet Information</h6>
+              <div class="form-group">
+                <label for="petType" class="form-label">Pet Type</label>
+                <select class="form-control" id="petType" name="petType" required>
+                  <option>Cat</option>
+                  <option>Dog</option>
+                  <option>Rabbit</option>
+                  <option>Reptile</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="breed" class="form-label">Breed</label>
+                <input type="text" class="form-control" id="breed" name="breed" placeholder="Husky">
+              </div>
+              <div class="form-group">
+                <label for="age" class="form-label">Age</label>
+                <input type="number" class="form-control" id="age" name="age" placeholder="Months" required>
+              </div>
+              
             </div>
             
           <div class="col-md-6">
@@ -202,73 +225,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <div class="row">
             <!-- Pet Information -->
             <div class="col-md-6 mt-3">
-              <h6>Pet Information</h6>
-              <div class="form-group">
-                <label for="petType" class="form-label">Pet Type</label>
-                <select class="form-control" id="petType" name="petType" required>
-                  <option>Cat</option>
-                  <option>Dog</option>
-                  <option>Rabbit</option>
-                  <option>Reptile</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="breed" class="form-label">Breed</label>
-                <input type="text" class="form-control" id="breed" name="breed" placeholder="Husky">
-              </div>
-              <div class="form-group">
-                <label for="age" class="form-label">Age</label>
-                <input type="number" class="form-control" id="age" name="age" placeholder="Months" required>
-              </div>
+              
             </div>
             
             <div class="col-md-6 mt-3">
               <h6>Services</h6>
-  <?php
-  require '../../../../db.php';
+              <?php
+require '../../../../db.php';
 
-  try {
-      $sql = "SELECT service_name, cost, discount, service_type FROM service_list";
-      $stmt = $conn->prepare($sql);
-      $stmt->execute();
-      $result = $stmt->get_result();
+try {
+    $sql = "SELECT service_name, cost, discount, service_type FROM service_list";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-      $medical_services = [];
-      $non_medical_services = [];
+    $clinic_services = [];
+    $home_services = [];
 
-      while ($row = $result->fetch_assoc()) {
-          $discounted_cost = $row['cost'] - ($row['cost'] * ($row['discount'] / 100));
-          
-          $service_data = [
-              'service_name' => $row['service_name'],
-              'cost' => number_format($row['cost'], 2), 
-              'discount' => $row['discount'],
-              'discounted_cost' => number_format($discounted_cost, 2),
-              'service_type' => $row['service_type']
-          ];
+    while ($row = $result->fetch_assoc()) {
+        $discounted_cost = $row['cost'] - ($row['cost'] * ($row['discount'] / 100));
+        
+        $service_data = [
+            'service_name' => $row['service_name'],
+            'cost' => number_format($row['cost'], 2), 
+            'discount' => $row['discount'],
+            'discounted_cost' => number_format($discounted_cost, 2),
+            'service_type' => $row['service_type']
+        ];
 
-          if (strtolower($row['service_type']) === 'medical') {
-              $medical_services[] = $service_data;
-          } elseif (strtolower($row['service_type']) === 'non-medical') {
-              $non_medical_services[] = $service_data;
-          }
-      }
+        if (strtolower($row['service_type']) === 'clinic') {
+            $clinic_services[] = $service_data;
+        } elseif (strtolower($row['service_type']) === 'home') {
+            $home_services[] = $service_data;
+        }
+    }
 
-      $stmt->close();
-  } catch (Exception $e) {
-      echo "Error: " . $e->getMessage();
-  }
+    $stmt->close();
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
 
-  $conn->close();
+$conn->close();
 ?>
 
 <!-- HTML Select Element -->
 <div class="form-group">
     <label for="service" class="form-label">Service</label>
     <select class="form-control" id="service" name="service" required onchange="updatePayment()">
-        <!-- Medical Services -->
-        <optgroup label="Medical Services" class="medical-services">
-            <?php foreach ($medical_services as $service): ?>
+        <!-- Clinic Services -->
+        <optgroup label="Clinic Services" class="clinic-services">
+            <?php foreach ($clinic_services as $service): ?>
                 <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
                         data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
                         data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
@@ -278,9 +284,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </option>
             <?php endforeach; ?>
         </optgroup>
-        <!-- Non-Medical Services -->
-        <optgroup label="Non-Medical Services" class="nonMedical-services">
-            <?php foreach ($non_medical_services as $service): ?>
+        <!-- Home Services -->
+        <optgroup label="Home Services" class="home-services">
+            <?php foreach ($home_services as $service): ?>
                 <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
                         data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
                         data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
@@ -293,13 +299,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </select>
 </div>
 
-    <div class="form-group">
-        <label for="totalPayment" class="form-label">Total Payment</label>
+
+    <div class="form-group mt-2">
+        <label for="totalPayment" class="form-label mb-0">Total Payment</label>
         <p id="totalPayment">₱ 0.00</p>
     </div>
 
     <!-- Hidden input for payment -->
-    <input type="hidden" id="payment" name="payment" />
+    <input type="hidden" id="payment" name="payment"/>
 
     <div class="form-group mt-3">
         <button type="submit" class="btn btn-primary book-save">Book Appointment</button>
@@ -343,71 +350,90 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="card-body">
               <ul class="list-group" id="historyList">
-                <li class="list-group-item current-appointment">
-                  <div
-                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                    <div>
-                      <h5 class="mb-1">Appointment with Dr. John Doe</h5>
-                      <p class="mb-1">Service: Grooming</p>
-                      <p class="mb-1">Pet: Husky, 1 Yr Old</p>
-                      <p>Owner: Racel Mae Loquellano</p>
-                    </div>
-                    <div class="mt-3 mt-md-0 text-md-right">
-                      <p class="mb-1">Date: 2024-07-10</p>
-                      <p class="mb-1">Time: 10:00 AM</p>
-                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal1">View Info</button>
-                      <a href="appointment.html"><button class="btn btn-primary">Cancel</button></a>
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item past-appointment">
-                  <div
-                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                    <div>
-                      <h5 class="mb-1">Appointment with Dr. Jane Smith</h5>
-                      <p class="mb-1">Service: Health Checkup</p>
-                      <p class="mb-1">Pet: Cat, 2 Yr Old</p>
-                      <p>Owner: John Doe</p>
-                    </div>
-                    <div class="mt-3 mt-md-0 text-md-right">
-                      <p class="mb-1">Date: 2024-06-20</p>
-                      <p class="mb-1">Time: 2:00 PM</p>
-                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal2">View Info</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item past-appointment">
-                  <div
-                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                    <div>
-                      <h5 class="mb-1">Appointment with Dr. Alan Brown</h5>
-                      <p class="mb-1">Service: Vaccination</p>
-                      <p class="mb-1">Pet: Dog, 3 Yr Old</p>
-                      <p>Owner: Emily Clark</p>
-                    </div>
-                    <div class="mt-3 mt-md-0 text-md-right">
-                      <p class="mb-1">Date: 2024-05-15</p>
-                      <p class="mb-1">Time: 9:00 AM</p>
-                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal3">View Info</button>
-                    </div>
-                  </div>
-                </li>
-                <li class="list-group-item past-appointment">
-                  <div
-                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                    <div>
-                      <h5 class="mb-1">Appointment with Dr. Sarah White</h5>
-                      <p class="mb-1">Service: Surgery</p>
-                      <p class="mb-1">Pet: Rabbit, 2 Yr Old</p>
-                      <p>Owner: Mark Johnson</p>
-                    </div>
-                    <div class="mt-3 mt-md-0 text-md-right">
-                      <p class="mb-1">Date: 2024-04-22</p>
-                      <p class="mb-1">Time: 11:00 AM</p>
-                      <button class="btn btn-primary" data-toggle="modal" data-target="#modal4">View Info</button>
-                    </div>
-                  </div>
-                </li>
+                <?php 
+                require '../../../../db.php';
+                $sql = "SELECT * FROM appointment WHERE status IN ('pending', 'waiting', 'on-going') ORDER BY appointment_date DESC";
+                $result = $conn->query($sql);
+                
+                if ($result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                    ?>
+                    <li class="list-group-item current-appointment">
+                      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                        <div>
+                            <h5 class="mb-1">Appointment</h5>
+                          <p class="mb-1">Service: <?php echo $row['service']; ?></p>
+                          <p class="mb-1">Pet: <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p>Owner: <?php echo $row['owner_name']; ?></p>
+                        </div>
+                        <div class="mt-3 mt-md-0 text-md-right">
+                        <p class="mb-1 status" style="background-color: 
+                            <?php 
+                                if ($row['status'] == 'pending') {
+                                    echo '#007bff';
+                                } elseif ($row['status'] == 'waiting') {
+                                    echo 'ffc107';
+                                } elseif ($row['status'] == 'on-going') {
+                                    echo 'g28a745';
+                                }
+                            ?>;">
+                            <?php echo $row['status']; ?>
+                        </p>
+
+                          <p class="mb-1">Date: <?php echo $row['appointment_date']; ?></p>
+                          <a href="appointment.php?cancel=<?php echo $row['id']; ?>"><button class="btn btn-primary">Cancel</button></a>
+                        </div>
+                      </div>
+                    </li>
+                    <?php
+                  }
+                } else {
+                  echo "<p>No appointments found</p>";
+                }
+                
+                $conn->close();
+                ?>
+               <?php 
+                require '../../../../db.php';
+                $sql = "SELECT * FROM appointment WHERE status = 'finish'";
+                $result = $conn->query($sql);
+                
+                if ($result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                    ?>
+                    <li class="list-group-item past-appointment">
+                      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                        <div>
+                            <h5 class="mb-1">Appointment</h5>
+                          <p class="mb-1">Service: <?php echo $row['service']; ?></p>
+                          <p class="mb-1">Pet: <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p>Owner: <?php echo $row['owner_name']; ?></p>
+                        </div>
+                        <div class="mt-3 mt-md-0 text-md-right">
+                        <p class="mb-1 status" style="background-color: 
+                            <?php 
+                                if ($row['status'] == 'finish') {
+                                    echo 'green';
+                                }
+                            ?>;">
+                            <?php echo $row['status']; ?>
+                        </p>
+
+                          <p class="mb-1">Date: <?php echo $row['appointment_date']; ?></p>
+                      
+                          <a href="appointment.php?cancel=<?php echo $row['id']; ?>"><button class="btn btn-primary">Cancel</button></a>
+                        </div>
+                      </div>
+                    </li>
+                    <?php
+                  }
+                } else {
+                  echo "<p>No appointments found</p>";
+                }
+                
+                $conn->close();
+                ?>
+                
               </ul>
               <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center mt-3" id="paginationControls">
@@ -421,131 +447,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
     </div>
   </section>
-  <!--Book-History Section End-->
-
-    <!--Book-History Modal Section-->
-  <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="modalLabel1" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header d-flex justify-content-between">
-          <h5 class="modal-title" id="modalLabel1">Appointment Details</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <h5>Appointment with Dr. John Doe</h5>
-          <p>Name: Racel Mae Loquellano</p>
-          <p>Contact: 09123456789</p>
-          <p>Email: bardyardpets@gmail.com</p>
-          <p>Adress: Magdiwang Highway</p>
-          <h5>Pet Information</h5>
-          <p>Pet Type: Cat</p>
-          <p>Breed: Husky</p>
-          <p>Age: 12months</p>
-          <h5>Services</h5>
-          <p>Service Category: Non-Medical</p>
-          <p>Service: Grooming</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modalLabel2" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header d-flex justify-content-between">
-          <h5 class="modal-title" id="modalLabel2">Appointment Details</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <h5>Appointment with Dr. Jane Smith</h5>
-          <p>Name: John Doe</p>
-          <p>Contact: 09123456789</p>
-          <p>Email: bardyardpets@gmail.com</p>
-          <p>Adress: Magdiwang Highway</p>
-          <h5>Pet Information</h5>
-          <p>Pet Type: Cat</p>
-          <p>Breed: Husky</p>
-          <p>Age: 24months</p>
-          <h5>Services</h5>
-          <p>Service Category: Medical</p>
-          <p>Service:Health Check up</p>
-         
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="modalLabel3" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header d-flex justify-content-between">
-          <h5 class="modal-title" id="modalLabel3">Appointment Details</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <h5>Appointment with Dr. Alan Brown</h5>
-          <p>Name: Emily Clark</p>
-          <p>Contact: 09123456789</p>
-          <p>Email: bardyardpets@gmail.com</p>
-          <p>Adress: Magdiwang Highway</p>
-          <h5>Pet Information</h5>
-          <p>Pet Type: Cat</p>
-          <p>Breed: Husky</p>
-          <p>Age: 36months</p>
-          <h5>Services</h5>
-          <p>Service Category: Medical</p>
-          <p>Service: Vaccination</p>
-          
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="modal4" tabindex="-1" role="dialog" aria-labelledby="modalLabel4" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header d-flex justify-content-between">
-          <h5 class="modal-title" id="modalLabel4">Appointment Details</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <h5>Appointment with Dr. Sarah White</h5>
-          <p>Name: Mark Johnson</p>
-          <p>Contact: 09123456789</p>
-          <p>Email: bardyardpets@gmail.com</p>
-          <p>Adress: Magdiwang Highway</p>
-          <h5>Pet Information</h5>
-          <p>Pet Type: Rabiit</p>
-          <p>Breed: White</p>
-          <p>Age: 24months</p>
-          <h5>Services</h5>
-          <p>Service Category: Medical</p>
-          <p>Surgery</p>
-          
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
+ 
 
   <!--Book-History Modal Section-->
 

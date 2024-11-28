@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2024 at 10:26 AM
+-- Generation Time: Nov 28, 2024 at 10:58 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -53,9 +53,9 @@ CREATE TABLE `appointment` (
 --
 
 INSERT INTO `appointment` (`id`, `owner_name`, `contact_num`, `email`, `barangay`, `pet_type`, `breed`, `age`, `service_category`, `service`, `payment`, `appointment_time`, `appointment_date`, `created_at`, `latitude`, `longitude`, `add_info`, `status`) VALUES
-(51, 'Ivan Ablanida ', 'hey', 'ejivan123@gmail.com', 'Cabuco', 'Dog', '123', 12, '', 'Grooming', 899.10, '00:00:00', '2024-11-23', '2024-11-23 07:48:16', 14.27935990, 120.86687720, 'dsdsadsadas', 'finish'),
-(52, 'Ivan Ablanida', '09957939703', 'ejivancablanida@gmail.com', 'Cabuco', 'Cat', 'dadas', 12, '', 'Boarding', 700.00, '00:00:00', '2024-11-27', '2024-11-27 09:08:27', 14.27935990, 120.86687720, 'Blk 4 lot 23', 'pending'),
-(53, 'Ivan Ablanida', '09957939703', 'ejivancablanida@gmail.com', 'Cabuco', 'Cat', 'dadas', 12, '', 'Boarding', 700.00, '00:00:00', '2024-11-27', '2024-11-27 09:09:14', 14.27935990, 120.86687720, 'Blk 4 lot 23', 'pending');
+(77, 'Ivan Ablanida', '09957939703', 'ejivancablanida@gmail.com', '', 'Cat', 'dadas', 12, '', 'Grooming', 899.10, '00:00:00', '2024-11-29', '2024-11-28 09:11:10', 14.28383250, 120.86687720, 'Blk 4 lot 23', 'finish'),
+(78, 'Ivan Ablanida', '09957939703', 'ejivancablanida@gmail.com', NULL, 'Cat', 'dadas', 12, '', 'try lang', 110.70, '00:00:00', '2024-12-07', '2024-11-28 09:11:22', 37.34925900, -121.86634090, 'Blk 4 lot 23', 'pending'),
+(79, 'Ivan Ablanida', '09957939703', 'ejivancablanida@gmail.com', 'Perez', 'Cat', 'dadas', 12, '', 'try lang', 110.70, '00:00:00', '2024-11-29', '2024-11-28 09:12:42', 14.28327619, 0.00000000, 'Blk 4 lot 23', 'pending');
 
 -- --------------------------------------------------------
 
@@ -308,7 +308,33 @@ INSERT INTO `global_reports` (`id`, `message`, `cur_time`) VALUES
 (7, 'User ejivancablanida@gmail.com logged in at ', '2024-11-27 08:54:12'),
 (8, 'ejivancablanida@gmail.com booked an appointment at 10:09 AM | 11/27/2024', '2024-11-27 09:09:14'),
 (9, 'Admin admin@gmail.com logged in at ', '2024-11-27 09:12:54'),
-(10, 'Admin admin@gmail.com logged in at ', '2024-11-27 09:22:06');
+(10, 'Admin admin@gmail.com logged in at ', '2024-11-27 09:22:06'),
+(11, 'User ejivancablanida@gmail.com logged in at ', '2024-11-28 07:08:24'),
+(12, 'Admin admin@gmail.com logged in at ', '2024-11-28 07:09:44'),
+(13, 'ejivancablanida@gmail.com booked an appointment at 09:00 AM | 11/28/2024', '2024-11-28 08:00:31'),
+(14, 'ejivancablanida@gmail.com booked an appointment at 09:00 AM | 11/28/2024', '2024-11-28 08:00:41'),
+(15, 'ejivancablanida@gmail.com booked an appointment at 09:00 AM | 11/28/2024', '2024-11-28 08:00:49'),
+(16, 'ejivancablanida@gmail.com booked an appointment at 09:00 AM | 11/28/2024', '2024-11-28 08:00:58'),
+(17, 'ejivancablanida@gmail.com booked an appointment at 09:01 AM | 11/28/2024', '2024-11-28 08:01:22'),
+(18, 'ejivancablanida@gmail.com booked an appointment at 09:22 AM | 11/28/2024', '2024-11-28 08:22:53'),
+(19, 'ejivancablanida@gmail.com booked an appointment at 09:23 AM | 11/28/2024', '2024-11-28 08:23:06'),
+(20, 'ejivancablanida@gmail.com booked an appointment at 09:29 AM | 11/28/2024', '2024-11-28 08:29:23'),
+(21, 'ejivancablanida@gmail.com booked an appointment at 09:29 AM | 11/28/2024', '2024-11-28 08:29:48'),
+(22, 'ejivancablanida@gmail.com booked an appointment at 09:31 AM | 11/28/2024', '2024-11-28 08:31:41'),
+(23, 'ejivancablanida@gmail.com booked an appointment at 09:31 AM | 11/28/2024', '2024-11-28 08:31:55'),
+(24, 'ejivancablanida@gmail.com booked an appointment at 09:35 AM | 11/28/2024', '2024-11-28 08:35:53'),
+(25, 'ejivancablanida@gmail.com booked an appointment at 09:35 AM | 11/28/2024', '2024-11-28 08:35:59'),
+(26, 'ejivancablanida@gmail.com booked an appointment at 09:37 AM | 11/28/2024', '2024-11-28 08:37:08'),
+(27, 'ejivancablanida@gmail.com booked an appointment at 09:38 AM | 11/28/2024', '2024-11-28 08:38:21'),
+(28, 'ejivancablanida@gmail.com booked an appointment at 09:57 AM | 11/28/2024', '2024-11-28 08:57:50'),
+(29, 'ejivancablanida@gmail.com booked an appointment at 09:58 AM | 11/28/2024', '2024-11-28 08:58:17'),
+(30, 'ejivancablanida@gmail.com booked an appointment at 09:59 AM | 11/28/2024', '2024-11-28 08:59:02'),
+(31, 'ejivancablanida@gmail.com booked an appointment at 10:02 AM | 11/28/2024', '2024-11-28 09:02:09'),
+(32, 'ejivancablanida@gmail.com booked an appointment at 10:03 AM | 11/28/2024', '2024-11-28 09:03:07'),
+(33, 'ejivancablanida@gmail.com booked an appointment at 10:10 AM | 11/28/2024', '2024-11-28 09:10:10'),
+(34, 'ejivancablanida@gmail.com booked an appointment at 10:11 AM | 11/28/2024', '2024-11-28 09:11:10'),
+(35, 'ejivancablanida@gmail.com booked an appointment at 10:11 AM | 11/28/2024', '2024-11-28 09:11:22'),
+(36, 'ejivancablanida@gmail.com booked an appointment at 10:12 AM | 11/28/2024', '2024-11-28 09:12:42');
 
 -- --------------------------------------------------------
 
@@ -425,7 +451,7 @@ INSERT INTO `review` (`id`, `email`, `profile_picture`, `review`, `status`, `las
 
 CREATE TABLE `service_list` (
   `id` int(11) NOT NULL,
-  `service_type` enum('medical','non-medical') NOT NULL,
+  `service_type` enum('clinic','home') NOT NULL,
   `service_name` varchar(255) NOT NULL,
   `cost` decimal(10,2) NOT NULL,
   `discount` decimal(5,2) DEFAULT 0.00,
@@ -439,14 +465,14 @@ CREATE TABLE `service_list` (
 --
 
 INSERT INTO `service_list` (`id`, `service_type`, `service_name`, `cost`, `discount`, `created_at`, `info`, `is_read`) VALUES
-(6, 'medical', 'Surgical Servicesss', 2500.00, 1.00, '2024-09-11 10:11:31', 'Professional surgical services for your pets', 0),
-(7, 'medical', 'Pharmacy', 300.00, 0.00, '2024-09-11 10:12:04', 'Wide range of medications available at our pharmacy.', 0),
-(8, 'non-medical', 'Grooming', 999.00, 10.00, '2024-09-11 10:13:23', 'Professional grooming services to keep your pets looking their best', 0),
-(9, 'non-medical', 'Boarding', 700.00, 0.00, '2024-09-11 10:13:43', 'Comfortable and safe boarding services for your pets', 0),
-(10, 'non-medical', 'Pet Supplies', 300.00, 0.00, '2024-09-11 10:14:05', 'A wide range of pet supplies for your pet\'s needs', 0),
-(17, 'medical', 'Preventive Health Caress', 123.00, 10.00, '2024-10-17 22:53:49', 'hehe', 1),
-(19, 'medical', 'try lang', 123.00, 10.00, '2024-10-26 17:23:39', 'Basta try lang to pare koBasta try lang to pare koBasta try lang to pare koBasta try lang to pare ko', 0),
-(20, 'medical', 'Test', 100.00, 10.00, '2024-10-28 02:46:09', 'tEST tEST', 0);
+(6, 'clinic', 'Surgical Servicesss', 2500.00, 1.00, '2024-09-11 10:11:31', 'Professional surgical services for your pets', 0),
+(7, 'clinic', 'Pharmacy', 300.00, 0.00, '2024-09-11 10:12:04', 'Wide range of medications available at our pharmacy.', 0),
+(8, 'home', 'Grooming', 999.00, 10.00, '2024-09-11 10:13:23', 'Professional grooming services to keep your pets looking their best', 0),
+(9, 'clinic', 'Boarding', 700.00, 0.00, '2024-09-11 10:13:43', 'Comfortable and safe boarding services for your pets', 0),
+(10, 'clinic', 'Pet Supplies', 300.00, 0.00, '2024-09-11 10:14:05', 'A wide range of pet supplies for your pet\'s needs', 0),
+(17, 'clinic', 'Preventive Health Caress', 123.00, 10.00, '2024-10-17 22:53:49', 'hehe', 1),
+(19, 'clinic', 'try lang', 123.00, 10.00, '2024-10-26 17:23:39', 'Basta try lang to pare koBasta try lang to pare koBasta try lang to pare koBasta try lang to pare ko', 0),
+(20, 'clinic', 'Test', 100.00, 10.00, '2024-10-28 02:46:09', 'tEST tEST', 0);
 
 -- --------------------------------------------------------
 
@@ -625,7 +651,7 @@ ALTER TABLE `wellness`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `approved_req`
@@ -667,7 +693,7 @@ ALTER TABLE `contact`
 -- AUTO_INCREMENT for table `global_reports`
 --
 ALTER TABLE `global_reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `manual_input`
