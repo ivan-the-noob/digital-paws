@@ -8,17 +8,6 @@ $products = [];
 if (isset($_GET['id'])) {
   $id = $_GET['id'];
 
-  $stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
-  $result = $stmt->get_result();
-
-  if ($result->num_rows > 0) {
-    $product = $result->fetch_assoc();
-  }
-  $stmt->close();
-
-
   $stmt = $conn->prepare("SELECT * FROM product WHERE id != ?");
   $stmt->bind_param("i", $id);
   $stmt->execute();
@@ -45,16 +34,6 @@ if (isset($_GET['id'])) {
   $stmt->close();
 
 
-  $stmt = $conn->prepare("SELECT * FROM product WHERE id != ?");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
-  $result = $stmt->get_result();
-
-  while ($row = $result->fetch_assoc()) {
-    $products[] = $row;
-  }
-
-  $stmt->close();
 }
 
 if (isset($_SESSION['email'])) {
@@ -79,7 +58,6 @@ if (isset($_SESSION['email'])) {
   exit;
 }
 
-$conn->close();
 ?>
 
 
@@ -93,79 +71,106 @@ $conn->close();
   <title>Buy Now</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="../../css/buy-now.css">
 </head>
 
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container">
-      <a class="navbar-brand d-none d-md-block" href="#">
-        <img src="../../../../assets/img/logo.png" alt="Logo" width="30" height="30">
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-          style="stroke: black; fill: none;">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
-          </path>
-        </svg>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="../../../../../user.html">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Product</a>
-          </li>
-        </ul>
-        <div class="dropdown">
-          <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            <img src="../../../../assets/img/customer.jfif" alt="" class="profile">
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="../../../users/web/api/dashboard.html">Profile</a>
+  <div class="navbar-container">
+<nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+            <a class="navbar-brand d-none d-lg-block" href="#">
+                    <img src="../../../../assets/img/logo.png" alt="Logo" width="30" height="30">
+                </a>
 
-            <a class="dropdown-item" href="login.html">Logout</a>
-          </div>
-        </div>
-      </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        style="stroke: black; fill: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../../../index.php">Home</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex ml-auto">
+                        <?php if ($email): ?>
+                            <!-- Profile Dropdown -->
+                            <div class="dropdown second-dropdown">
+                                <button class="btn" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../../../assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
+                                </button>
+                                <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
+                                    <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
+                                    <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
+                                </ul>
+                            </div>
+                          <?php
+                            include '../../function/php/count_cart.php';
+                          ?>
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                        <a href="../../function/php/update_cart_status.php" class="header-cart">
+                            <span class="material-symbols-outlined">
+                                shopping_cart
+                            </span>
+
+                            <?php if ($newCartData > 0): ?>
+                                <span class="badge"><?= $newCartData ?></span>
+                            <?php endif; ?>
+                        </a>
+                                <a href="my-orders.php" class="header-cart">
+                                    <span class="material-symbols-outlined">
+                                        local_shipping
+                                    </span>
+                                </a>
+                            </div>
+                            </div>
+
+
+                        <?php else: ?>
+                            <a href="features/users/web/api/login.php" class="btn-theme" type="button">Login</a>
+                        <?php endif; ?>
+                    </div>
+
+        </nav>
     </div>
-  </nav>
 
   <!-- Product Section -->
   <div class="container">
     <section class="product row">
     <input type="hidden" id="main-product-id" value="<?= htmlspecialchars($product['id']) ?>">
     <div class="col-md-6">
-  <img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>" alt="Product Image" class="img-fluid" id="main-product-img">
-</div>
-<div class="col-md-5">
-  <div class="product-text">
-    <p>Digital Paws</p>
-    <h1 id="main-product-name"><?= htmlspecialchars($product['product_name']) ?></h1>
-    <p class="stock" id="main-product-stock">Stock: <?= htmlspecialchars($product['quantity']) ?></p>
-    <p class="price" id="main-product-price">₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?> PHP</p>
+    <img src="../../../../assets/img/product/<?= htmlspecialchars($product['product_img']) ?>" alt="Product Image" class="img-fluid" id="main-product-img">
+  </div>
+  <div class="col-md-5">
+        <div class="product-text">
+            <p>Digital Paws</p>
+            <h1 id="main-product-name"><?= htmlspecialchars($product['product_name']) ?></h1>
+            <p class="stock" id="main-product-stock">Stock: <?= htmlspecialchars($product['quantity']) ?></p>
+            <p class="price" id="main-product-price">₱<?= htmlspecialchars(number_format($product['cost'], 2)) ?> PHP</p>
 
-    <p class="mb-0 mt-3">Quantity</p>
-    <div class="quantity-wrapper">
-      <button class="quantity-btn" id="decrement-btn">-</button> <!-- Decrement button -->
-      <input type="number" class="form-control" id="quantity" min="1" value="1">
-      <!-- Quantity input -->
-      <button class="quantity-btn" id="increment-btn">+</button> <!-- Increment button -->
+            <p class="mb-0 mt-3">Quantity</p>
+            <?php if ($product['quantity'] < 1): ?>
+                <p class="text-danger mt-2">Out of Stock</p>
+            <?php else: ?>
+                <div class="quantity-wrapper">
+                    <button class="quantity-btn" id="decrement-btn">-</button> <!-- Decrement button -->
+                    <input type="number" class="form-control" id="quantity" min="1" value="1">
+                    <!-- Quantity input -->
+                    <button class="quantity-btn" id="increment-btn">+</button> <!-- Increment button -->
+                </div>
+                <button class="add-to-cart mt-2" data-bs-toggle="modal" data-bs-target="#addToCartModal" onclick="showCartModal()">Add to cart</button>
+                <button class="buy-it-now mt-2" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" onclick="openOrderDetailsModal()">Buy it now</button>
+            <?php endif; ?>
+        </div>
     </div>
 
-    <?php
-    $triggerModal = isset($_GET['triggerModal']) && $_GET['triggerModal'] == 'true';
-    ?>
-    <button class="add-to-cart mt-2" data-bs-toggle="modal" data-bs-target="#addToCartModal" onclick="showCartModal()">Add to cart</button>
-    <button class="buy-it-now mt-2" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" onclick="openOrderDetailsModal()">Buy it now</button>
-  </div>
-
-  
-</div>
 
 
 
@@ -437,13 +442,13 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
                           </div>
                         <div class="d-flex justify-content-between">
                           <p>Shipping Fee:</p>
-                          <p><span id="shippingFee" name="shipping-fee">Shoulder by rider</span></p>
+                          <p><span id="shippingFee" name="shipping-fee">Via Lalamove</span></p>
                           <input type="hidden" name="shipping-fee" value="69.00">
                         </div>
                         <div class="d-flex justify-content-between">
                           <h6>Total:</h6>
                           <h6><span id="totalAmount" name="total-amount">192.00</span></h6>
-                          <input type="hidden" name="total-amount" value="<? = htmlspecialchars(number_format($product['cost'], 2)) ?>">
+                          <input type="hidden" name="total-amount" value="<?htmlspecialchars(number_format($product['cost'], 2)) ?>">
                         </div>
                       </div>
                     </div>
@@ -601,26 +606,30 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
       <!-- Recommended Products Section -->
 
 
-      <h3 class="mt-5">You may also like</h3>
-        <div class="row px-5">
-          <?php if (empty($products)): ?>
-            <div class="col-12">
-              <p>No products available.</p>
-            </div>
-          <?php else: ?>
-            <?php foreach ($products as $item): ?>
-              <div class="col-md-3 col-sm-6 col-12 mb-4 product-item" data-id="<?= $item['id'] ?>" onclick="fetchProductDetails(<?= $item['id'] ?>)">
-                <div class="product-item">
-                  <div class="img-product">
-                    <img src="../../../../assets/img/product/<?= htmlspecialchars($item['product_img']) ?>" alt="Product Image" class="img-fluid mb-2">
+      <?php if ($product['quantity'] > 0): ?>
+          <h3 class="mt-5">You may also like</h3>
+          <div class="row px-5">
+              <?php if (empty($products)): ?>
+                  <div class="col-12">
+                      <p>No products available.</p>
                   </div>
-                  <h5 class="product-title"><?= htmlspecialchars($item['product_name']) ?></h5>
-                  <div class="product-price">₱<?= number_format($item['cost'], 2) ?> PHP</div>
-                </div>
-              </div>
-            <?php endforeach; ?>
-          <?php endif; ?>
-        </div>
+              <?php else: ?>
+                  <?php foreach (array_slice($products, 0, 4) as $item): ?>
+                      <div class="col-md-3 col-sm-6 col-12 mb-4 product-item" data-id="<?= $item['id'] ?>" onclick="fetchProductDetails(<?= $item['id'] ?>)">
+                          <div class="product-item">
+                              <div class="img-product">
+                                  <img src="../../../../assets/img/product/<?= htmlspecialchars($item['product_img']) ?>" alt="Product Image" class="img-fluid mb-2">
+                              </div>
+                              <h5 class="product-title"><?= htmlspecialchars($item['product_name']) ?></h5>
+                              <div class="product-price">₱<?= number_format($item['cost'], 2) ?> PHP</div>
+                          </div>
+                      </div>
+                  <?php endforeach; ?>
+              <?php endif; ?>
+          </div>
+      <?php endif; ?>
+
+
 
     </section>
 
@@ -629,29 +638,7 @@ document.querySelectorAll('.row.px-5 .product-item').forEach(item => {
 
   </div>
 
-  <button id="chat-bot-button" type="button" onclick="toggleChat()">
-    <i class="fa-solid fa-headset"></i>
-</button>
-  <div id="chat-interface" class="hidden">
-    <div id="chat-header">
-      <p>Amazing Day! How may I help you?</p>
-      <button onclick="toggleChat()">X</button>
-    </div>
-    <div id="chat-body">
-      <div class="button-bot">
-        <button>How to book?</button>
-        <!-- Additional buttons as needed -->
-      </div>
-    </div>
-    <div class="line"></div>
-    <div class="admin mt-3">
-      <div class="admin-chat">
-        <img src="../../../../assets/img/vet logo.jpg" alt="Admin">
-        <p>Admin</p>
-      </div>
-      <p class="text">Hello, I am Chat Bot. Please ask me a question by pressing the question buttons.</p>
-    </div>
-  </div>
+  
 
 </body>
 <script src="../../function/script/select-size.js"></script>

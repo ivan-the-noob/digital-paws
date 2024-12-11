@@ -127,12 +127,12 @@ $conn->close();
     <section class="front relative-container">
         <div class="paws">
             <img src="assets/img/foot2.png" class="foot2" alt="Paw Print 2">
-            <img src="assets/img/foot3.png" class="foot3" alt="Paw Print 3">
+            <img src="assets/img/foot3.png" class="foot3" alt="Paw Print 3" style="opacity: 50%">
         </div>
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 order-1 order-md-2 text-center">
-                    <img src="assets/img/about_us.png" alt="Vet Logo" class="img-fluid">
+                    <img src="assets/img/about_us.png" alt="Vet Logo" class="img-fluid" style="position: relative; z-index: 999">
                 </div>
                 <div class="col-md-6 order-2 order-md-1 text-md-left mb-4 mb-md-0 front-text">
                     <h4 class="mt-5">Book your pet's next appointment with ease!</h4>
@@ -344,8 +344,8 @@ $conn->close();
                 <div class="col-md-6 p-3 text-section">
                     <h2>About Us</h2>
                     <p>
-                        Welcome to Pet Shop Booking, your trusted companion in pet grooming and care.
-                        At Pet Shop Booking, we understand that your pets are more than just animals—they’re beloved
+                        Welcome to Happy Vet Animal Clinic, your trusted companion in pet grooming and care.
+                        At Happy Vet Animal Clinic, we understand that your pets are more than just animals—they’re beloved
                         members of your family.
                     </p>
                     <p>

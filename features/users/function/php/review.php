@@ -12,8 +12,9 @@ $email = $_SESSION['email'];
 $profile = $_SESSION['profile_picture'];
 $review = $_POST['comment'] ?? '';
 
+// Check if the review is empty or only spaces
 if (empty(trim($review))) {
-    header("Location: index.php?status=empty");
+    header("Location: ../../../../index.php?status=empty");
     exit();
 }
 
@@ -46,4 +47,5 @@ if ($has_reviewed_today) {
 
 $stmt->close();
 $conn->close();
+
 ?>

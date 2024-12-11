@@ -230,13 +230,11 @@ body{
   border-radius: 10px;
   background-color: #F8EBDC;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  min-height: 55vh;
 }
 
 .product h5{
   width: 100%;
   word-wrap: break-word;
-  height: 10vh;
 }
 
 .btn .add-to-cart{
@@ -494,6 +492,17 @@ body{
   padding: 5px 15px;
 
 }
+
+.product-button{
+  height: 8vh;
+  border-radius: 15px;
+  padding: 3px 15px;
+  background-color: #7A3015 !important;
+  border: none;
+  color: #fff;
+}
+
+
 
 
 

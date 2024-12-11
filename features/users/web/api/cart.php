@@ -21,7 +21,7 @@ include '../../../../db.php';
 
 $cart_items = [];
 
-$sql = "SELECT * FROM product"; // Change 'Product Name' to the actual product name you want to search for
+$sql = "SELECT * FROM product"; 
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -116,8 +116,8 @@ if (isset($_SESSION['email'])) {
                                 <img src="../../../../assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
                                 </button>
                                 <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
-                                    <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
-                                    <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
+                                    <li><a class="dropdown-item" href="../../features/users/web/api/dashboard.php">Profile</a></li>
+                                    <li><a class="dropdown-item" href="../../function/authentication/logout.php">Logout</a></li>
                                 </ul>
                             </div>
                           <?php 
@@ -219,8 +219,7 @@ if (isset($_SESSION['email'])) {
                 <div class="card-box" id="card-box">
                     <p class="p-3">Check Out Now</p>
                 </div>
-                <div class="div">
-                    <p>Total Amount:</p>
+                <div class="check-out">
                     <button id="checkoutButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">Checkout</button>
                 </div>
             </div>
@@ -320,7 +319,7 @@ if (isset($_SESSION['email'])) {
                                     <!-- Shipping Fee Section -->
                                     <div class="d-flex justify-content-between">
                                         <p>Shipping Fee:</p>
-                                        <p><span id="shippingFee" name="shipping-fee">Shoulder by Rider</span></p>
+                                        <p><span id="shippingFee" name="shipping-fee">Via Lalamove</span></p>
                                     </div>
 
                                     <!-- Total Section -->

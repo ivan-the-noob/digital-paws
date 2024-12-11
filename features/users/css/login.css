@@ -75,6 +75,7 @@ input{
 }
 
 .login-right input[type="email"],
+.login-right input[type="text"],
 .login-right input[type="password"] {
     
     border-radius: 20px;

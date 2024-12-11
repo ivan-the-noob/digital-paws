@@ -176,247 +176,132 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <!--Appointment Section-->
   <section class="appointment">
-    <div class="content py-5 date">
+    <div class="content date">
       <div class="col-md-8 col-11 app">
         <div class="appoints">
           <button>Appointment Availability</button>
-          <a href="my-app.php" class="appoint">My Appointment</button>
+          <a href="appointment.php" class="appoint" id="toggleViewBtn">My Calendar</a>
         </div>
-        <div class="card card-outline card-primary rounded-0 shadow" id="appointmentSection">
-          <div class="card-body">
-            <div class="calendar-container">
-              <div id="appointmentCalendar"></div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>
-    <div class="modal fade" id="dayModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" id="info" role="document">
-    <div class="modal-content">
-      <div class="modal-header d-flex justify-content-between">
-        <h5 class="modal-title" id="modalLabel">Book Your Desired Schedule</h5>
-        <button type="button"  data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-      <form id="appointmentForm" method="POST" action="appointment.php" enctype="multipart/form-data">
-        <div class="sched row">
-          <div class="col-md-6">
-            <p>Appointment Schedule</p>
-            <div id="modalContent" class="col-6"></div>
-            <input type="hidden" id="appointment_date" name="appointment_date" value="">
-          </div>
-         
-        </div>
-        <div class="line w-100 my-3"></div>
-        <div class="row">
-          <!-- Left Side: Autocomplete and Map -->
-          <div class="col-md-6">
-          <h6>Owner Information</h6>
-          <div class="form-group">
-          <label for="ownerName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="ownerName" name="ownerName" placeholder="Ex. Ivan Ablanida" required>
-              </div>
-              <div class="form-group">
-                <label for="contactNum" class="form-label">Contact #</label>
-                <input type="tel" class="form-control" id="contactNum" name="contactNum" placeholder="Ex. 09123456879" required>
-              </div>
-              <div class="form-group">
-                  <label for="ownerEmail" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="ownerEmail" name="ownerEmail" 
-                        value="<?php echo htmlspecialchars($email); ?>" readonly required>
-              </div>
-              <h6 class="pet-divide">Pet Information</h6>
-              <div class="form-group">
-                <label for="petType" class="form-label">Pet Type</label>
-                <select class="form-control" id="petType" name="petType" required>
-                  <option>Cat</option>
-                  <option>Dog</option>
-                  <option>Rabbit</option>
-                  <option>Reptile</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="breed" class="form-label">Breed</label>
-                <input type="text" class="form-control" id="breed" name="breed" placeholder="Husky">
-              </div>
-              <div class="form-group">
-                <label for="age" class="form-label">Age</label>
-                <input type="number" class="form-control" id="age" name="age" placeholder="Months" required>
-              </div>
-              
-            </div>
-            
-          <div class="col-md-6">
-              <h6>Address Information</h6>
-              <div class="form-group">
-              <div class="form-group mt-3" id= "autocomplete-wrapper">
-                <input id="autocomplete" placeholder="Can't find your location? Search here." type="text" class="form-control">
-              </div>
-                <select id="barangayDropdown" class="form-control w-50 mt-2 mb-2" name="barangayDropdown" disabled>
-                  <option value="">Select Barangay</option>
-                </select>
-              </div>
-              <div id="modalMap" style="height: 400px;"></div>
-              <input type="text" class="form-control mt-2" id="addInfo" name="add-info" placeholder="Street Name, Building, House No." required>
-              <input type="hidden" id="latitude" name="latitude">
-              <input type="hidden" id="longitude" name="longitude">
-             
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- Pet Information -->
-            <div class="col-md-6 mt-3">
-              
-            </div>
-            
-            <div class="col-md-6 mt-3">
-              <h6>Services</h6>
-              <?php
-require '../../../../db.php';
-
-try {
-    $sql = "SELECT service_name, cost, discount, service_type FROM service_list";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $clinic_services = [];
-    $home_services = [];
-
-    while ($row = $result->fetch_assoc()) {
-      $cost_str = $row['cost']; 
-      $discount = (float) $row['discount'];
-      $discounted_cost = $cost_str; 
-      $service_data = [
-          'service_name' => $row['service_name'],
-          'cost' => htmlspecialchars($cost_str),
-          'discount' => $row['discount'],
-          'discounted_cost' => $discounted_cost,
-          'service_type' => $row['service_type']
-      ];
-  
-      if (strtolower($row['service_type']) === 'clinic') {
-          $clinic_services[] = $service_data;
-      } elseif (strtolower($row['service_type']) === 'home') {
-          $home_services[] = $service_data;
-      }
-  }
-  
-
-    $stmt->close();
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
-
-$conn->close();
-?>
-
-<!-- HTML Select Element -->
-<div class="form-group">
-    <label for="service" class="form-label">Service</label>
-    <select class="form-control" id="service" name="service" required onchange="updatePayment()">
-        <!-- Clinic Services -->
-        <optgroup label="Clinic Services" class="clinic-services">
-            <?php foreach ($clinic_services as $service): ?>
-                <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
-                        data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
-                        data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
-                    <?php echo htmlspecialchars($service['service_name']); ?> - 
-                    ₱<?php echo htmlspecialchars($service['cost']); ?> - 
-                    <?php echo htmlspecialchars($service['discount']); ?>%
-                </option>
-            <?php endforeach; ?>
-        </optgroup>
-        <!-- Home Services -->
-        <optgroup label="Home Services" class="home-services">
-            <?php foreach ($home_services as $service): ?>
-                <option value="<?php echo htmlspecialchars($service['service_name']); ?>" 
-                        data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
-                        data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
-                    <?php echo htmlspecialchars($service['service_name']); ?> - 
-                    ₱<?php echo htmlspecialchars($service['cost']); ?> - 
-                    <?php echo htmlspecialchars($service['discount']); ?>%
-                </option>
-            <?php endforeach; ?>
-        </optgroup>
-    </select>
-</div>
-
-
-    <div class="form-group mt-2">
-        <label for="totalPayment" class="form-label mb-0">Total Payment</label>
-        <p id="totalPayment">₱ 0.00</p>
-    </div>
-
-    <!-- Hidden input for payment -->
-    <input type="hidden" id="payment" name="payment"/>
-
-    <div class="form-group">
-    <label for="paymentOption" class="form-label">Payment Option</label><br>
-      <input type="radio" id="gcash" name="paymentOption" value="gcash" onchange="togglePaymentFields()"> GCash
-      <input type="radio" id="onStore" name="paymentOption" value="onStore" onchange="togglePaymentFields()"> On Store
-    </div>
-
-<!-- GCash Payment Fields (Initially hidden) -->
-<div id="gcashFields" style="display:none;">
-    <div class="form-group">
-        <label for="gcashImage" class="form-label">GCash Image</label>
-        <input type="file" class="form-control" id="gcashImage" name="gcash_image" accept="image/*" required>
-    </div>
-    <div class="form-group">
-        <label for="gcashReference" class="form-label">GCash Reference Number</label>
-        <input type="text" class="form-control" id="gcashReference" name="gcash_reference" placeholder="Enter GCash Reference Number" required>
-    </div>
-</div>
-
-<script>
-    function togglePaymentFields() {
-    var gcashFields = document.getElementById('gcashFields');
-    var gcashOption = document.getElementById('gcash').checked;
-
-    if (gcashOption) {
-        gcashFields.style.display = 'block';
-    } else {
-        gcashFields.style.display = 'none'; 
-    }
-
-    console.log('GCash Fields Display:', gcashFields.style.display);  // Debug line to check visibility
-}
-</script>
-<div class="form-group mt-3">
-        <button type="submit" class="btn btn-primary book-save">Book Appointment</button>
-    </div>
-
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-    function updatePayment() {
-        var serviceSelect = document.getElementById('service');
-        var selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-        var payment = selectedOption.getAttribute('data-payment');
-        document.getElementById('totalPayment').textContent = '₱' + payment;
-        document.getElementById('payment').value = payment;
-    }
-</script>
-
-
-
-
+   
   </section>
   <!--Appointment Section End-->
 
     <!--Book-History Section-->
-  
+  <section class="booked-history" id="bookedHistorySection">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-12 col-24">
+          <div class="card card-outline card-primary rounded-0 shadow">
+            <div class="card-header rounded-0">
+              <h4 class="card-title text-center">Booked History</h4>
+            </div>
+            <div class="tab-bar">
+              <button id="currentBtn">Current Appointment</button>
+              <button class="none"> |</button>
+              <button id="pastBtn">Past Appointment</button>
+            </div>
+            <div class="card-body">
+              <ul class="list-group" id="historyList">
+                <?php 
+                require '../../../../db.php';
+                $sql = "SELECT * FROM appointment WHERE status IN ('pending', 'waiting', 'on-going') ORDER BY appointment_date DESC";
+                $result = $conn->query($sql);
+                
+                if ($result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                    ?>
+                    <li class="list-group-item current-appointment">
+                      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                        <div>
+                            <h5 class="mb-1">Appointment</h5>
+                          <p class="mb-1">Service: <?php echo $row['service']; ?></p>
+                          <p class="mb-1">Pet: <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p>Owner: <?php echo $row['owner_name']; ?></p>
+                        </div>
+                        <div class="mt-3 mt-md-0 text-md-right">
+                        <p class="mb-1 status" style="background-color: 
+                            <?php 
+                                if ($row['status'] == 'pending') {
+                                    echo '#007bff';
+                                } elseif ($row['status'] == 'waiting') {
+                                    echo 'ffc107';
+                                } elseif ($row['status'] == 'on-going') {
+                                    echo 'g28a745';
+                                }
+                            ?>; color: #fff;">
+                            <?php echo $row['status']; ?>
+                        </p>
+
+                          <p class="mb-1">Date: <?php echo $row['appointment_date']; ?></p>
+                          <a href="appointment.php?cancel=<?php echo $row['id']; ?>"><button class="btn btn-primary">Cancel</button></a>
+                        </div>
+                      </div>
+                    </li>
+                    <?php
+                  }
+                } else {
+                  echo "<p>No appointments found</p>";
+                }
+                
+                $conn->close();
+                ?>
+               <?php 
+                require '../../../../db.php';
+                $sql = "SELECT * FROM appointment WHERE status = 'finish'";
+                $result = $conn->query($sql);
+                
+                if ($result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                    ?>
+                    <li class="list-group-item past-appointment">
+                      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                        <div>
+                            <h5 class="mb-1">Appointment</h5>
+                          <p class="mb-1">Service: <?php echo $row['service']; ?></p>
+                          <p class="mb-1">Pet: <?php echo $row['pet_type'] . ', ' . $row['age'] . ' Yr Old'; ?></p>
+                          <p>Owner: <?php echo $row['owner_name']; ?></p>
+                        </div>
+                        <div class="mt-3 mt-md-0 text-md-right">
+                        <p class="mb-1 status" style="background-color: 
+                            <?php 
+                                if ($row['status'] == 'finish') {
+                                    echo 'green';
+                                }
+                            ?>; color: #fff;">
+                            <?php echo $row['status']; ?>
+                        </p>
+
+                          <p class="mb-1">Date: <?php echo $row['appointment_date']; ?></p>
+                      
+                        
+                        </div>
+                      </div>
+                    </li>
+                    <?php
+                  }
+                } else {
+                  echo "<p>No appointments found</p>";
+                }
+                
+                $conn->close();
+                ?>
+                
+              </ul>
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-3" id="paginationControls">
+                  <li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#" data-page="2">2</a></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
  
 
   <!--Book-History Modal Section-->
@@ -645,6 +530,7 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script src="../../function/script/pagination-history.js"></script>
 <script src="../../function/script/calendar.js"></script>
+<script src="../../function/script/toggle-appointment.js"></script>
 <script src="../../function/script/tab-bar.js"></script>
 <script src="../../function/script/service-dropdown.js"></script>
 <script src="../../function/script/chatbot-toggle.js"></script>

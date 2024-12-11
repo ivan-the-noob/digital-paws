@@ -34,7 +34,7 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
 <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
             <a class="navbar-brand d-none d-lg-block" href="#">
-                    <img src="assets/img/logo.png" alt="Logo" width="30" height="30">
+                    <img src="../../../../assets/img/logo.png" alt="Logo" width="30" height="30">
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -105,7 +105,7 @@ if (isset($_SESSION['email']) && isset($_SESSION['profile_picture'])) {
           <img src="../../../../assets/img/map.PNG" alt="Map Image" class="img-fluid">
           <h3 class="mt-4">About Us</h3>
           <p class="about-text">
-            <span class="font-weight-bold">The Bark Yard Pet Salon and Wellness Clinic</span> is an animal care facility
+            <span class="font-weight-bold">The Happy Vet Animal Clinic</span> is an animal care facility
             dedicated to providing high customer satisfaction by rendering quality pet care while furnishing a fun,
             clean, thematic, enjoyable atmosphere at an acceptable price. Our experienced team is passionate about
             animals and committed to their well-being. We offer a range of services tailored to meet the unique needs of
