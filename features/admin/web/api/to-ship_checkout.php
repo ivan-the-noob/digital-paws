@@ -52,9 +52,9 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                    
                 </ul>
             </div>
-           
+            
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle" id="checkoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <a href="#" class="d-flex align-items-center dropdown-toggle" id="checkoutDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #fff; border-radius: 10px;">
                     <i class="fa-solid fa-calendar-check"></i>
                     <span class="ms-2">Checkout</span>
                 </a>
@@ -65,23 +65,8 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
                     <li><a class="dropdown-item" href="delivered_checkout.php"><i class="fa-solid fa-calendar-check"></i> <span>Delivered</span></a></li>
                     <li><a class="dropdown-item" href="decline.php"><i class="fa-solid fa-calendar-check"></i> <span>Declined</span></a></li>
                 </ul>
-            </div> 
+            </div>  
            
-
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="checkoutDropdowns" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    <span class="ms-2">Booking</span>
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="checkoutDropdowns">
-                    <li><a class="dropdown-item" href="app-req.php"><i class="fa-solid fa-calendar-check"></i> <span>Pending Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-waiting.php"><i class="fa-solid fa-calendar-check"></i> <span>Waiting Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-ongoing.php"><i class="fa-solid fa-calendar-check"></i> <span>On Going Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-finish.php"><i class="fa-solid fa-calendar-check"></i> <span>Finished Bookings</span></a></li>
-                    <li><a class="dropdown-item" href="app-cancel.php"><i class="fa-solid fa-calendar-check"></i> <span>Cancelled Bookings</span></a></li>
-                   
-                </ul>
-            </div>
 
             <div class="maintenance">
                 <p class="maintenance-text">Maintenance</p>

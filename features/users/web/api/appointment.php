@@ -180,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="col-md-8 col-11 app">
         <div class="appoints">
           <button>Appointment Availability</button>
-          <a href="my-app.php" class="appoint">My Appointment</button>
+          <a href="my-app.php" class="appoint">My Appointment</a>
         </div>
         <div class="card card-outline card-primary rounded-0 shadow" id="appointmentSection">
           <div class="card-body">

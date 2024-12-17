@@ -1,7 +1,12 @@
 <?php
-
+session_start();
 include '../../../../db.php';
 include '../../function/authentication/login.php';
+
+if (isset($_SESSION['email'])) {
+    header("Location: ../../../../index.php");
+    exit(); 
+}
 
 ?>
 

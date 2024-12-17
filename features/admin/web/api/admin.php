@@ -8,59 +8,88 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['role']) || $_SESSION['role']
 $email = $_SESSION['email'];
 
 if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
-    header('Content-Type: application/json');
-
+    header('Content-Type: text/plain'); // Change content type to text/plain for plain data output
     include '../../../../db.php';
 
     $currentYear = date('Y');
-    $currentMonth = date('n'); // 1 for January, 12 for December
-
-    $lastMonth = $currentMonth - 1;
-    $lastYear = $currentYear;
-
+    $selectedMonth = isset($_GET['month']) ? $_GET['month'] : date('n');
+    $lastMonth = $selectedMonth - 1;
     if ($lastMonth < 1) {
         $lastMonth = 12;
-        $lastYear -= 1;
+        $currentYear -= 1;
     }
 
-    // SQL query to fetch payment data from both `appointment` and `manual_input`
-    $sql = "
-        SELECT MONTH(created_at) as month, YEAR(created_at) as year, SUM(payment) as total
-        FROM (
-            -- Appointment sales where status is 'finish'
-            SELECT created_at, payment FROM appointment WHERE status = 'finish'
-            UNION ALL
-            -- Manual sales from the manual_input table
-            SELECT created_at, sales_amount as payment FROM manual_input
-        ) AS all_sales
-        WHERE YEAR(created_at) = $currentYear  -- Filter for the current year
-        GROUP BY YEAR(created_at), MONTH(created_at)
-        ORDER BY YEAR(created_at), MONTH(created_at)";
+    // Sanitize selected month to prevent SQL injection
+    $selectedMonth = filter_var($selectedMonth, FILTER_VALIDATE_INT);
+    $lastMonth = filter_var($lastMonth, FILTER_VALIDATE_INT);
 
-    $result = $conn->query($sql);
+    try {
+        $sql = "
+            SELECT MONTH(created_at) as month, YEAR(created_at) as year, SUM(payment) as total
+            FROM (
+                SELECT created_at, payment FROM appointment WHERE status = 'finish'
+                UNION ALL
+                SELECT created_at, sales_amount as payment FROM manual_input
+            ) AS all_sales
+            WHERE (YEAR(created_at) = $currentYear AND MONTH(created_at) = $selectedMonth) 
+               OR (YEAR(created_at) = $currentYear AND MONTH(created_at) = $lastMonth)
+            GROUP BY YEAR(created_at), MONTH(created_at)
+            ORDER BY YEAR(created_at), MONTH(created_at)";
 
-    // Initialize the payments array for current and last month
-    $payments = [
-        'currentMonth' => array_fill(0, 12, 0),
-        'lastMonth' => array_fill(0, 12, 0)
-    ];
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $monthIndex = intval($row['month']) - 1;
-            if ($row['year'] == $currentYear && $row['month'] == $currentMonth) {
-                $payments['currentMonth'][$monthIndex] = floatval($row['total']);
-            } elseif ($row['year'] == $lastYear && $row['month'] == $lastMonth) {
-                $payments['lastMonth'][$monthIndex] = floatval($row['total']);
-            }
+        // If fetching data for all months
+        if ($selectedMonth === 'all') {
+            $sql = "
+                SELECT MONTH(created_at) as month, YEAR(created_at) as year, SUM(payment) as total
+                FROM (
+                    SELECT created_at, payment FROM appointment WHERE status = 'finish'
+                    UNION ALL
+                    SELECT created_at, sales_amount as payment FROM manual_input
+                ) AS all_sales
+                WHERE YEAR(created_at) = $currentYear
+                GROUP BY YEAR(created_at), MONTH(created_at)
+                ORDER BY MONTH(created_at)";
         }
+
+        $result = $conn->query($sql);
+
+        // Initialize the payments array
+        $payments = [
+            'currentMonth' => array_fill(0, 12, 0),
+            'lastMonth' => array_fill(0, 12, 0),
+        ];
+
+        if ($result) {
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $monthIndex = intval($row['month']) - 1;
+
+                    if ($row['year'] == $currentYear && $row['month'] == $selectedMonth) {
+                        $payments['currentMonth'][$monthIndex] = floatval($row['total']);
+                    }
+
+                    if ($row['year'] == $currentYear && $row['month'] == $lastMonth) {
+                        $payments['lastMonth'][$monthIndex] = floatval($row['total']);
+                    }
+                }
+            }
+        } else {
+            // If query fails
+            echo "Error: Database query failed: " . $conn->error;
+            exit;
+        }
+
+        $conn->close();
+
+        // Return the data as plain text (comma-separated)
+        echo implode(',', $payments['currentMonth']) . "\n" . implode(',', $payments['lastMonth']);
+        exit;
+    } catch (Exception $e) {
+        // Handle any errors that may occur
+        echo "Error: An error occurred: " . $e->getMessage();
+        exit;
     }
-
-    $conn->close();
-
-    echo json_encode($payments);
-    exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -234,35 +263,57 @@ if (isset($_GET['action']) && $_GET['action'] === 'getPayments') {
                     </div>
                 </div>
             </div>
+           
             <div class="flex-container">
                 <div class="chart-container">
+                    <div class="div">
+                        <div class="d-flex gap-2 justify-content-center">
+                            <select id="monthSelect">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                                <option value="all">Show all months data</option>
+                            </select>
+                            <button id="searchButton" class="btn btn-primary">Search</button>
+                            <button id="exportBtn" class="btn btn-success">Export as Excel</button>
+                        </div>
+                    </div>
                     <canvas id="salesChart"></canvas>
                 </div>
                 <div class="global-container">
                 <?php 
-require '../../../../db.php';
+                    require '../../../../db.php';
 
-$sql = "SELECT * FROM global_reports ORDER BY cur_time DESC"; 
-$result = $conn->query($sql);
+                    $sql = "SELECT * FROM global_reports ORDER BY cur_time DESC"; 
+                    $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    // Output the reports
-    while ($row = $result->fetch_assoc()) {
-        $message = $row['message'];
-        $time = $row['cur_time']; // Assuming current_time is a TIMESTAMP column
-        
-        
-        // Display the message and time
-        echo "<div class='report'>";
-        echo "<p>$message<span class='report-time'> $time</span></p><hr>";
-        echo "</div>";
-    }
-} else {
-    echo "<p>No reports available.</p>";
-}
+                    if ($result->num_rows > 0) {
+                        // Output the reports
+                        while ($row = $result->fetch_assoc()) {
+                            $message = $row['message'];
+                            $time = $row['cur_time']; // Assuming current_time is a TIMESTAMP column
+                            
+                            
+                            // Display the message and time
+                            echo "<div class='report'>";
+                            echo "<p>$message<span class='report-time'> $time</span></p><hr>";
+                            echo "</div>";
+                        }
+                    } else {
+                        echo "<p>No reports available.</p>";
+                    }
 
-$conn->close();
-?>
+                    $conn->close();
+                    ?>
 
    
 </div>
@@ -352,6 +403,8 @@ $conn->close();
         <script src="../../function/script/month-chart.js"></script>
         <script src="../../function/script/toggle-menu.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>

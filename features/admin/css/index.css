@@ -253,9 +253,8 @@ body {
     background-color: #FFFFFF;
     border-radius: 10px;
     width: 48%;
-    display: flex;
-    margin: auto;
     border: 1px solid #cabebe;
+    margin-right: 10px;
     
 }
 

@@ -6,11 +6,11 @@ if (isset($_SESSION['email'])) {
   $email = $_SESSION['email'];
 
   // Update query to fetch latitude, longitude, and other details
-  $query = "SELECT latitude, longitude, contact_number, home_street, address_search, profile_picture FROM users WHERE email = ?";
+  $query = "SELECT name, latitude, longitude, contact_number, home_street, address_search, profile_picture FROM users WHERE email = ?";
   $stmt = $conn->prepare($query);
   $stmt->bind_param("s", $email);
   $stmt->execute();
-  $stmt->bind_result($latitude, $longitude, $contact_number, $home_street, $address_search, $profile_picture);
+  $stmt->bind_result($name, $latitude, $longitude, $contact_number, $home_street, $address_search, $profile_picture);
   $stmt->fetch();
   $stmt->close();
 
@@ -67,7 +67,7 @@ echo "<script>
       <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="../../../../../user.html">Home</a>
+            <a class="nav-link" href="../../../../index.php">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Profile</a>
@@ -78,7 +78,7 @@ echo "<script>
           <div class="dropdown">
             <button class=" dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
-              <img src="../../../../assets/img/customer.jfif" alt="" class="profile">
+              <img src="../../../../assets/img/<?= htmlspecialchars($profile_picture) ?>" class="rounded-circle profile" alt="Profile Picture">
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <a class="dropdown-item" href="#">Profile</a>
@@ -96,9 +96,9 @@ echo "<script>
     <div class="row justify-content-center">
       <!-- Left Side: Profile Information -->
       <div class="text-center mb-4">
-        <img src="../../../../assets/img/customer.jfif" class="rounded-circle" alt="Profile Picture"
+        <img src="../../../../assets/img/<?= htmlspecialchars($profile_picture) ?>" class="rounded-circle" alt="Profile Picture"
           style="width: 150px; height: 150px;">
-        <h4 class="mt-3">Racel</h4>
+        <h4 class="mt-3"><?= htmlspecialchars($name) ?></h4>
       </div>
 
       <form action="../../function/php/update_profile.php" method="POST" enctype="multipart/form-data"
