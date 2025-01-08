@@ -139,8 +139,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <img src="../../../../assets/img/<?php echo htmlspecialchars($_SESSION['profile_picture']); ?>" alt="Profile Image" class="profile">
                                 </button>
                                 <ul class="dropdown-menu custom-center-dropdown" aria-labelledby="dropdownMenuButton2">
-                                    <li><a class="dropdown-item" href="features/users/web/api/dashboard.php">Profile</a></li>
-                                    <li><a class="dropdown-item" href="features/users/function/authentication/logout.php">Logout</a></li>
+                                    <li><a class="dropdown-item" href="dashboard.php">Profile</a></li>
+                                    <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                                 </ul>
                             </div>
                           <?php
@@ -326,8 +326,7 @@ $conn->close();
                         data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
                         data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
                     <?php echo htmlspecialchars($service['service_name']); ?> - 
-                    ₱<?php echo htmlspecialchars($service['cost']); ?> - 
-                    <?php echo htmlspecialchars($service['discount']); ?>%
+                    ₱<?php echo htmlspecialchars($service['cost']); ?>  
                 </option>
             <?php endforeach; ?>
         </optgroup>
@@ -338,8 +337,7 @@ $conn->close();
                         data-payment="<?php echo htmlspecialchars($service['discounted_cost']); ?>" 
                         data-discount="<?php echo htmlspecialchars($service['discount']); ?>">
                     <?php echo htmlspecialchars($service['service_name']); ?> - 
-                    ₱<?php echo htmlspecialchars($service['cost']); ?> - 
-                    <?php echo htmlspecialchars($service['discount']); ?>%
+                    ₱<?php echo htmlspecialchars($service['cost']); ?>  
                 </option>
             <?php endforeach; ?>
         </optgroup>
@@ -364,6 +362,7 @@ $conn->close();
 <!-- GCash Payment Fields (Initially hidden) -->
 <div id="gcashFields" style="display:none;">
     <div class="form-group">
+        <img src="../../../../assets/img/gcash/gcash.jpg" alt="" style="width: 100%;">
         <label for="gcashImage" class="form-label">GCash Image</label>
         <input type="file" class="form-control" id="gcashImage" name="gcash_image" accept="image/*" required>
     </div>
@@ -413,13 +412,6 @@ $conn->close();
 
 
   </section>
-  <!--Appointment Section End-->
-
-    <!--Book-History Section-->
-  
- 
-
-  <!--Book-History Modal Section-->
 
 
   <!--Chat Bot-->

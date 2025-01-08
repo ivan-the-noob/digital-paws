@@ -258,6 +258,10 @@ body {
     
 }
 
+.chart-button button{
+    height: 40px;
+}
+
 .global-container{
     margin-top: 50px !important;
     padding: 20px;

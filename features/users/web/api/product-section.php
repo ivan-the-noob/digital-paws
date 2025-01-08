@@ -144,7 +144,6 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                     <button onclick="filterProducts('petfood')">Pet Food</button>
                     <button onclick="filterProducts('pettoys')">Pet Toys</button>
                     <button onclick="filterProducts('supplements')">Supplements</button>
-                    <button onclick="filterProducts('all')">All Products</button>
                 </div>
             </div>
 
@@ -200,12 +199,16 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                                         <p class="tag align-items-center mb-0 d-flex">PHP</p>
                                         <p class="price mb-0"><?= htmlspecialchars(number_format($product['cost'], 2)) ?></p>
                                     </div>
+                                    <?php if ($product['quantity'] > 0): ?>
                                     <div class="d-flex justify-content-between item-btn">
                                         <a href="../../../../features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>" class="btn buy-now">BUY NOW!</a>
                                         <a href="../../../../features/users/web/api/buy-now.php?id=<?= $product['id'] ?>&type=<?= htmlspecialchars($product['type']) ?>&triggerModal=true" class="btn add-to-cart">
                                             <span class="material-symbols-outlined">shopping_cart</span>
                                         </a>
                                     </div>
+                                    <?php else: ?>
+                                    <button class="buy-now">Out Of Stock!</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endwhile; 
